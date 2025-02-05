@@ -15,6 +15,10 @@ public class MoveableObject {
         this.color = color;
     }
 
+    public MoveableObject(int x2, int y2, int width2, int height2, Color color2, String text) {
+        //TODO Auto-generated constructor stub
+    }
+
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(x, y, width, height);

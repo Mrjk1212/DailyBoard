@@ -22,7 +22,7 @@ public class CanvasPanel extends JPanel {
         setLayout(null);
 
         calendarBlock = new CalendarObject(100, 100, 200, 150, Color.LIGHT_GRAY);
-        stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
+        stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW, this);
 
         objects.add(calendarBlock);
         objects.add(stickyNote);
@@ -182,7 +182,7 @@ public class CanvasPanel extends JPanel {
 
     // Method to add different objects
     public void addStickyNote() {
-        objects.add(new StickyNoteObject(100, 100, 100, 100, Color.YELLOW));
+        objects.add(new StickyNoteObject(100, 100, 100, 100, Color.YELLOW, this));
         repaint();
     }
 
@@ -203,6 +203,10 @@ public class CanvasPanel extends JPanel {
 
     public void deleteSelectedObject() {
         if (selectedObject != null) {
+            if(selectedObject instanceof StickyNoteObject){
+                ((StickyNoteObject) selectedObject).destroy();
+            }
+            
             objects.remove(selectedObject);
             selectedObject = null;
             repaint();
