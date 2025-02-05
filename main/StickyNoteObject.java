@@ -5,6 +5,11 @@ public class StickyNoteObject extends MoveableObject {
     private String text = "";
     private boolean isResizing = false;
     private Point lastDrag = null;
+    
+    // Minimum size constraints
+    private static final int MIN_WIDTH = 30;
+    private static final int MIN_HEIGHT = 30;
+
 
     public StickyNoteObject(int x, int y, int width, int height, Color color) {
         super(x, y, width, height, color);
@@ -47,18 +52,21 @@ public class StickyNoteObject extends MoveableObject {
         }
     }
 
-    // Getters and setters for width and height (needed for resizing)
-    public void setWidth(int width) {
-        if(getWidth() >= 30 && getHeight()  >= 30){
-        super.setWidth(width); // Assuming MoveableObject has a setWidth method
-        }
+public void setWidth(int width) {
+    if (width >= MIN_WIDTH) {
+        super.setWidth(width); // Ensure parent class has a valid method
+    } else {
+        super.setWidth(MIN_WIDTH); // Enforce minimum width
     }
+}
 
-    public void setHeight(int height) {
-        if(getWidth() >= 30 && getHeight()  >= 30){
-            super.setHeight(height); // Assuming MoveableObject has a setWidth method
-            }
+public void setHeight(int height) {
+    if (height >= MIN_HEIGHT) {
+        super.setHeight(height); // Ensure parent class has a valid method
+    } else {
+        super.setHeight(MIN_HEIGHT); // Enforce minimum height
     }
+}
 
     public String getText() {
         return text;
