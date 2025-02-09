@@ -20,7 +20,6 @@ public class StickyNoteObject extends JPanel {
         textField.setBackground(color);
         textField.setBounds(5, 5, width - 10, length - 10);
         textField.setBorder(null);  // Remove border for a cleaner look
-        textField.setHorizontalAlignment(JTextField.CENTER); // Center text
         add(textField);
 
         // Enable dragging
