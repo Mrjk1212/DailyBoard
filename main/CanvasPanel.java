@@ -3,9 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class CanvasPanel extends JPanel {
-    private MoveableObject calendarBlock;
-    private MoveableObject stickyNote;
-    private MoveableObject selectedObject = null;
+    private StickyNoteObject stickyNote;
 
 
     private double scale = 1.0; // Zoom level
@@ -15,17 +13,15 @@ public class CanvasPanel extends JPanel {
     private boolean isResizing = false;
 
     // Add new objects to the canvas
-    private java.util.List<MoveableObject> objects = new java.util.ArrayList<>();
+    private java.util.List<StickyNoteObject> StickyNoteObjectList = new java.util.ArrayList<>();
 
     public CanvasPanel() {
         setPreferredSize(new Dimension(800, 600));
         setLayout(null);
 
-        calendarBlock = new CalendarObject(100, 100, 200, 150, Color.LIGHT_GRAY);
         stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW, this);
 
-        objects.add(calendarBlock);
-        objects.add(stickyNote);
+        StickyNoteObjectList.add(stickyNote);
 
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -34,29 +30,28 @@ public class CanvasPanel extends JPanel {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     // Right click starts panning
                     isPanning = true;
+                    
                 } else {
                     // Left click selects objects or starts resizing
-                    for (MoveableObject obj : objects) {
+                    for (StickyNoteObject obj : StickyNoteObjectList) {
                         if (obj instanceof StickyNoteObject && ((StickyNoteObject) obj).isResizing(scaledPoint)) {
                             // Start resizing if clicked on the resize corner
                             isResizing = true;
-                            selectedObject = obj;
+                            
                             break;
                         } else if (obj.contains(scaledPoint)) {
-                            // Select the object for moving
-                            selectedObject = obj;
+                            
                             repaint();
                             break;
+                        }else{
+                            
                         }
                     }
                 }
                 lastDrag = e.getPoint();
             }
         
-            public void mouseReleased(MouseEvent e) {
-                if (selectedObject != null) {
-                    selectedObject.selected(getGraphics(), false);
-                }
+            public void mouseReleased(MouseEvent e) {       
                 lastDrag = null;
                 isResizing = false;
                 isPanning = false;
@@ -73,18 +68,10 @@ public class CanvasPanel extends JPanel {
                     offsetY += dy;
                     lastDrag = e.getPoint();
                     repaint();
-                } else if (selectedObject != null) {
-                    // If resizing, adjust the size
-                    int dx = e.getX() - lastDrag.x;
-                    int dy = e.getY() - lastDrag.y;
-                    if (isResizing) {
-                        ((StickyNoteObject) selectedObject).move(dx, dy, true); // Resize
-                    } else {
-                        selectedObject.move(dx, dy, false); // Move
-                    }
-                    lastDrag = e.getPoint();
-                    repaint();
-                }
+                } 
+                lastDrag = e.getPoint();
+                repaint();
+                
             }
         });
 
@@ -136,8 +123,8 @@ public class CanvasPanel extends JPanel {
         // Draw the scaling grid (always centered)
         drawGrid(g2);
 
-        // Draw moveable objects
-        for (MoveableObject obj : objects) {
+        // Draw StickyNote objects
+        for (StickyNoteObject obj : StickyNoteObjectList) {
             obj.draw(g2);
         }
     }
@@ -182,22 +169,22 @@ public class CanvasPanel extends JPanel {
 
     // Method to add different objects
     public void addStickyNote() {
-        objects.add(new StickyNoteObject(100, 100, 100, 100, Color.YELLOW, this));
+        StickyNoteObjectList.add(new StickyNoteObject(100, 100, 100, 100, Color.YELLOW, this));
         repaint();
     }
 
     public void addCalendar() {
-        objects.add(new CalendarObject(300, 100, 200, 150, Color.LIGHT_GRAY));
+        //objects.add(new CalendarObject(300, 100, 200, 150, Color.LIGHT_GRAY));
         repaint();
     }
 
     public void addToDoList() {
-        objects.add(new ToDoListObject(500, 100, 200, 100, Color.CYAN));
+        //objects.add(new ToDoListObject(500, 100, 200, 100, Color.CYAN));
         repaint();
     }
 
     public void addParagraph() {
-        objects.add(new ParagraphObject(700, 100, 300, 100, Color.PINK));
+        //objects.add(new ParagraphObject(700, 100, 300, 100, Color.PINK));
         repaint();
     }
 
