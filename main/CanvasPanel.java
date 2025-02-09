@@ -1,103 +1,77 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
-import java.util.List;
+
 public class CanvasPanel extends JPanel {
-    private List<StickyNoteObject> stickyNotes = new ArrayList<>();
-    private double scale = 1.0;
-    private int offsetX = 0, offsetY = 0;
+    private StickyNoteObject stickyNote;
+
+
+    private double scale = 1.0; // Zoom level
+    private int offsetX = 0, offsetY = 0; // Panning offsets
     private Point lastDrag = null;
+    private boolean isPanning = false;
+    private boolean isResizing = false;
+
+    // Add new objects to the canvas
+    private java.util.List<StickyNoteObject> StickyNoteObjectList = new java.util.ArrayList<>();
 
     public CanvasPanel() {
         setPreferredSize(new Dimension(800, 600));
         setLayout(null);
 
-        // Mouse wheel listener for zooming
-        addMouseWheelListener(e -> {
-            double zoomFactor = 1.1;
-            if (e.getPreciseWheelRotation() < 0) {
-                scale *= zoomFactor; // Zoom in
-            } else {
-                scale /= zoomFactor; // Zoom out
-            }
-            updateStickyNotePositions();
-            repaint();
-        });
-
-        // Mouse listeners for panning
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                lastDrag = e.getPoint();
-            }
-        });
-
-        addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if (lastDrag != null) {
-                    int dx = e.getX() - lastDrag.x;
-                    int dy = e.getY() - lastDrag.y;
-                    offsetX += dx;
-                    offsetY += dy;
-                    lastDrag = e.getPoint();
-                    updateStickyNotePositions();
-                    repaint();
-                }
-            }
-        });
+        repaint();
     }
 
-    // Ensure sticky notes scale & move properly
-    private void updateStickyNotePositions() {
-        for (StickyNoteObject note : stickyNotes) {
-            int currentX = note.getX();
-            int currentY = note.getY();
-    
-            int scaledX = (int) ((currentX * scale) + offsetX);
-            int scaledY = (int) ((currentY * scale) + offsetY);
-            int newWidth = (int) (note.getOriginalWidth() * scale);
-            int newHeight = (int) (note.getOriginalHeight() * scale);
-    
-            note.setBounds(scaledX, scaledY, newWidth, newHeight);
-            note.updateOriginalPosition(); // Save new position so it doesn't reset
+    // Draws a grid
+    private void drawGrid(Graphics2D g2) {
+        int baseGridSize = 50; // Default grid spacing
+        int gridSpacing = (int) (baseGridSize * scale);
+
+        // Adjust spacing dynamically so the grid stays visible at extreme zoom levels
+        while (gridSpacing < 5) {
+            baseGridSize *= 2;
+            gridSpacing = (int) (baseGridSize * scale);
+        }
+
+        g2.setColor(new Color(220, 220, 220)); // Light gray grid
+
+        // Determine bounds for grid rendering
+        int width = getWidth() * 20;
+        int height = getHeight() * 20;
+
+        // Calculate the number of grid lines to draw based on panel size and grid spacing
+        int centerX = width;
+        int centerY = height;
+
+        // Draw vertical grid lines
+        for (int x = centerX % baseGridSize; x < width; x += baseGridSize) {
+            g2.drawLine(x, 0, x, height);
+        }
+        for (int x = centerX % baseGridSize; x > 0; x -= baseGridSize) {
+            g2.drawLine(x, 0, x, height);
+        }
+
+        // Draw horizontal grid lines
+        for (int y = centerY % baseGridSize; y < height; y += baseGridSize) {
+            g2.drawLine(0, y, width, y);
+        }
+        for (int y = centerY % baseGridSize; y > 0; y -= baseGridSize) {
+            g2.drawLine(0, y, width, y);
         }
     }
+
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        Graphics2D g2d = (Graphics2D) g.create();
-        AffineTransform transform = new AffineTransform();
-        transform.translate(offsetX, offsetY);
-        transform.scale(scale, scale);
-        g2d.setTransform(transform);
-        
-        g2d.dispose();
-        drawGrid(g2);
-        
+        drawGrid((Graphics2D) g);
     }
 
-    private void drawGrid(Graphics2D g2) {
-        int gridSize = (int) (50 * scale);
-        g2.setColor(new Color(220, 220, 220));
-
-        for (int x = offsetX % gridSize; x < getWidth(); x += gridSize) {
-            g2.drawLine(x, 0, x, getHeight());
-        }
-        for (int y = offsetY % gridSize; y < getHeight(); y += gridSize) {
-            g2.drawLine(0, y, getWidth(), y);
-        }
-    }
-
+    // Method to add different objects
     public void addStickyNote() {
-        StickyNoteObject note = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
-        stickyNotes.add(note);
-        add(note);
-        updateStickyNotePositions();
+        stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
+        StickyNoteObjectList.add(stickyNote);
+        add(stickyNote);
         repaint();
     }
 
