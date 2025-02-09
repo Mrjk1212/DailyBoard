@@ -19,117 +19,10 @@ public class CanvasPanel extends JPanel {
         setPreferredSize(new Dimension(800, 600));
         setLayout(null);
 
-        stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW, this);
-
-        StickyNoteObjectList.add(stickyNote);
-
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                Point scaledPoint = getScaledPoint(e.getPoint());
-        
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    // Right click starts panning
-                    isPanning = true;
-                    
-                } else {
-                    // Left click selects objects or starts resizing
-                    for (StickyNoteObject obj : StickyNoteObjectList) {
-                        if (obj instanceof StickyNoteObject && ((StickyNoteObject) obj).isResizing(scaledPoint)) {
-                            // Start resizing if clicked on the resize corner
-                            isResizing = true;
-                            
-                            break;
-                        } else if (obj.contains(scaledPoint)) {
-                            
-                            repaint();
-                            break;
-                        }else{
-                            
-                        }
-                    }
-                }
-                lastDrag = e.getPoint();
-            }
-        
-            public void mouseReleased(MouseEvent e) {       
-                lastDrag = null;
-                isResizing = false;
-                isPanning = false;
-            }
-        });
-        
-        addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                if (isPanning) {
-                    // Panning the canvas
-                    int dx = e.getX() - lastDrag.x;
-                    int dy = e.getY() - lastDrag.y;
-                    offsetX += dx;
-                    offsetY += dy;
-                    lastDrag = e.getPoint();
-                    repaint();
-                } 
-                lastDrag = e.getPoint();
-                repaint();
-                
-            }
-        });
-
-        // Mouse wheel listener for zooming (centered on cursor)
-        addMouseWheelListener(e -> {
-            double zoomFactor = e.getPreciseWheelRotation() > 0 ? 0.9 : 1.1;
-            Point mousePoint = e.getPoint();
-            zoomAtPoint(mousePoint, zoomFactor);
-            repaint();
-        });
+        repaint();
     }
 
-    // Converts screen coordinates to scaled coordinates
-    private Point getScaledPoint(Point p) {
-        int x = (int) ((p.x - offsetX) / scale);
-        int y = (int) ((p.y - offsetY) / scale);
-        return new Point(x, y);
-    }
-
-    // Zoom centered on a specific point
-    private void zoomAtPoint(Point cursor, double zoomFactor) {
-        double newScale = scale * zoomFactor;
-
-        // Prevent zooming too far out
-        if (newScale < 0.1) return;
-        
-        // Cursor position in world coordinates before zooming
-        double worldX = (cursor.x - offsetX) / scale;
-        double worldY = (cursor.y - offsetY) / scale;
-
-        // Apply new scale
-        scale = newScale;
-
-        // Adjust offset so cursor remains at the same world position
-        offsetX = (int) (cursor.x - worldX * scale);
-        offsetY = (int) (cursor.y - worldY * scale);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Apply zoom and panning transformations
-        g2.translate(offsetX, offsetY);
-        g2.scale(scale, scale);
-
-        // Draw the scaling grid (always centered)
-        drawGrid(g2);
-
-        // Draw StickyNote objects
-        for (StickyNoteObject obj : StickyNoteObjectList) {
-            obj.draw(g2);
-        }
-    }
-
-    // Draws an infinite scaling grid, always centered on the canvas
+    // Draws a grid
     private void drawGrid(Graphics2D g2) {
         int baseGridSize = 50; // Default grid spacing
         int gridSpacing = (int) (baseGridSize * scale);
@@ -167,9 +60,18 @@ public class CanvasPanel extends JPanel {
         }
     }
 
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        drawGrid((Graphics2D) g);
+    }
+
     // Method to add different objects
     public void addStickyNote() {
-        StickyNoteObjectList.add(new StickyNoteObject(100, 100, 100, 100, Color.YELLOW, this));
+        stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
+        StickyNoteObjectList.add(stickyNote);
+        add(stickyNote);
         repaint();
     }
 
@@ -188,6 +90,7 @@ public class CanvasPanel extends JPanel {
         repaint();
     }
 
+    /* 
     public void deleteSelectedObject() {
         if (selectedObject != null) {
             if(selectedObject instanceof StickyNoteObject){
@@ -199,6 +102,7 @@ public class CanvasPanel extends JPanel {
             repaint();
         }
     }
+        */
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Canvas with Toolbar");
@@ -211,27 +115,28 @@ public class CanvasPanel extends JPanel {
         toolBar.setFloatable(false);
 
         // Add buttons for the toolbar
-        JButton addStickyNoteButton = new JButton("Add Sticky Note");
+        JButton addStickyNoteButton = new JButton("Sticky Note");
         addStickyNoteButton.addActionListener(e -> canvasPanel.addStickyNote());
         toolBar.add(addStickyNoteButton);
 
-        JButton addCalendarButton = new JButton("Add Calendar");
+        JButton addCalendarButton = new JButton("Calendar");
         addCalendarButton.addActionListener(e -> canvasPanel.addCalendar());
         toolBar.add(addCalendarButton);
 
-        JButton addToDoListButton = new JButton("Add To-Do List");
+        JButton addToDoListButton = new JButton("To-Do List");
         addToDoListButton.addActionListener(e -> canvasPanel.addToDoList());
         toolBar.add(addToDoListButton);
 
-        JButton addParagraphButton = new JButton("Add Paragraph");
+        JButton addParagraphButton = new JButton("Paragraph");
         addParagraphButton.addActionListener(e -> canvasPanel.addParagraph());
         toolBar.add(addParagraphButton);
 
+        /* 
         // Add the delete button
         JButton deleteButton = new JButton("Delete Selected");
         deleteButton.addActionListener(e -> canvasPanel.deleteSelectedObject());
         toolBar.add(deleteButton);
-
+*/
         // Set up frame layout
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
         frame.getContentPane().add(canvasPanel, BorderLayout.CENTER);
