@@ -125,6 +125,15 @@ public class CanvasPanel extends JPanel {
     public void addStickyNote() {
         stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
         stickyNoteObjectList.add(stickyNote);
+        // Update size to account for zoom out/in
+        stickyNote.setBounds(
+            stickyNote.getX(),
+            stickyNote.getY(),
+            (int)(stickyNote.getOriginalWidth() * scale),
+            (int)(stickyNote.getOriginalHeight() * scale)
+        );
+        stickyNote.setScale(scale);
+        stickyNote.repaintInside();
         add(stickyNote);
         repaint();
     }

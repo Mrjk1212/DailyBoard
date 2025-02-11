@@ -2,6 +2,27 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/* 
+TODO
+-Add an option to re-color each note so there can be distinction between them when zoomed out.
+-Add a title option for each note (the outlook board had this option, I just found it sort of nice.)
+-Add the functionality for actually creating new lines inside the note, example:
+
+--------------------------------------------------------------------
+|this is a sticky note                                             |
+|-I don't want to rely on the size of the note to denote new lines |
+|-Because I want to show things on multiple lines IF I WANT TO!!!  |
+--------------------------------------------------------------------
+*/
+
+/**
+ * StickyNoteObject represents a resizable and draggable component that allows
+ * users to input and display text. The text can be edited by clicking inside the note,
+ * resizing is done by clicking and dragging the bottom left corner of the note, and
+ * moving the note is done by clicking an edge and draggin the note to a new location.
+ * @author Aaron Cherney
+ * @version 1.0
+ */
 public class StickyNoteObject extends JPanel {
     private JTextField textField;
     private JLabel displayLabel;
@@ -25,6 +46,8 @@ public class StickyNoteObject extends JPanel {
         displayLabel = new JLabel("", SwingConstants.CENTER);
         displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         displayLabel.setBounds(5, 5, width - 10, height - 10);
+        displayLabel.setHorizontalAlignment(JLabel.LEFT);
+        displayLabel.setVerticalAlignment(JLabel.TOP);
         add(displayLabel);
 
         // Create a JTextField for input
@@ -33,6 +56,7 @@ public class StickyNoteObject extends JPanel {
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         textField.setBorder(null);
         textField.setVisible(false); // Initially hidden
+        textField.setBackground(color);
         add(textField);
 
         // Focus listener to update label when user clicks away
@@ -70,6 +94,7 @@ public class StickyNoteObject extends JPanel {
                     isResizing = true;
                 } else {
                     isResizing = false;
+                    
                 }
             }
         });
