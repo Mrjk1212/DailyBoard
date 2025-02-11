@@ -96,6 +96,8 @@ public class CanvasPanel extends JPanel {
                 }
             }
         });
+
+        
     }
 
     private void drawGrid(Graphics2D g2) {
@@ -139,7 +141,6 @@ public class CanvasPanel extends JPanel {
     }
 
 
-
     public void addCalendar() {
         //objects.add(new CalendarObject(300, 100, 200, 150, Color.LIGHT_GRAY));
         repaint();
@@ -154,20 +155,6 @@ public class CanvasPanel extends JPanel {
         //objects.add(new ParagraphObject(700, 100, 300, 100, Color.PINK));
         repaint();
     }
-
-    /* 
-    public void deleteSelectedObject() {
-        if (selectedObject != null) {
-            if(selectedObject instanceof StickyNoteObject){
-                ((StickyNoteObject) selectedObject).destroy();
-            }
-            
-            objects.remove(selectedObject);
-            selectedObject = null;
-            repaint();
-        }
-    }
-        */
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Canvas with Toolbar");

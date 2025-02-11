@@ -18,8 +18,9 @@ TODO
 /**
  * StickyNoteObject represents a resizable and draggable component that allows
  * users to input and display text. The text can be edited by clicking inside the note,
- * resizing is done by clicking and dragging the bottom left corner of the note, and
- * moving the note is done by clicking an edge and draggin the note to a new location.
+ * resizing is done by clicking and dragging the bottom left corner of the note,
+ * moving the note is done by clicking an edge and draggin the note to a new location,
+ * and deleting the note is done by clicking the top right corner of the note.
  * @author Aaron Cherney
  * @version 1.0
  */
@@ -29,6 +30,7 @@ public class StickyNoteObject extends JPanel {
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
+    private static final int DELETE_MARGIN = 10;
     private static final Color RESIZE_COLOR = Color.GRAY;
     private int originalWidth;
     private int originalHeight;
@@ -92,9 +94,12 @@ public class StickyNoteObject extends JPanel {
 
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
-                } else {
+                } 
+                else if(isInDeleteZone(e.getPoint())){
+                    delete();
+                }
+                else {
                     isResizing = false;
-                    
                 }
             }
         });
@@ -165,15 +170,34 @@ public class StickyNoteObject extends JPanel {
         return (p.x >= w - RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
     }
 
+    private boolean isInDeleteZone(Point p) {
+        int w = getWidth();
+        return (p.x >= w - DELETE_MARGIN && p.y <= DELETE_MARGIN);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(RESIZE_COLOR);
         g.fillRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN , RESIZE_MARGIN);
+        g.setColor(Color.RED);
+        g.fillRect(getWidth() - DELETE_MARGIN, getHeight() - getHeight(), DELETE_MARGIN, DELETE_MARGIN);
     }
 
     public void repaintInside() {
         updateTextStyle();
         repaint();
     }
+
+    //get a click in top right corner and delete all components inside and then delete the sticky note....
+    public void delete(){
+        removeAll(); // remove all child components first just to be safe :)
+        Container parent = getParent();
+        if (parent != null) {
+            parent.remove(this);
+            parent.revalidate();
+            parent.repaint();
+        }
+    }
+
 }
