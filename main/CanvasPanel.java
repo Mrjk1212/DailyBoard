@@ -1,79 +1,141 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.util.List;
+import java.util.ArrayList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
-
-
-    private double scale = 1.0; // Zoom level
-    private int offsetX = 0, offsetY = 0; // Panning offsets
+    private double scale = 1.0;
+    private int offsetX = 0, offsetY = 0;
     private Point lastDrag = null;
     private boolean isPanning = false;
     private boolean isResizing = false;
-
-    // Add new objects to the canvas
-    private java.util.List<StickyNoteObject> StickyNoteObjectList = new java.util.ArrayList<>();
+    private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
+    private static final double ZOOM_FACTOR = 0.1;
+    private static final double MIN_SCALE = 0.1;
+    private static final double MAX_SCALE = 3.0;
 
     public CanvasPanel() {
         setPreferredSize(new Dimension(800, 600));
         setLayout(null);
 
-        repaint();
+        addMouseWheelListener(e -> {
+            Point mousePoint = e.getPoint();
+            double oldScale = scale;
+            
+            if (e.getWheelRotation() < 0) {
+                scale = Math.min(scale * (1 + ZOOM_FACTOR), MAX_SCALE);
+            } else {
+                scale = Math.max(scale * (1 - ZOOM_FACTOR), MIN_SCALE);
+            }
+
+            for (StickyNoteObject note : stickyNoteObjectList) {
+                // Calculate distance from mouse to note
+                double dx = note.getX() - mousePoint.x;
+                double dy = note.getY() - mousePoint.y;
+                
+                // Scale this distance by the change in scale
+                double scaleChange = scale / oldScale;
+                dx *= scaleChange;
+                dy *= scaleChange;
+                
+                // Set new position relative to mouse point
+                note.setLocation(
+                    (int)(mousePoint.x + dx),
+                    (int)(mousePoint.y + dy)
+                );
+                
+                // Update size
+                note.setBounds(
+                    note.getX(),
+                    note.getY(),
+                    (int)(note.getOriginalWidth() * scale),
+                    (int)(note.getOriginalHeight() * scale)
+                );
+                note.setScale(scale);
+                note.repaintInside();
+            }
+            repaint();
+        });
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    isPanning = true;
+                    lastDrag = e.getPoint();
+                    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    isPanning = false;
+                    setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (isPanning && lastDrag != null) {
+                    int dx = e.getX() - lastDrag.x;
+                    int dy = e.getY() - lastDrag.y;
+                    offsetX += dx;
+                    offsetY += dy;
+                    lastDrag = e.getPoint();
+
+                    for (StickyNoteObject obj : stickyNoteObjectList) {
+                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                    }
+                    repaint();
+                }
+            }
+        });
     }
 
-    // Draws a grid
     private void drawGrid(Graphics2D g2) {
-        int baseGridSize = 50; // Default grid spacing
-        int gridSpacing = (int) (baseGridSize * scale);
+        int baseGridSize = 50;
+        int scaledGridSize = (int)(baseGridSize * scale);
+        g2.setColor(new Color(220, 220, 220));
 
-        // Adjust spacing dynamically so the grid stays visible at extreme zoom levels
-        while (gridSpacing < 5) {
-            baseGridSize *= 2;
-            gridSpacing = (int) (baseGridSize * scale);
+        int startX = offsetX % scaledGridSize;
+        int startY = offsetY % scaledGridSize;
+
+        for (int x = startX; x < getWidth(); x += scaledGridSize) {
+            g2.drawLine(x, 0, x, getHeight());
         }
 
-        g2.setColor(new Color(220, 220, 220)); // Light gray grid
-
-        // Determine bounds for grid rendering
-        int width = getWidth() * 20;
-        int height = getHeight() * 20;
-
-        // Calculate the number of grid lines to draw based on panel size and grid spacing
-        int centerX = width;
-        int centerY = height;
-
-        // Draw vertical grid lines
-        for (int x = centerX % baseGridSize; x < width; x += baseGridSize) {
-            g2.drawLine(x, 0, x, height);
-        }
-        for (int x = centerX % baseGridSize; x > 0; x -= baseGridSize) {
-            g2.drawLine(x, 0, x, height);
-        }
-
-        // Draw horizontal grid lines
-        for (int y = centerY % baseGridSize; y < height; y += baseGridSize) {
-            g2.drawLine(0, y, width, y);
-        }
-        for (int y = centerY % baseGridSize; y > 0; y -= baseGridSize) {
-            g2.drawLine(0, y, width, y);
+        for (int y = startY; y < getHeight(); y += scaledGridSize) {
+            g2.drawLine(0, y, getWidth(), y);
         }
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawGrid((Graphics2D) g);
+        Graphics2D g2 = (Graphics2D) g;
+        drawGrid(g2);
     }
 
-    // Method to add different objects
     public void addStickyNote() {
         stickyNote = new StickyNoteObject(300, 200, 100, 100, Color.YELLOW);
-        StickyNoteObjectList.add(stickyNote);
+        stickyNoteObjectList.add(stickyNote);
         add(stickyNote);
         repaint();
     }
+
+
 
     public void addCalendar() {
         //objects.add(new CalendarObject(300, 100, 200, 150, Color.LIGHT_GRAY));
