@@ -1,15 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.ArrayList;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
-import java.util.ArrayList;
+
 
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
@@ -17,7 +12,6 @@ public class CanvasPanel extends JPanel {
     private int offsetX = 0, offsetY = 0;
     private Point lastDrag = null;
     private boolean isPanning = false;
-    private boolean isResizing = false;
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
     private static final double ZOOM_FACTOR = 0.1;
     private static final double MIN_SCALE = 0.1;
