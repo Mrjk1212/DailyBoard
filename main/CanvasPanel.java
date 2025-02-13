@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
+    
     private double scale = 1.0;
     private int offsetX = 0, offsetY = 0;
     private Point lastDrag = null;
