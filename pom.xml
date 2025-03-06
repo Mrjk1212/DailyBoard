@@ -22,7 +22,7 @@
                     </goals>
                     <configuration>
                     <sources>
-                        <source>main</source>
+                        <source>src</source>
                     </sources>
                     </configuration>
                 </execution>
@@ -33,9 +33,23 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.5.0</version>
                 <configuration>
-                <mainClass>CanvasPanel</mainClass>
+                <mainClass>GoogleCalendarTest</mainClass>
                 </configuration>
             </plugin>
+
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                </execution>
+            </executions>
+            </plugin>
+
         </plugins>
     </build>
 
