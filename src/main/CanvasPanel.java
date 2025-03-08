@@ -6,12 +6,16 @@ import java.util.ArrayList;
 
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
+    private CalendarObject calendar;
     
     private double scale = 1.0;
     private int offsetX = 0, offsetY = 0;
     private Point lastDrag = null;
     private boolean isPanning = false;
+
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
+    private List<CalendarObject> calendarObjectList = new ArrayList<>();
+
     private static final double ZOOM_FACTOR = 0.1;
     private static final double MIN_SCALE = 0.1;
     private static final double MAX_SCALE = 3.0;
@@ -56,6 +60,32 @@ public class CanvasPanel extends JPanel {
                 note.setScale(scale);
                 note.repaintInside();
             }
+            for (CalendarObject cal : calendarObjectList) {
+                // Calculate distance from mouse to note
+                double dx = cal.getX() - mousePoint.x;
+                double dy = cal.getY() - mousePoint.y;
+                
+                // Scale this distance by the change in scale
+                double scaleChange = scale / oldScale;
+                dx *= scaleChange;
+                dy *= scaleChange;
+                
+                // Set new position relative to mouse point
+                cal.setLocation(
+                    (int)(mousePoint.x + dx),
+                    (int)(mousePoint.y + dy)
+                );
+                
+                // Update size
+                cal.setBounds(
+                    cal.getX(),
+                    cal.getY(),
+                    (int)(cal.getOriginalWidth() * scale),
+                    (int)(cal.getOriginalHeight() * scale)
+                );
+                cal.setScale(scale);
+                cal.repaintInside();
+            }
             repaint();
         });
 
@@ -89,6 +119,9 @@ public class CanvasPanel extends JPanel {
                     lastDrag = e.getPoint();
 
                     for (StickyNoteObject obj : stickyNoteObjectList) {
+                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                    }
+                    for (CalendarObject obj : calendarObjectList) {
                         obj.setLocation(obj.getX() + dx, obj.getY() + dy);
                     }
                     repaint();
@@ -141,7 +174,18 @@ public class CanvasPanel extends JPanel {
 
 
     public void addCalendar() {
-        //objects.add(new CalendarObject(300, 100, 200, 150, Color.LIGHT_GRAY));
+        calendar = new CalendarObject(300, 500, 200, 150, Color.LIGHT_GRAY);
+        calendarObjectList.add(calendar);
+        // Update size to account for zoom out/in
+        calendar.setBounds(
+            calendar.getX(),
+            calendar.getY(),
+            (int)(calendar.getOriginalWidth() * scale),
+            (int)(calendar.getOriginalHeight() * scale)
+        );
+        calendar.setScale(scale);
+        calendar.repaintInside();
+        add(calendar);
         repaint();
     }
 

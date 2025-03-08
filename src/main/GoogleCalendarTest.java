@@ -84,9 +84,11 @@ public class GoogleCalendarTest {
 
     // List the next 10 events from the primary calendar.
     DateTime now = new DateTime(System.currentTimeMillis());
+    DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000);
     Events events = service.events().list("primary")
-        .setMaxResults(10)
+        .setMaxResults(50)
         .setTimeMin(now)
+        .setTimeMax(oneWeekLater)
         .setOrderBy("startTime")
         .setSingleEvents(true)
         .execute();
