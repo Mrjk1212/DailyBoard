@@ -8,7 +8,12 @@ import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.List;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -44,8 +49,6 @@ TODO
 
 
 public class CalendarObject extends JPanel {
-    private JTextField textField;
-    private JLabel displayLabel;
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
@@ -54,6 +57,9 @@ public class CalendarObject extends JPanel {
     private int originalWidth;
     private int originalHeight;
     private double scale = 1.0;
+
+    private JTable eventTable;
+    private DefaultTableModel tableModel;
 
 
     /**
@@ -106,7 +112,7 @@ public class CalendarObject extends JPanel {
         return credential;
     }
 
-    public void listWeeksEvents() throws IOException, GeneralSecurityException {
+    public List<Event> listWeeksEvents() throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service =
@@ -124,22 +130,49 @@ public class CalendarObject extends JPanel {
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute();
-        List<Event> items = events.getItems();
-        if (items.isEmpty()) {
+        List<Event> eventList = events.getItems();
+        if (eventList.isEmpty()) {
             System.out.println("No upcoming events found.");
+            return null;
         } else {
-            System.out.println("Upcoming events");
-            for (Event event : items) {
+            for (Event event : eventList) {
             DateTime start = event.getStart().getDateTime();
             if (start == null) {
                 start = event.getStart().getDate();
             }
             System.out.printf("%s (%s)\n", event.getSummary(), start);
+
             }
+            return eventList;
         }
     }
 
-
+    public void populateTable(List<Event> events) {
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // Day of the week
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // 12-hour format
+    
+        if (events == null || events.isEmpty()) {
+            System.out.println("No events to populate.");
+            return;
+        }
+    
+        for (Event event : events) {
+            DateTime start = event.getStart().getDateTime();
+            if (start == null) {
+                start = event.getStart().getDate();
+            }
+    
+            String day = dayFormat.format(new Date(start.getValue()));
+            String time = (start.getTimeZoneShift() == 0) ? "All Day" : timeFormat.format(new Date(start.getValue()));
+            String summary = event.getSummary();
+    
+            System.out.println("Adding to table: " + day + " | " + time + " | " + summary);
+    
+            tableModel.addRow(new Object[]{day, time, summary});
+        }
+    
+        tableModel.fireTableDataChanged();
+    }
 
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -147,33 +180,36 @@ public class CalendarObject extends JPanel {
         setBackground(color);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        setLayout(null);
+        setLayout(new BorderLayout());
 
-        //list events in terminal when added
+
+
+        // Table setup
+        String[] columnNames = {"Day", "Time", "Event"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        eventTable = new JTable(tableModel);
+        eventTable.setEnabled(false);
+        eventTable.setBackground(Color.GRAY);
+        eventTable.setForeground(Color.WHITE);
+        eventTable.setBounds(5,5,width,height);
+        
+        
+        add(eventTable, BorderLayout.CENTER);
+
+        // Populate the table
         try {
-            listWeeksEvents();
+            List<Event> eventList = listWeeksEvents();
+            populateTable(eventList);
+            // Ensure the table updates after adding events
+            tableModel.fireTableDataChanged();
+            revalidate();
+            repaint();
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
 
-        // Create a JLabel to display text
-        displayLabel = new JLabel("", SwingConstants.CENTER);
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        displayLabel.setBounds(5, 5, width - 10, height - 10);
-        displayLabel.setHorizontalAlignment(JLabel.LEFT);
-        displayLabel.setVerticalAlignment(JLabel.TOP);
-        add(displayLabel);
-
-        // Create a JTextField for input
-        textField = new JTextField();
-        textField.setBounds(5, 5, width - 10, height - 10);
-        textField.setFont(new Font("Arial", Font.PLAIN, 12));
-        textField.setBorder(null);
-        textField.setVisible(false); // Initially hidden
-        textField.setBackground(color);
-        add(textField);
-
         // Focus listener to update label when user clicks away
+        /* Maybe implement listeners later if i want to change events from this application
         textField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
@@ -190,6 +226,7 @@ public class CalendarObject extends JPanel {
                 }
             }
         });
+        
 
         // Click event to allow text editing
         displayLabel.addMouseListener(new MouseAdapter() {
@@ -198,6 +235,7 @@ public class CalendarObject extends JPanel {
                 enterEditMode();
             }
         });
+        */
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -239,6 +277,7 @@ public class CalendarObject extends JPanel {
         });
     }
 
+    /*
     private void saveText() {
         String text = textField.getText().trim();
         if (!text.isEmpty()) {
@@ -254,7 +293,7 @@ public class CalendarObject extends JPanel {
         displayLabel.setVisible(false);
         textField.requestFocus();
     }
-
+    */
     public int getOriginalWidth() {
         return originalWidth;
     }
@@ -267,14 +306,13 @@ public class CalendarObject extends JPanel {
         this.scale = newScale;
         updateTextStyle();
     }
-
+    
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
-        textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        eventTable.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        eventTable.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
     }
+    
 
     private boolean isInResizeZone(Point p) {
         int w = getWidth();
