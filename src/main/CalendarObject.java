@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JTable;
+
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -53,10 +53,11 @@ public class CalendarObject extends JPanel {
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
     private static final int DELETE_MARGIN = 10;
-    private static final Color RESIZE_COLOR = Color.GRAY;
+    private static final Color RESIZE_COLOR = Color.LIGHT_GRAY;
     private int originalWidth;
     private int originalHeight;
     private double scale = 1.0;
+    private int ARC_RADIUS = 10;
 
     private JTable eventTable;
     private DefaultTableModel tableModel;
@@ -170,7 +171,6 @@ public class CalendarObject extends JPanel {
     
             tableModel.addRow(new Object[]{day, time, summary});
         }
-    
         tableModel.fireTableDataChanged();
     }
 
@@ -179,8 +179,9 @@ public class CalendarObject extends JPanel {
         originalHeight = height;
         setBackground(color);
         setBounds(xPos, yPos, width, height);
-        setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        setLayout(new BorderLayout());
+        setOpaque(false);
+        //setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        setLayout(null);
 
 
 
@@ -191,10 +192,10 @@ public class CalendarObject extends JPanel {
         eventTable.setEnabled(false);
         eventTable.setBackground(Color.GRAY);
         eventTable.setForeground(Color.WHITE);
-        eventTable.setBounds(5,5,width,height);
+        eventTable.setBounds(0,0,width,height);
         
         
-        add(eventTable, BorderLayout.CENTER);
+        add(eventTable);
 
         // Populate the table
         try {
@@ -241,10 +242,9 @@ public class CalendarObject extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 initialClick = e.getPoint();
-
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
-                } 
+                }
                 else if(isInDeleteZone(e.getPoint())){
                     delete();
                 }
@@ -310,7 +310,8 @@ public class CalendarObject extends JPanel {
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         eventTable.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        eventTable.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
+        repaint();
     }
     
 
@@ -328,10 +329,28 @@ public class CalendarObject extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(RESIZE_COLOR);
-        g.fillRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN , RESIZE_MARGIN);
-        g.setColor(Color.RED);
-        g.fillRect(getWidth() - DELETE_MARGIN, getHeight() - getHeight(), DELETE_MARGIN, DELETE_MARGIN);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Draw rounded rectangle background
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth() - 10, getHeight() - 10, ARC_RADIUS, ARC_RADIUS);
+
+        // Draw resize box
+        g2.setColor(RESIZE_COLOR);
+        g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+
+        // Draw delete box
+        g2.setColor(Color.RED);
+        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+    }
+
+    @Override
+    protected void paintBorder(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.GRAY);
+        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, ARC_RADIUS, ARC_RADIUS);
     }
 
     public void repaintInside() {
