@@ -35,11 +35,13 @@ public class StickyNoteObject extends JPanel {
     private int originalWidth;
     private int originalHeight;
     private double scale = 1.0;
+    private int ARC_RADIUS = 10;
 
     public StickyNoteObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
         setBackground(color);
+        setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         setLayout(null);
@@ -178,10 +180,28 @@ public class StickyNoteObject extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(RESIZE_COLOR);
-        g.fillRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN , RESIZE_MARGIN);
-        g.setColor(Color.RED);
-        g.fillRect(getWidth() - DELETE_MARGIN, getHeight() - getHeight(), DELETE_MARGIN, DELETE_MARGIN);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Draw rounded rectangle background
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), ARC_RADIUS, ARC_RADIUS);
+
+        // Draw resize box
+        g2.setColor(RESIZE_COLOR);
+        g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+
+        // Draw delete box
+        g2.setColor(Color.RED);
+        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+    }
+
+    @Override
+    protected void paintBorder(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.GRAY);
+        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, ARC_RADIUS, ARC_RADIUS);
     }
 
     public void repaintInside() {
