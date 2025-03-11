@@ -126,7 +126,7 @@ public class CalendarObject extends JPanel {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     
-        DateTime now = new DateTime(System.currentTimeMillis());
+        DateTime now = new DateTime(System.currentTimeMillis() - (System.currentTimeMillis() % (24L * 60 * 60 * 1000))); // Midnight today
         DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000);
         Events events = service.events().list("primary")
             .setMaxResults(50)
@@ -165,11 +165,11 @@ public class CalendarObject extends JPanel {
         int eventHour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
     
         // The first row (index 0) is the header row, so shift the index by +1
-        return eventHour + 1;
+        return eventHour + 2;
     }
 
     public void populateTable(List<Event> events) {
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // "Sunday"
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEE"); // "Sunday"
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd"); // "5/11"
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // "12:30 PM"
     
@@ -282,6 +282,8 @@ public class CalendarObject extends JPanel {
         eventTable.setEnabled(false);
         eventTable.setBackground(Color.GRAY);
         eventTable.setForeground(Color.WHITE);
+        eventTable.setShowGrid(true);
+        eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.setBounds(0,0,width,height);
         
         

@@ -20,18 +20,19 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
             Color bgColor = eventCells.get(key);
             cell.setBackground(bgColor);
 
-            // Calculate brightness to determine text color
+            // Adjust text color for readability
             double brightness = (0.299 * bgColor.getRed()) + (0.587 * bgColor.getGreen()) + (0.114 * bgColor.getBlue());
             Color textColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
             
-            cell.setForeground(textColor); // Set text color
-            cell.setFont(new Font("Arial", Font.BOLD, 12)); // Make it bold for better readability
+            cell.setForeground(textColor);
+            cell.setFont(new Font("Arial", Font.BOLD, 12));
+            cell.setHorizontalAlignment(SwingConstants.CENTER);
+            cell.setBorder(BorderFactory.createEmptyBorder()); // Remove cell borders
         } else {
             cell.setBackground(Color.GRAY);
             cell.setForeground(Color.WHITE);
         }
-
-        cell.setHorizontalAlignment(SwingConstants.CENTER);
+        
         return cell;
     }
 }
