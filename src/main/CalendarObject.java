@@ -6,10 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -148,31 +152,72 @@ public class CalendarObject extends JPanel {
         }
     }
 
+
     public void populateTable(List<Event> events) {
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // Day of the week
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // 12-hour format
-    
-        if (events == null || events.isEmpty()) {
-            System.out.println("No events to populate.");
-            return;
-        }
-    
-        for (Event event : events) {
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                start = event.getStart().getDate();
-            }
-    
-            String day = dayFormat.format(new Date(start.getValue()));
-            String time = (start.getTimeZoneShift() == 0) ? "All Day" : timeFormat.format(new Date(start.getValue()));
-            String summary = event.getSummary();
-    
-            System.out.println("Adding to table: " + day + " | " + time + " | " + summary);
-    
-            tableModel.addRow(new Object[]{day, time, summary});
-        }
-        tableModel.fireTableDataChanged();
+    SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // Day of the week
+    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // 12-hour format
+
+    if (events == null || events.isEmpty()) {
+        System.out.println("No events to populate.");
+        return;
     }
+
+    // Clear existing table data
+    tableModel.setRowCount(0);
+    tableModel.setColumnCount(0);
+
+    // Define columns for days of the week
+    String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    tableModel.setColumnIdentifiers(daysOfWeek);
+    tableModel.addRow(new Object[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
+
+    // Map to store events for each day
+    Map<String, List<Event>> eventsByDay = new HashMap<>();
+    for (String day : daysOfWeek) {
+        eventsByDay.put(day, new ArrayList<>());
+    }
+
+    // Organize events by day
+    for (Event event : events) {
+        DateTime start = event.getStart().getDateTime();
+        if (start == null) {
+            start = event.getStart().getDate();
+        }
+    
+        String day = dayFormat.format(new Date(start.getValue()));
+        String time = (event.getStart().getDateTime() != null) ? timeFormat.format(new Date(start.getValue())) : "All Day"; // Handle all-day events
+    
+        eventsByDay.get(day).add(event);
+    }
+
+    // Sort events within each day by time
+    for (List<Event> dayEvents : eventsByDay.values()) {
+        dayEvents.sort(Comparator.comparing(e -> e.getStart().getDateTime().getValue()));
+    }
+
+    // Find the maximum number of events in a single day to determine row count
+    int maxEvents = eventsByDay.values().stream().mapToInt(List::size).max().orElse(0);
+    
+    // Populate the table row by row
+    for (int i = 0; i < maxEvents; i++) {
+        Object[] row = new Object[7]; // 7 columns for each day
+        for (int j = 0; j < daysOfWeek.length; j++) {
+            List<Event> dayEvents = eventsByDay.get(daysOfWeek[j]);
+            if (i < dayEvents.size()) {
+                Event event = dayEvents.get(i);
+                DateTime start = event.getStart().getDateTime();
+                String time = (start == null) ? "All Day" : timeFormat.format(new Date(start.getValue()));
+                row[j] = time + " - " + event.getSummary();
+            } else {
+                row[j] = ""; // Empty cell if no event for this row
+            }
+        }
+        tableModel.addRow(row);
+    }
+
+
+    tableModel.fireTableDataChanged();
+}
 
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
