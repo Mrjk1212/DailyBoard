@@ -14,6 +14,7 @@ import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+//import java.util.Calendar; // Import the correct Calendar class
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -125,7 +126,6 @@ public class CalendarObject extends JPanel {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     
-        // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
         DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000);
         Events events = service.events().list("primary")
@@ -138,7 +138,7 @@ public class CalendarObject extends JPanel {
         List<Event> eventList = events.getItems();
         if (eventList.isEmpty()) {
             System.out.println("No upcoming events found.");
-            return null;
+            return Collections.emptyList();
         } else {
             for (Event event : eventList) {
             DateTime start = event.getStart().getDateTime();
@@ -152,72 +152,93 @@ public class CalendarObject extends JPanel {
         }
     }
 
+    // Helper method to format time in AM/PM format
+    private static String formatTime(int hour) {
+        int displayHour = (hour % 12 == 0) ? 12 : hour % 12;
+        String period = (hour < 12) ? "AM" : "PM";
+        return displayHour + " " + period;
+    }
+
+    private int getRowIndexForTime(Date eventDate) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        calendar.setTime(eventDate);
+        int eventHour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+    
+        // The first row (index 0) is the header row, so shift the index by +1
+        return eventHour + 1;
+    }
 
     public void populateTable(List<Event> events) {
-    SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // Day of the week
-    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // 12-hour format
-
-    if (events == null || events.isEmpty()) {
-        System.out.println("No events to populate.");
-        return;
-    }
-
-    // Clear existing table data
-    tableModel.setRowCount(0);
-    tableModel.setColumnCount(0);
-
-    // Define columns for days of the week
-    String[] daysOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-    tableModel.setColumnIdentifiers(daysOfWeek);
-    tableModel.addRow(new Object[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"});
-
-    // Map to store events for each day
-    Map<String, List<Event>> eventsByDay = new HashMap<>();
-    for (String day : daysOfWeek) {
-        eventsByDay.put(day, new ArrayList<>());
-    }
-
-    // Organize events by day
-    for (Event event : events) {
-        DateTime start = event.getStart().getDateTime();
-        if (start == null) {
-            start = event.getStart().getDate();
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE"); // "Sunday"
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd"); // "5/11"
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // "12:30 PM"
+    
+        if (events == null || events.isEmpty()) {
+            System.out.println("No events to populate.");
+            return;
         }
     
-        String day = dayFormat.format(new Date(start.getValue()));
-        String time = (event.getStart().getDateTime() != null) ? timeFormat.format(new Date(start.getValue())) : "All Day"; // Handle all-day events
+        // Clear existing table data
+        tableModel.setRowCount(0);
+        tableModel.setColumnCount(0);
     
-        eventsByDay.get(day).add(event);
-    }
-
-    // Sort events within each day by time
-    for (List<Event> dayEvents : eventsByDay.values()) {
-        dayEvents.sort(Comparator.comparing(e -> e.getStart().getDateTime().getValue()));
-    }
-
-    // Find the maximum number of events in a single day to determine row count
-    int maxEvents = eventsByDay.values().stream().mapToInt(List::size).max().orElse(0);
+        // Generate dates for the next 7 days
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        String[] columns = new String[8]; // 1 extra for "Time" column
+        columns[0] = "Time";
     
-    // Populate the table row by row
-    for (int i = 0; i < maxEvents; i++) {
-        Object[] row = new Object[7]; // 7 columns for each day
-        for (int j = 0; j < daysOfWeek.length; j++) {
-            List<Event> dayEvents = eventsByDay.get(daysOfWeek[j]);
-            if (i < dayEvents.size()) {
-                Event event = dayEvents.get(i);
-                DateTime start = event.getStart().getDateTime();
-                String time = (start == null) ? "All Day" : timeFormat.format(new Date(start.getValue()));
-                row[j] = time + " - " + event.getSummary();
-            } else {
-                row[j] = ""; // Empty cell if no event for this row
+        for (int i = 0; i < 7; i++) {
+            String dayName = dayFormat.format(calendar.getTime());  // Get day name
+            String date = dateFormat.format(calendar.getTime());  // Get date (MM/dd)
+            columns[i + 1] = dayName + " - " + date;  // Combine into header format
+            calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);  // Move to next day
+        }
+    
+        tableModel.setColumnIdentifiers(columns);
+        tableModel.addRow(columns); // Add header row
+    
+        // Populate the "Time" column from 12 AM to 11 PM
+        int totalHours = 24;
+        for (int hour = 0; hour < totalHours; hour++) {
+            String timeLabel = formatTime(hour);
+            tableModel.addRow(new Object[]{timeLabel, "", "", "", "", "", "", ""});
+        }
+    
+        // Populate table with events
+        for (Event event : events) {
+            DateTime startDateTime = event.getStart().getDateTime();
+            if (startDateTime == null) {
+                startDateTime = event.getStart().getDate(); // All-day event
+            }
+    
+            if (startDateTime != null) {
+                Date eventDate = new Date(startDateTime.getValue());
+                String eventDay = dayFormat.format(eventDate); // Get day of the event
+                String eventTime = timeFormat.format(eventDate); // Get formatted event time
+    
+                // Find the correct column index for the event's day
+                int dayIndex = -1;
+                for (int i = 1; i <= 7; i++) {
+                    if (columns[i].startsWith(eventDay)) {
+                        dayIndex = i;
+                        break;
+                    }
+                }
+                if (dayIndex == -1) continue; // Skip if no matching column
+    
+                // Find the correct row index for the time slot
+                int rowIndex = getRowIndexForTime(eventDate);
+                if (rowIndex == -1) continue; // Skip if time slot not found
+    
+                // Add event to the correct cell
+                Object existingValue = tableModel.getValueAt(rowIndex, dayIndex);
+                String newValue = (existingValue == null || existingValue.toString().isEmpty()) ? event.getSummary() : existingValue + ", " + event.getSummary();
+                tableModel.setValueAt(newValue, rowIndex, dayIndex);
             }
         }
-        tableModel.addRow(row);
+    
+        tableModel.fireTableDataChanged();
     }
-
-
-    tableModel.fireTableDataChanged();
-}
 
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
