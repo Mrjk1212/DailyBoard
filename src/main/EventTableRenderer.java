@@ -31,6 +31,7 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
         } else {
             cell.setBackground(Color.GRAY);
             cell.setForeground(Color.WHITE);
+            cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
         }
         
         return cell;

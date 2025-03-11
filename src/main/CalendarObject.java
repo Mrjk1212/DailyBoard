@@ -251,7 +251,7 @@ public class CalendarObject extends JPanel {
     
             if (startRow == -1 || endRow == -1) continue;
     
-            Color eventColor = new Color(198, 231, 255); 
+            Color eventColor = new Color(100 + (int)(Math.random() * 156), 100 + (int)(Math.random() * 156), 100 + (int)(Math.random() * 156));
             for (int row = startRow; row <= endRow; row++) {
                 renderer.addEventCell(row, dayIndex, eventColor);
             }
@@ -270,10 +270,8 @@ public class CalendarObject extends JPanel {
         setBackground(color);
         setBounds(xPos, yPos, width, height);
         setOpaque(false);
-        //setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        
         setLayout(null);
-
-
 
         // Table setup
         String[] columnNames = {"Day", "Time", "Event"};
@@ -283,6 +281,7 @@ public class CalendarObject extends JPanel {
         eventTable.setBackground(Color.GRAY);
         eventTable.setForeground(Color.WHITE);
         eventTable.setShowGrid(true);
+        eventTable.setGridColor(Color.DARK_GRAY);
         eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.setBounds(0,0,width,height);
         
@@ -300,35 +299,6 @@ public class CalendarObject extends JPanel {
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
-
-        // Focus listener to update label when user clicks away
-        /* Maybe implement listeners later if i want to change events from this application
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                saveText();
-            }
-        });
-
-        // Key listener to save text on Enter key press
-        textField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    saveText();
-                }
-            }
-        });
-        
-
-        // Click event to allow text editing
-        displayLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                enterEditMode();
-            }
-        });
-        */
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -369,23 +339,6 @@ public class CalendarObject extends JPanel {
         });
     }
 
-    /*
-    private void saveText() {
-        String text = textField.getText().trim();
-        if (!text.isEmpty()) {
-            displayLabel.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
-        }
-        textField.setVisible(false);
-        displayLabel.setVisible(true);
-    }
-
-    private void enterEditMode() {
-        textField.setText(displayLabel.getText().replaceAll("<[^>]*>", "")); // Remove HTML formatting
-        textField.setVisible(true);
-        displayLabel.setVisible(false);
-        textField.requestFocus();
-    }
-    */
     public int getOriginalWidth() {
         return originalWidth;
     }
