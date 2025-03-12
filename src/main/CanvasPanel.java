@@ -1,6 +1,15 @@
 import javax.swing.*;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import main.saves.BoardObjectState;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -23,6 +32,8 @@ public class CanvasPanel extends JPanel {
     public CanvasPanel() {
         setPreferredSize(new Dimension(800, 600));
         setLayout(null);
+
+        loadBoardState();
 
         addMouseWheelListener(e -> {
             Point mousePoint = e.getPoint();
@@ -199,6 +210,70 @@ public class CanvasPanel extends JPanel {
         repaint();
     }
 
+    public void saveBoardState() {
+        List<BoardObjectState> boardState = new ArrayList<>();
+
+        for (StickyNoteObject note : stickyNoteObjectList) {
+            boardState.add(new BoardObjectState(
+                "StickyNote",
+                note.getX(), note.getY(),
+                note.getWidth(), note.getHeight(),
+                note.getBackground(),  // Get color
+                note.getText()  // Get text content
+            ));
+        }
+
+        for (CalendarObject cal : calendarObjectList) {
+            boardState.add(new BoardObjectState(
+                "Calendar",
+                cal.getX(), cal.getY(),
+                cal.getWidth(), cal.getHeight(),
+                cal.getBackground(),  // Get color
+                ""  // Calendars dont store text lol
+            ));
+        }
+
+        // Convert to JSON
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter("boardState.json")) {
+            gson.toJson(boardState, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadBoardState() {
+        Gson gson = new Gson();
+        try (FileReader reader = new FileReader("boardState.json")) {
+            BoardObjectState[] boardState = gson.fromJson(reader, BoardObjectState[].class);
+            
+            if (boardState != null) {
+                for (BoardObjectState obj : boardState) {
+                    if (obj.type.equals("StickyNote")) {
+                        StickyNoteObject note = new StickyNoteObject(
+                            obj.x, obj.y, obj.width, obj.height, obj.getColor()
+                        );
+                        note.setText(obj.text);
+                        stickyNoteObjectList.add(note);
+                        add(note);
+                    } else if (obj.type.equals("Calendar")) {
+                        CalendarObject cal = new CalendarObject(
+                            obj.x, obj.y, obj.width, obj.height, obj.getColor()
+                        );
+                        calendarObjectList.add(cal);
+                        add(cal);
+                    }
+                }
+                revalidate();
+                repaint(); //repaint make sure everything loads in....
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("Canvas with Toolbar");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -226,12 +301,15 @@ public class CanvasPanel extends JPanel {
         addParagraphButton.addActionListener(e -> canvasPanel.addParagraph());
         toolBar.add(addParagraphButton);
 
-        /* 
-        // Add the delete button
-        JButton deleteButton = new JButton("Delete Selected");
-        deleteButton.addActionListener(e -> canvasPanel.deleteSelectedObject());
-        toolBar.add(deleteButton);
-*/
+        // Save board state on exit
+        //TODO Correctly Handle Deletion of board objects
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                canvasPanel.saveBoardState();
+            }
+        });
+
         // Set up frame layout
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
         frame.getContentPane().add(canvasPanel, BorderLayout.CENTER);

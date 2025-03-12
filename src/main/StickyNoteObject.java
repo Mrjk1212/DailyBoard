@@ -138,6 +138,16 @@ public class StickyNoteObject extends JPanel {
         displayLabel.setVisible(true);
     }
 
+    
+    public String getText() { 
+        return displayLabel.getText();
+    }
+
+    public void setText(String text) { 
+        displayLabel.setText(text);
+        updateTextStyle();
+    }
+
     private void enterEditMode() {
         textField.setText(displayLabel.getText().replaceAll("<[^>]*>", "")); // Remove HTML formatting
         textField.setVisible(true);

@@ -19,7 +19,7 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
         if (eventCells.containsKey(key)) {
             Color bgColor = eventCells.get(key);
             cell.setBackground(bgColor);
-
+            
             // Adjust text color for readability
             double brightness = (0.299 * bgColor.getRed()) + (0.587 * bgColor.getGreen()) + (0.114 * bgColor.getBlue());
             Color textColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
