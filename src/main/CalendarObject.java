@@ -298,7 +298,7 @@ public class CalendarObject extends JPanel {
         eventTable.getTableHeader().setFont(new Font("Aptos", Font.BOLD, 12));
         eventTable.setBounds(0,0,width,height);
         
-        
+
         // ScrollPane setup to show only 12 rows at a time
         eventTable.setRowHeight(30);
         int visibleRows = 12;
@@ -324,6 +324,7 @@ public class CalendarObject extends JPanel {
             List<Event> eventList = listWeeksEvents();
             populateTable(eventList);
             tableModel.fireTableDataChanged();
+            eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
             revalidate();
             repaint();
         } catch (IOException | GeneralSecurityException e) {
