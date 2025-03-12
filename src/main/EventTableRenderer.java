@@ -23,19 +23,21 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
             // Adjust text color for readability
             double brightness = (0.299 * bgColor.getRed()) + (0.587 * bgColor.getGreen()) + (0.114 * bgColor.getBlue());
             Color textColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
-            
+            //Event cells
             cell.setForeground(textColor);
-            cell.setFont(new Font("Arial", Font.BOLD, 12));
+            cell.setFont(new Font("Aptos", Font.BOLD, 12));
             cell.setHorizontalAlignment(SwingConstants.CENTER);
-            cell.setBorder(BorderFactory.createEmptyBorder()); // Remove cell borders
+            cell.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, new Color(39, 139, 215)));
         } else {
-            if(column == 0){ //Color First Column Different
+            if(column == 0){ //First column cell
                 cell.setBackground(Color.WHITE);
                 cell.setForeground(Color.BLACK);
+                cell.setFont(new Font("Aptos", Font.BOLD, 12));
                 cell.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-            }else{
-                cell.setBackground(new Color(229, 228, 226));
+            }else{//Default cell
+                cell.setBackground(new Color(250, 249, 248));
                 cell.setForeground(Color.WHITE);
+                cell.setFont(new Font("Aptos", Font.BOLD, 12));
                 cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
             }
             

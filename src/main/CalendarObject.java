@@ -213,11 +213,16 @@ public class CalendarObject extends JPanel {
             String timeLabel = formatTime(hour);
             tableModel.addRow(new Object[]{timeLabel, "", "", "", "", "", "", ""});
         }
-    
+        
         // Initialize the cell renderer
         EventTableRenderer renderer = new EventTableRenderer();
         eventTable.setDefaultRenderer(Object.class, renderer);
-    
+
+        //Set the current time label to be colored, so it's easier to see the current time
+        DateTime nowDateTime = new DateTime(System.currentTimeMillis());
+        Date now = new Date(nowDateTime.getValue());
+        renderer.addEventCell(getRowIndexForTime(now), 0, new Color(190, 218, 240));
+
         Random random = new Random();
         for (Event event : events) {
             DateTime startDateTime = event.getStart().getDateTime();
@@ -253,11 +258,11 @@ public class CalendarObject extends JPanel {
     
             if (startRow == -1 || endRow == -1) continue;
     
-            Color eventColor = new Color(100 + (int)(Math.random() * 156), 100 + (int)(Math.random() * 156), 100 + (int)(Math.random() * 156));
+            Color eventColor = new Color(190, 218, 240); //Close to light blue 23
             for (int row = startRow; row <= endRow; row++) {
                 renderer.addEventCell(row, dayIndex, eventColor);
             }
-    
+            
             Object existingValue = tableModel.getValueAt(startRow, dayIndex);
             String newValue = (existingValue == null || existingValue.toString().isEmpty()) ? event.getSummary() : existingValue + ", " + event.getSummary();
             tableModel.setValueAt(newValue, startRow, dayIndex);
@@ -281,7 +286,7 @@ public class CalendarObject extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0);
         eventTable = new JTable(tableModel);
         eventTable.setEnabled(false);
-        eventTable.setBackground(new Color(229, 228, 226));
+        eventTable.setBackground(new Color(250, 249, 248));
         eventTable.setForeground(Color.WHITE);
         eventTable.setShowGrid(true);
         eventTable.setGridColor(Color.DARK_GRAY);
@@ -290,6 +295,7 @@ public class CalendarObject extends JPanel {
         eventTable.getTableHeader().setBackground(Color.WHITE);
         eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
         eventTable.getTableHeader().setForeground(Color.BLACK);
+        eventTable.getTableHeader().setFont(new Font("Aptos", Font.BOLD, 12));
         eventTable.setBounds(0,0,width,height);
         
         
@@ -385,7 +391,7 @@ public class CalendarObject extends JPanel {
         repaint();
     }
     
-
+    
     private boolean isInResizeZone(Point p) {
         int w = getWidth();
         int h = getHeight();
