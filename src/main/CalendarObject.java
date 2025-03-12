@@ -36,13 +36,14 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 /* 
 TODO
--THE CALENDAR DOESNT DISPLAY THE CURRENT DAYS EVENTS THAT HAVE PASSED... IT SHOULD!
-
+-Go Back And Forward Weeks
+-
+-
 */
 
 /**
  * CalendarObject represents a resizable and draggable component that allows
- * users to input a google calendar link.
+ * users to input a google account.
  * resizing is done by clicking and dragging the bottom left corner of the component,
  * moving the component is done by clicking an edge and draggin the component to a new location,
  * and deleting the component is done by clicking the top right corner of the component.
@@ -65,6 +66,7 @@ public class CalendarObject extends JPanel {
     private int ARC_RADIUS = 10;
 
     private JTable eventTable;
+    private JScrollPane scrollPane;
     private DefaultTableModel tableModel;
 
 
@@ -283,16 +285,29 @@ public class CalendarObject extends JPanel {
         eventTable.setShowGrid(true);
         eventTable.setGridColor(Color.DARK_GRAY);
         eventTable.setIntercellSpacing(new Dimension(0, 0));
+        eventTable.getTableHeader().setReorderingAllowed(false);
+        eventTable.setTableHeader(null);
         eventTable.setBounds(0,0,width,height);
         
         
-        add(eventTable);
+        // ScrollPane setup to show only 6 rows at a time
+        eventTable.setRowHeight(30);
+        int visibleRows = 12;
+        int tableHeight = visibleRows * eventTable.getRowHeight();
+        eventTable.setPreferredScrollableViewportSize(new Dimension(width, tableHeight));
 
+        scrollPane = new JScrollPane(eventTable);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setEnabled(false);
+        
+        scrollPane.setBounds(0, 0, width, tableHeight);
+        add(scrollPane, BorderLayout.CENTER);
+        
         // Populate the table
         try {
             List<Event> eventList = listWeeksEvents();
             populateTable(eventList);
-            // Ensure the table updates after adding events
             tableModel.fireTableDataChanged();
             revalidate();
             repaint();
@@ -356,6 +371,8 @@ public class CalendarObject extends JPanel {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         eventTable.setFont(new Font("Arial", Font.PLAIN, fontSize));
         eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
+        scrollPane.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        scrollPane.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
         repaint();
     }
     
