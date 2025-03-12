@@ -36,8 +36,8 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 /* 
 TODO
--Go Back And Forward Weeks
--
+-Go Back And Forward Weeks.
+-Automatically "Center" The Calendar On The Current Time, and Color the first column's associated row as blue.
 -
 */
 
@@ -167,7 +167,7 @@ public class CalendarObject extends JPanel {
         int eventHour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
     
         // The first row (index 0) is the header row, so shift the index by +1
-        return eventHour + 2;
+        return eventHour + 1;
     }
 
     public void populateTable(List<Event> events) {
@@ -197,7 +197,7 @@ public class CalendarObject extends JPanel {
         }
     
         tableModel.setColumnIdentifiers(columns);
-        tableModel.addRow(columns); // Add header row
+        //tableModel.addRow(columns); // Add header row if I decide to not use a JScrollPane
     
         // Special row for all-day events
         Object[] allDayRow = new Object[8];
@@ -248,8 +248,8 @@ public class CalendarObject extends JPanel {
             }
             if (dayIndex == -1) continue;
     
-            int startRow = isAllDay ? 1 : getRowIndexForTime(eventStart); // Row 1 for all-day events
-            int endRow = isAllDay ? 1 : getRowIndexForTime(eventEnd);
+            int startRow = isAllDay ? 0 : getRowIndexForTime(eventStart); // Row 1 for all-day events
+            int endRow = isAllDay ? 0 : getRowIndexForTime(eventEnd);
     
             if (startRow == -1 || endRow == -1) continue;
     
@@ -266,6 +266,7 @@ public class CalendarObject extends JPanel {
         tableModel.fireTableDataChanged();
     }
 
+    
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
@@ -280,25 +281,33 @@ public class CalendarObject extends JPanel {
         tableModel = new DefaultTableModel(columnNames, 0);
         eventTable = new JTable(tableModel);
         eventTable.setEnabled(false);
-        eventTable.setBackground(Color.GRAY);
+        eventTable.setBackground(new Color(229, 228, 226));
         eventTable.setForeground(Color.WHITE);
         eventTable.setShowGrid(true);
         eventTable.setGridColor(Color.DARK_GRAY);
         eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.getTableHeader().setReorderingAllowed(false);
-        eventTable.setTableHeader(null);
+        eventTable.getTableHeader().setBackground(Color.WHITE);
+        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        eventTable.getTableHeader().setForeground(Color.BLACK);
         eventTable.setBounds(0,0,width,height);
         
         
-        // ScrollPane setup to show only 6 rows at a time
+        // ScrollPane setup to show only 12 rows at a time
         eventTable.setRowHeight(30);
         int visibleRows = 12;
         int tableHeight = visibleRows * eventTable.getRowHeight();
         eventTable.setPreferredScrollableViewportSize(new Dimension(width, tableHeight));
 
         scrollPane = new JScrollPane(eventTable);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Hide scrollbar width
+
+        // Enable scrolling with the mouse wheel
+        scrollPane.addMouseWheelListener(e -> {
+            JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+            verticalBar.setValue(verticalBar.getValue() + e.getWheelRotation() * verticalBar.getUnitIncrement() * 40);
+        });
         scrollPane.setEnabled(false);
         
         scrollPane.setBounds(0, 0, width, tableHeight);
@@ -368,7 +377,7 @@ public class CalendarObject extends JPanel {
     }
     
     private void updateTextStyle() {
-        int fontSize = Math.max(1, (int) Math.round(12 * scale));
+        int fontSize = Math.max(1, (int) Math.round(12));
         eventTable.setFont(new Font("Arial", Font.PLAIN, fontSize));
         eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
         scrollPane.setFont(new Font("Arial", Font.PLAIN, fontSize));

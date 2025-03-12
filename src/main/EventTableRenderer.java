@@ -29,9 +29,16 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
             cell.setHorizontalAlignment(SwingConstants.CENTER);
             cell.setBorder(BorderFactory.createEmptyBorder()); // Remove cell borders
         } else {
-            cell.setBackground(Color.GRAY);
-            cell.setForeground(Color.WHITE);
-            cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
+            if(column == 0){ //Color First Column Different
+                cell.setBackground(Color.WHITE);
+                cell.setForeground(Color.BLACK);
+                cell.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+            }else{
+                cell.setBackground(new Color(229, 228, 226));
+                cell.setForeground(Color.WHITE);
+                cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
+            }
+            
         }
         
         return cell;
