@@ -33,7 +33,7 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
                 cell.setBackground(Color.WHITE);
                 cell.setForeground(Color.BLACK);
                 cell.setFont(new Font("Aptos", Font.BOLD, 12));
-                cell.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+                cell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             }else{//Default cell
                 cell.setBackground(new Color(250, 249, 248));
                 cell.setForeground(Color.WHITE);

@@ -37,7 +37,7 @@ import com.google.api.services.calendar.model.Events;
 /* 
 TODO
 -Go Back And Forward Weeks.
--Automatically "Center" The Calendar On The Current Time, and Color the first column's associated row as blue.
+-
 -
 */
 
@@ -293,7 +293,7 @@ public class CalendarObject extends JPanel {
         eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.getTableHeader().setReorderingAllowed(false);
         eventTable.getTableHeader().setBackground(Color.WHITE);
-        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY));
         eventTable.getTableHeader().setForeground(Color.BLACK);
         eventTable.getTableHeader().setFont(new Font("Aptos", Font.BOLD, 12));
         eventTable.setBounds(0,0,width,height);
@@ -384,9 +384,9 @@ public class CalendarObject extends JPanel {
     
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12));
-        eventTable.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        eventTable.setFont(new Font("Aptos", Font.PLAIN, fontSize));
         eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
-        scrollPane.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        scrollPane.setFont(new Font("Aptos", Font.PLAIN, fontSize));
         scrollPane.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
         repaint();
     }
