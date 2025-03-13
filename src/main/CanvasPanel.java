@@ -317,7 +317,6 @@ public class CanvasPanel extends JPanel {
         toolBar.add(addParagraphButton);
 
         // Save board state on exit
-        //TODO Correctly Handle Deletion of board objects
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

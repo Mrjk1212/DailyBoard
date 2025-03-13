@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "type": "StickyNote",
+    "x": 521,
+    "y": 65,
+    "width": 58,
+    "height": 58,
+    "colorR": 255,
+    "colorG": 255,
+    "colorB": 0,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a working sticky note\u003c/body\u003e\u003c/html\u003e"
+  },
+  {
+    "type": "Calendar",
+    "x": 233,
+    "y": 146,
+    "width": 400,
+    "height": 291,
+    "colorR": 128,
+    "colorG": 128,
+    "colorB": 128,
+    "text": ""
+  }
+]

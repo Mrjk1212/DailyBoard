@@ -4,6 +4,10 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+//Dashed lines for half hour's only
+//lighter border colors on first column and header row
+//header row same background as default cell
+
 public class EventTableRenderer extends DefaultTableCellRenderer {
     private final Map<Point, Color> eventCells = new HashMap<>();
 
@@ -25,19 +29,19 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
             Color textColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
             //Event cells
             cell.setForeground(textColor);
-            cell.setFont(new Font("Aptos", Font.BOLD, 12));
+            cell.setFont(new Font("Aptos", Font.PLAIN, 12));
             cell.setHorizontalAlignment(SwingConstants.CENTER);
             cell.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, new Color(39, 139, 215)));
         } else {
             if(column == 0){ //First column cell
                 cell.setBackground(Color.WHITE);
                 cell.setForeground(Color.BLACK);
-                cell.setFont(new Font("Aptos", Font.BOLD, 12));
+                cell.setFont(new Font("Aptos", Font.PLAIN, 12));
                 cell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             }else{//Default cell
                 cell.setBackground(new Color(250, 249, 248));
                 cell.setForeground(Color.WHITE);
-                cell.setFont(new Font("Aptos", Font.BOLD, 12));
+                cell.setFont(new Font("Aptos", Font.PLAIN, 12));
                 cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
             }
             

@@ -287,15 +287,16 @@ public class CalendarObject extends JPanel {
         eventTable = new JTable(tableModel);
         eventTable.setEnabled(false);
         eventTable.setBackground(new Color(250, 249, 248));
-        eventTable.setForeground(Color.WHITE);
+        //eventTable.setForeground(Color.WHITE);
         eventTable.setShowGrid(true);
-        eventTable.setGridColor(Color.DARK_GRAY);
+        //eventTable.setGridColor(Color.DARK_GRAY);
+        eventTable.setBorder(BorderFactory.createEmptyBorder());
         eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.getTableHeader().setReorderingAllowed(false);
-        eventTable.getTableHeader().setBackground(Color.WHITE);
-        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        eventTable.getTableHeader().setBackground(new Color(250, 249, 248));
+        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         eventTable.getTableHeader().setForeground(Color.BLACK);
-        eventTable.getTableHeader().setFont(new Font("Aptos", Font.BOLD, 12));
+        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));
         eventTable.setBounds(0,0,width,height);
         
 
@@ -308,6 +309,7 @@ public class CalendarObject extends JPanel {
         scrollPane = new JScrollPane(eventTable);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Hide scrollbar width
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         // Enable scrolling with the mouse wheel
         scrollPane.addMouseWheelListener(e -> {
