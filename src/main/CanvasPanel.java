@@ -181,6 +181,14 @@ public class CanvasPanel extends JPanel {
         stickyNote.repaintInside();
         add(stickyNote);
         repaint();
+        
+    }
+
+    public void removeStickyNote(StickyNoteObject note) {
+        stickyNoteObjectList.remove(note); // Remove from list
+        remove(note); // Remove from UI
+        revalidate();
+        repaint();
     }
 
 
@@ -197,6 +205,13 @@ public class CanvasPanel extends JPanel {
         calendar.setScale(scale);
         calendar.repaintInside();
         add(calendar);
+        repaint();
+    }
+
+    public void removeCalendarObject(CalendarObject cal) {
+        calendarObjectList.remove(cal); // Remove from list
+        remove(cal); // Remove from UI
+        revalidate();
         repaint();
     }
 

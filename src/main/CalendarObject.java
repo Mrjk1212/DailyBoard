@@ -438,16 +438,11 @@ public class CalendarObject extends JPanel {
 
     //get a click in top right corner and delete all components inside and then delete the sticky note....
     public void delete(){
-        removeAll(); // remove all child components first just to be safe :)
         Container parent = getParent();
-        if (parent != null) {
-            parent.remove(this);
-            parent.revalidate();
-            parent.repaint();
+        if (parent instanceof CanvasPanel) {
+            ((CanvasPanel) parent).removeCalendarObject(this);// Notify CanvasPanel
         }
     }
-
-    
 
 
 }
