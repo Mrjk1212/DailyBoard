@@ -1,4 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.HashMap;
@@ -37,12 +39,33 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
                 cell.setBackground(Color.WHITE);
                 cell.setForeground(Color.BLACK);
                 cell.setFont(new Font("Aptos", Font.PLAIN, 12));
-                cell.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+                if(row % 2 == 0){
+                    Border matteBorder = BorderFactory.createMatteBorder(0, 1, 0, 1, Color.LIGHT_GRAY); //left, right
+                    Border empty = BorderFactory.createEmptyBorder(0, -1, -1, -1);
+                    Border dashed = BorderFactory.createDashedBorder(Color.GRAY, 1, 1);
+                    Border compound = new CompoundBorder(empty, dashed);
+                    Border doubleCompound = new CompoundBorder(compound, matteBorder);
+                    cell.setBorder(doubleCompound);
+                }else{
+                    
+
+                    cell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.LIGHT_GRAY)); // Top, left, right
+                    
+                    
+                }
+                
             }else{//Default cell
                 cell.setBackground(new Color(250, 249, 248));
-                cell.setForeground(Color.WHITE);
-                cell.setFont(new Font("Aptos", Font.PLAIN, 12));
-                cell.setBorder(BorderFactory.createDashedBorder(getBackground()));
+                if(row % 2 == 0){
+                    Border matteBorder = BorderFactory.createMatteBorder(0, 1, 0, 1, Color.LIGHT_GRAY); //left, right
+                    Border empty = BorderFactory.createEmptyBorder(0, -1, -1, -1);
+                    Border dashed = BorderFactory.createDashedBorder(Color.GRAY, 1, 1);
+                    Border compound = new CompoundBorder(empty, dashed);
+                    Border doubleCompound = new CompoundBorder(compound, matteBorder);
+                    cell.setBorder(doubleCompound);
+                }else{
+                    cell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.LIGHT_GRAY)); // Top, left, right
+                }
             }
             
         }

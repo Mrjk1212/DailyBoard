@@ -165,9 +165,10 @@ public class CalendarObject extends JPanel {
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         calendar.setTime(eventDate);
         int eventHour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+        int eventMinute = calendar.get(java.util.Calendar.MINUTE);
     
         // The first row (index 0) is the header row, so shift the index by +1
-        return eventHour + 1;
+        return (eventHour * 2) + (eventMinute >= 30 ? 2 : 1);
     }
 
     public void populateTable(List<Event> events) {
@@ -197,7 +198,6 @@ public class CalendarObject extends JPanel {
         }
     
         tableModel.setColumnIdentifiers(columns);
-        //tableModel.addRow(columns); // Add header row if I decide to not use a JScrollPane
     
         // Special row for all-day events
         Object[] allDayRow = new Object[8];
@@ -207,22 +207,23 @@ public class CalendarObject extends JPanel {
         }
         tableModel.addRow(allDayRow);
     
-        // Populate the "Time" column from 12 AM to 11 PM
+        // Populate the "Time" column with 30-minute increments
         int totalHours = 24;
         for (int hour = 0; hour < totalHours; hour++) {
             String timeLabel = formatTime(hour);
-            tableModel.addRow(new Object[]{timeLabel, "", "", "", "", "", "", ""});
+            tableModel.addRow(new Object[]{timeLabel, "", "", "", "", "", "", ""}); // Full hour
+            tableModel.addRow(new Object[]{" ", "", "", "", "", "", "", ""}); // Half-hour
         }
-        
+    
         // Initialize the cell renderer
         EventTableRenderer renderer = new EventTableRenderer();
         eventTable.setDefaultRenderer(Object.class, renderer);
-
-        //Set the current time label to be colored, so it's easier to see the current time
+    
+        // Set the current time label to be colored
         DateTime nowDateTime = new DateTime(System.currentTimeMillis());
         Date now = new Date(nowDateTime.getValue());
         renderer.addEventCell(getRowIndexForTime(now), 0, new Color(190, 218, 240));
-
+    
         Random random = new Random();
         for (Event event : events) {
             DateTime startDateTime = event.getStart().getDateTime();
@@ -258,11 +259,11 @@ public class CalendarObject extends JPanel {
     
             if (startRow == -1 || endRow == -1) continue;
     
-            Color eventColor = new Color(190, 218, 240); //Close to light blue 23
+            Color eventColor = new Color(190, 218, 240); // Close to light blue
             for (int row = startRow; row <= endRow; row++) {
                 renderer.addEventCell(row, dayIndex, eventColor);
             }
-            
+    
             Object existingValue = tableModel.getValueAt(startRow, dayIndex);
             String newValue = (existingValue == null || existingValue.toString().isEmpty()) ? event.getSummary() : existingValue + ", " + event.getSummary();
             tableModel.setValueAt(newValue, startRow, dayIndex);
@@ -287,9 +288,7 @@ public class CalendarObject extends JPanel {
         eventTable = new JTable(tableModel);
         eventTable.setEnabled(false);
         eventTable.setBackground(new Color(250, 249, 248));
-        //eventTable.setForeground(Color.WHITE);
-        eventTable.setShowGrid(true);
-        //eventTable.setGridColor(Color.DARK_GRAY);
+        eventTable.setShowGrid(false);
         eventTable.setBorder(BorderFactory.createEmptyBorder());
         eventTable.setIntercellSpacing(new Dimension(0, 0));
         eventTable.getTableHeader().setReorderingAllowed(false);
