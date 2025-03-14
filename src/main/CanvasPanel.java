@@ -139,7 +139,6 @@ public class CanvasPanel extends JPanel {
                 }
             }
         });
-
         
     }
 

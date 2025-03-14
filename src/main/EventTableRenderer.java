@@ -40,7 +40,7 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
                 cell.setForeground(Color.BLACK);
                 cell.setFont(new Font("Aptos", Font.PLAIN, 12));
                 if(row % 2 == 0){
-                    Border matteBorder = BorderFactory.createMatteBorder(0, 1, 0, 1, Color.LIGHT_GRAY); //left, right
+                    Border matteBorder = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.LIGHT_GRAY); //left, right
                     Border empty = BorderFactory.createEmptyBorder(0, -1, -1, -1);
                     Border dashed = BorderFactory.createDashedBorder(Color.GRAY, 1, 1);
                     Border compound = new CompoundBorder(empty, dashed);
@@ -49,7 +49,7 @@ public class EventTableRenderer extends DefaultTableCellRenderer {
                 }else{
                     
 
-                    cell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.LIGHT_GRAY)); // Top, left, right
+                    cell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, -1, Color.LIGHT_GRAY)); // Top, left, right
                     
                     
                 }
