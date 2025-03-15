@@ -31,7 +31,7 @@ X = Completed/Checkmark. aka removes item from list when clicked
  */
 public class TodoObject extends JPanel {
     private JTextField textField;
-    private JLabel displayLabel;
+    private JButton addTaskButton;
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
@@ -74,13 +74,17 @@ public class TodoObject extends JPanel {
             }
         });
 
-        // Create a JLabel to display text
-        displayLabel = new JLabel("Click to Edit");
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        displayLabel.setOpaque(false);
-        displayLabel.setForeground(Color.BLACK);
-        displayLabel.setHorizontalAlignment(JLabel.CENTER);
-        add(displayLabel, "span 3, wrap");
+        // Create a JButton
+        addTaskButton = new JButton("+  Add Task");
+        addTaskButton.setFont(new Font("Arial", Font.PLAIN, 12));
+        addTaskButton.setOpaque(false);
+        addTaskButton.setBackground(Color.BLACK);
+        addTaskButton.setForeground(Color.WHITE);
+        addTaskButton.setBorder(null);
+        addTaskButton.setRequestFocusEnabled(false);
+        
+        addTaskButton.setHorizontalAlignment(JButton.LEFT);
+        add(addTaskButton, "span 3, wrap");
  
 
         addMouseListener(new MouseAdapter() {
@@ -126,26 +130,26 @@ public class TodoObject extends JPanel {
     private void saveText() {
         String text = textField.getText().trim();
         if (!text.isEmpty()) {
-            displayLabel.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
+            addTaskButton.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
         }
         textField.setVisible(false);
-        displayLabel.setVisible(true);
+        addTaskButton.setVisible(true);
     }
 
     
     public String getText() { 
-        return displayLabel.getText();
+        return addTaskButton.getText();
     }
 
     public void setText(String text) { 
-        displayLabel.setText(text);
+        addTaskButton.setText(text);
         updateTextStyle();
     }
 
     private void enterEditMode() {
-        textField.setText(displayLabel.getText().replaceAll("<[^>]*>", "")); // Remove HTML formatting
+        textField.setText(addTaskButton.getText().replaceAll("<[^>]*>", "")); // Remove HTML formatting
         textField.setVisible(true);
-        displayLabel.setVisible(false);
+        addTaskButton.setVisible(false);
         textField.requestFocus();
     }
 
@@ -164,7 +168,7 @@ public class TodoObject extends JPanel {
 
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
         textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
         //displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
         //textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
