@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
     private CalendarObject calendar;
+    private TodoObject todo;
     
     private double scale = 1.0;
     private int offsetX = 0, offsetY = 0;
@@ -24,6 +25,7 @@ public class CanvasPanel extends JPanel {
 
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
     private List<CalendarObject> calendarObjectList = new ArrayList<>();
+    private List<TodoObject> todoObjectList = new ArrayList<>();
 
     private static final double ZOOM_FACTOR = 0.1;
     private static final double MIN_SCALE = 0.1;
@@ -97,6 +99,35 @@ public class CanvasPanel extends JPanel {
                 cal.setScale(scale);
                 cal.repaintInside();
             }
+
+            for (TodoObject td : todoObjectList) {
+                // Calculate distance from mouse to note
+                double dx = td.getX() - mousePoint.x;
+                double dy = td.getY() - mousePoint.y;
+                
+                // Scale this distance by the change in scale
+                double scaleChange = scale / oldScale;
+                dx *= scaleChange;
+                dy *= scaleChange;
+                
+                // Set new position relative to mouse point
+                td.setLocation(
+                    (int)(mousePoint.x + dx),
+                    (int)(mousePoint.y + dy)
+                );
+                
+                // Update size
+                td.setBounds(
+                    td.getX(),
+                    td.getY(),
+                    (int)(td.getOriginalWidth() * scale),
+                    (int)(td.getOriginalHeight() * scale)
+                );
+                td.setScale(scale);
+                td.repaintInside();
+            }
+
+
             repaint();
         });
 
@@ -133,6 +164,9 @@ public class CanvasPanel extends JPanel {
                         obj.setLocation(obj.getX() + dx, obj.getY() + dy);
                     }
                     for (CalendarObject obj : calendarObjectList) {
+                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                    }
+                    for (TodoObject obj : todoObjectList){
                         obj.setLocation(obj.getX() + dx, obj.getY() + dy);
                     }
                     repaint();
@@ -215,7 +249,25 @@ public class CanvasPanel extends JPanel {
     }
 
     public void addToDoList() {
-        //objects.add(new ToDoListObject(500, 100, 200, 100, Color.CYAN));
+        todo = new TodoObject(50, 50, 200, 400, Color.GRAY);
+        todoObjectList.add(todo);
+        // Update size to account for zoom out/in
+        todo.setBounds(
+            todo.getX(),
+            todo.getY(),
+            (int)(todo.getOriginalWidth() * scale),
+            (int)(todo.getOriginalHeight() * scale)
+        );
+        todo.setScale(scale);
+        todo.repaintInside();
+        add(todo);
+        repaint();
+    }
+
+    public void removeTodoObject(TodoObject td) {
+        todoObjectList.remove(td); // Remove from list
+        remove(td); // Remove from UI
+        revalidate();
         repaint();
     }
 
@@ -244,6 +296,16 @@ public class CanvasPanel extends JPanel {
                 cal.getWidth(), cal.getHeight(),
                 cal.getBackground(),  // Get color
                 ""  // Calendars dont store text lol
+            ));
+        }
+
+        for (TodoObject td : todoObjectList){
+            boardState.add(new BoardObjectState(
+                "Todo",
+                td.getX(), td.getY(),
+                td.getWidth(), td.getHeight(),
+                td.getBackground(),
+                ""//td.getListContent() //TODO make this function return a list that can be rebuilt on application relaunch
             ));
         }
 
@@ -277,6 +339,12 @@ public class CanvasPanel extends JPanel {
                         );
                         calendarObjectList.add(cal);
                         add(cal);
+                    } else if (obj.type.equals("Todo")) {
+                        TodoObject td = new TodoObject(
+                            obj.x, obj.y, obj.width, obj.height, obj.getColor()
+                        );
+                        todoObjectList.add(td);
+                        add(td);
                     }
                 }
                 revalidate();

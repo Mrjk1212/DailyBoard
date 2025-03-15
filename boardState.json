@@ -1,10 +1,43 @@
 [
   {
+    "type": "StickyNote",
+    "x": 444,
+    "y": 124,
+    "width": 174,
+    "height": 22,
+    "colorR": 255,
+    "colorG": 255,
+    "colorB": 0,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is also a sticky ntoe\u003c/body\u003e\u003c/html\u003e"
+  },
+  {
+    "type": "StickyNote",
+    "x": 327,
+    "y": 106,
+    "width": 96,
+    "height": 96,
+    "colorR": 255,
+    "colorG": 255,
+    "colorB": 0,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a sticky ntoe\u003c/body\u003e\u003c/html\u003e"
+  },
+  {
     "type": "Calendar",
-    "x": 108,
-    "y": 41,
-    "width": 620,
-    "height": 497,
+    "x": 444,
+    "y": 166,
+    "width": 337,
+    "height": 419,
+    "colorR": 128,
+    "colorG": 128,
+    "colorB": 128,
+    "text": ""
+  },
+  {
+    "type": "Todo",
+    "x": 105,
+    "y": 114,
+    "width": 183,
+    "height": 343,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,

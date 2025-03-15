@@ -4,34 +4,20 @@ import javax.swing.*;
 
 /* 
 TODO
--Add an option to re-color each note so there can be distinction between them when zoomed out.
--Add a title option for each note (the outlook board had this option, I just found it sort of nice.)
--Add the functionality for actually creating new lines inside the note, example:
-
---------------------------------------------------------------------
-|this is a sticky note                                             |
-|-I don't want to rely on the size of the note to denote new lines |
-|-Because I want to show things on multiple lines IF I WANT TO!!!  |
---------------------------------------------------------------------
-
---------BUGS----------
--There is no way to effectively make a blank sticky note after it has been
-written in. If you try and backspace all the text in it and then hit enter
-the note will not be overwritten with the blank input but will instead
-stay the same.
+-Everything
 
 */
 
 /**
- * StickyNoteObject represents a resizable and draggable component that allows
- * users to input and display text. The text can be edited by clicking inside the note,
+ * TodoObject represents a resizable and draggable component that allows
+ * users to input and check off items on a todo list.
  * resizing is done by clicking and dragging the bottom left corner of the note,
- * moving the note is done by clicking an edge and draggin the note to a new location,
- * and deleting the note is done by clicking the top right corner of the note.
+ * moving the list is done by clicking an edge and draggin the list to a new location,
+ * and deleting the list is done by clicking the top right corner of the list.
  * @author Aaron Cherney
  * @version 1.0
  */
-public class StickyNoteObject extends JPanel {
+public class TodoObject extends JPanel {
     private JTextField textField;
     private JLabel displayLabel;
     private Point initialClick;
@@ -44,7 +30,7 @@ public class StickyNoteObject extends JPanel {
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
 
-    public StickyNoteObject(int xPos, int yPos, int width, int height, Color color) {
+    public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
         setBackground(color);
@@ -230,7 +216,7 @@ public class StickyNoteObject extends JPanel {
     public void delete(){
         Container parent = getParent();
         if (parent instanceof CanvasPanel) {
-            ((CanvasPanel) parent).removeStickyNote(this); // Notify CanvasPanel
+            ((CanvasPanel) parent).removeTodoObject(this); // Notify CanvasPanel
         }
     }
 
