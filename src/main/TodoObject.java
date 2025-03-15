@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import net.miginfocom.swing.MigLayout;
 
 /* 
 TODO
@@ -44,30 +45,31 @@ public class TodoObject extends JPanel {
     public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
+        setLayout(new MigLayout("", "[][][]", "[][]"));
         setBackground(color);
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        setLayout(null);
+        
 
         // Create a JLabel to display text
-        displayLabel = new JLabel("", SwingConstants.CENTER);
+        displayLabel = new JLabel("");
         displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        displayLabel.setBounds(5, 5, width - 10, height - 10);
-        displayLabel.setHorizontalAlignment(JLabel.LEFT);
-        displayLabel.setVerticalAlignment(JLabel.TOP);
+        //displayLabel.setBounds(5, 5, width - 10, height - 10);
+        //displayLabel.setHorizontalAlignment(JLabel.LEFT);
+        //displayLabel.setVerticalAlignment(JLabel.TOP);
         displayLabel.setBackground(Color.RED);
         displayLabel.setVisible(true);
-        add(displayLabel);
+        add(displayLabel, "span 3, wrap");
 
         // Create a JTextField for input
         textField = new JTextField();
-        textField.setBounds(5, 5, width - 10, height - 100);
+        //textField.setBounds(5, 5, width - 10, height - 100);
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         textField.setBorder(null);
         textField.setVisible(true); // Initially hidden
         textField.setBackground(Color.BLUE);
-        add(textField);
+        add(textField, "span 3");
 
  
 
@@ -154,8 +156,8 @@ public class TodoObject extends JPanel {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         displayLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
         textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
-        textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        //displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        //textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
     }
 
     private boolean isInResizeZone(Point p) {

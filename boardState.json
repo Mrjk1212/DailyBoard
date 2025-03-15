@@ -1,8 +1,8 @@
 [
   {
     "type": "StickyNote",
-    "x": 515,
-    "y": 134,
+    "x": 592,
+    "y": 154,
     "width": 170,
     "height": 21,
     "colorR": 255,
@@ -12,8 +12,8 @@
   },
   {
     "type": "StickyNote",
-    "x": 398,
-    "y": 135,
+    "x": 475,
+    "y": 155,
     "width": 104,
     "height": 136,
     "colorR": 255,
@@ -23,21 +23,10 @@
   },
   {
     "type": "Calendar",
-    "x": 515,
-    "y": 175,
+    "x": 592,
+    "y": 195,
     "width": 327,
     "height": 404,
-    "colorR": 128,
-    "colorG": 128,
-    "colorB": 128,
-    "text": ""
-  },
-  {
-    "type": "Todo",
-    "x": 50,
-    "y": 50,
-    "width": 189,
-    "height": 367,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
