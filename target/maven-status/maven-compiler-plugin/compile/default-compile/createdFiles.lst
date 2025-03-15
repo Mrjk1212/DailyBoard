@@ -1,11 +1,9 @@
 EventTableRenderer.class
 StickyNoteObject$5.class
-TodoObject$3.class
 CanvasPanel$2.class
 GoogleCalendarTest.class
 StickyNoteObject$1.class
 TodoObject$2.class
-TodoObject$5.class
 CanvasPanel.class
 TodoObject.class
 CanvasPanel$3.class
@@ -18,5 +16,4 @@ StickyNoteObject$3.class
 CanvasPanel$1.class
 main\saves\BoardObjectState.class
 StickyNoteObject$4.class
-TodoObject$4.class
 CalendarObject$2.class

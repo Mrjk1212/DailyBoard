@@ -4,7 +4,18 @@ import javax.swing.*;
 
 /* 
 TODO
--Everything
+--------LIST NAME----------
+--------Add Item-----------
+----------Item-----------X-
+----------Item-----------X-
+----------Item-----------X-
+----------Item-----------X-
+---------------------------
+
+list name = Jtext field over a JLabel for changing the name of the list
+Add item = adds an item to the task list array and adds the item into a JList
+Item = String data in the
+X = Completed/Checkmark. aka removes item from list when clicked
 
 */
 
@@ -45,42 +56,20 @@ public class TodoObject extends JPanel {
         displayLabel.setBounds(5, 5, width - 10, height - 10);
         displayLabel.setHorizontalAlignment(JLabel.LEFT);
         displayLabel.setVerticalAlignment(JLabel.TOP);
+        displayLabel.setBackground(Color.RED);
+        displayLabel.setVisible(true);
         add(displayLabel);
 
         // Create a JTextField for input
         textField = new JTextField();
-        textField.setBounds(5, 5, width - 10, height - 10);
+        textField.setBounds(5, 5, width - 10, height - 100);
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         textField.setBorder(null);
-        textField.setVisible(false); // Initially hidden
-        textField.setBackground(color);
+        textField.setVisible(true); // Initially hidden
+        textField.setBackground(Color.BLUE);
         add(textField);
 
-        // Focus listener to update label when user clicks away
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                saveText();
-            }
-        });
-
-        // Key listener to save text on Enter key press
-        textField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    saveText();
-                }
-            }
-        });
-
-        // Click event to allow text editing
-        displayLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                enterEditMode();
-            }
-        });
+ 
 
         addMouseListener(new MouseAdapter() {
             @Override

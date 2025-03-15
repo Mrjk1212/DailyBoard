@@ -18,7 +18,8 @@ TODO
 -There is no way to effectively make a blank sticky note after it has been
 written in. If you try and backspace all the text in it and then hit enter
 the note will not be overwritten with the blank input but will instead
-stay the same.
+stay the same. 
+- this is fixed now I think, but i'll leave this here as a reminder to check this.
 
 */
 
@@ -140,6 +141,9 @@ public class StickyNoteObject extends JPanel {
         String text = textField.getText().trim();
         if (!text.isEmpty()) {
             displayLabel.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
+        }
+        else{
+            displayLabel.setText("");
         }
         textField.setVisible(false);
         displayLabel.setVisible(true);
