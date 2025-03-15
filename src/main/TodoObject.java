@@ -45,32 +45,42 @@ public class TodoObject extends JPanel {
     public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
-        setLayout(new MigLayout("", "[][][]", "[][]"));
+        setLayout(new MigLayout("", "[grow,fill][grow,fill][grow,fill]", ""));//
         setBackground(color);
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         
-
-        // Create a JLabel to display text
-        displayLabel = new JLabel("");
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        //displayLabel.setBounds(5, 5, width - 10, height - 10);
-        //displayLabel.setHorizontalAlignment(JLabel.LEFT);
-        //displayLabel.setVerticalAlignment(JLabel.TOP);
-        displayLabel.setBackground(Color.RED);
-        displayLabel.setVisible(true);
-        add(displayLabel, "span 3, wrap");
-
         // Create a JTextField for input
         textField = new JTextField();
         //textField.setBounds(5, 5, width - 10, height - 100);
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         textField.setBorder(null);
-        textField.setVisible(true); // Initially hidden
-        textField.setBackground(Color.BLUE);
-        add(textField, "span 3");
+        textField.setVisible(true);
+        textField.setBackground(Color.WHITE);
+        textField.setForeground(Color.BLACK);
+        textField.setHorizontalAlignment(JTextField.CENTER);
+                
+        add(textField, "span 3, wrap");
 
+        // Add an ActionListener to disable editing when Enter is pressed
+        textField.addActionListener(e -> {
+            textField.setEditable(false); // Disable editing
+        });
+        textField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                textField.setEditable(true); // Enable editing again
+            }
+        });
+
+        // Create a JLabel to display text
+        displayLabel = new JLabel("Click to Edit");
+        displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        displayLabel.setOpaque(false);
+        displayLabel.setForeground(Color.BLACK);
+        displayLabel.setHorizontalAlignment(JLabel.CENTER);
+        add(displayLabel, "span 3, wrap");
  
 
         addMouseListener(new MouseAdapter() {
