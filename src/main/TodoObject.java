@@ -1,5 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 
@@ -13,8 +16,8 @@ TODO
 ----------Item-----------X-
 ---------------------------
 
-list name = Jtext field over a JLabel for changing the name of the list
-Add item = adds an item to the task list array and adds the item into a JList
+list name = Jtext field for changing the name of the list
+Add item = adds an item to the task list array and adds the item into the JPanel as a JLabel(span 2) + JButton("span 1,wrap")
 Item = String data in the
 X = Completed/Checkmark. aka removes item from list when clicked
 
@@ -42,10 +45,13 @@ public class TodoObject extends JPanel {
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
 
+    private List<String> todoListArray = new ArrayList<>();
+    private List<JButton> todoCompleteButtons = new ArrayList<>();
+
     public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
-        setLayout(new MigLayout("", "[grow,fill][grow,fill][grow,fill]", ""));//
+        setLayout(new MigLayout("", "[grow, fill][][]", ""));//
         setBackground(color);
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
@@ -66,11 +72,13 @@ public class TodoObject extends JPanel {
         // Add an ActionListener to disable editing when Enter is pressed
         textField.addActionListener(e -> {
             textField.setEditable(false); // Disable editing
+            textField.setRequestFocusEnabled(false);
         });
         textField.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 textField.setEditable(true); // Enable editing again
+                textField.setRequestFocusEnabled(true);
             }
         });
 
@@ -84,6 +92,7 @@ public class TodoObject extends JPanel {
         addTaskButton.setRequestFocusEnabled(false);
         
         addTaskButton.setHorizontalAlignment(JButton.LEFT);
+        addTaskButton.addActionListener(e -> addTaskToList());
         add(addTaskButton, "span 3, wrap");
  
 
@@ -127,30 +136,64 @@ public class TodoObject extends JPanel {
         });
     }
 
+    private void addTaskToList(){
+        System.out.println("Adding Task");
+        JTextField newTask = new JTextField();
+        newTask.setText("");
+        newTask.setFont(new Font("Arial", Font.PLAIN, 12));
+        newTask.setBorder(null);
+        newTask.setVisible(true);
+        newTask.setBackground(Color.WHITE);
+        newTask.setForeground(Color.BLACK);
+        newTask.setOpaque(false);
+        newTask.setHorizontalAlignment(JTextField.CENTER);
+
+        // Add an ActionListener to disable editing when Enter is pressed
+        textField.addActionListener(e -> {
+            textField.setEditable(false); // Disable editing
+            textField.setRequestFocusEnabled(false);
+        });
+        textField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                textField.setEditable(true); // Enable editing again
+                textField.setRequestFocusEnabled(true);
+            }
+        });
+        JButton newTaskCompleteButton = new JButton();
+
+
+        todoListArray.add(newTask.getText());
+        todoCompleteButtons.add(newTaskCompleteButton);
+
+
+        add(newTask, "span 2");
+        add(newTaskCompleteButton, "wrap");
+        
+        revalidate();
+        repaintInside(); // Needs to scale text in tasks
+        repaint();
+    }
+
     private void saveText() {
         String text = textField.getText().trim();
         if (!text.isEmpty()) {
-            addTaskButton.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
+            textField.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
         }
-        textField.setVisible(false);
-        addTaskButton.setVisible(true);
+
     }
 
+    public List<String> getList(){
+        return todoListArray;
+    }
     
     public String getText() { 
-        return addTaskButton.getText();
+        return textField.getText();
     }
 
     public void setText(String text) { 
-        addTaskButton.setText(text);
+        textField.setText(text);
         updateTextStyle();
-    }
-
-    private void enterEditMode() {
-        textField.setText(addTaskButton.getText().replaceAll("<[^>]*>", "")); // Remove HTML formatting
-        textField.setVisible(true);
-        addTaskButton.setVisible(false);
-        textField.requestFocus();
     }
 
     public int getOriginalWidth() {
@@ -166,6 +209,7 @@ public class TodoObject extends JPanel {
         updateTextStyle();
     }
 
+    // Needs to scale text in tasks
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
@@ -212,6 +256,7 @@ public class TodoObject extends JPanel {
         g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, ARC_RADIUS, ARC_RADIUS);
     }
 
+    // Needs to scale text in tasks
     public void repaintInside() {
         updateTextStyle();
         repaint();

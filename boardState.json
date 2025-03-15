@@ -1,57 +1,64 @@
 [
   {
     "type": "StickyNote",
-    "x": 603,
-    "y": 4,
-    "width": 190,
-    "height": 45,
+    "x": 605,
+    "y": 70,
+    "width": 178,
+    "height": 39,
     "colorR": 255,
     "colorG": 255,
     "colorB": 0,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is also a sticky ntoe\u003c/body\u003e\u003c/html\u003e"
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is also a sticky ntoe\u003c/body\u003e\u003c/html\u003e",
+    "todoListStrings": []
   },
   {
     "type": "StickyNote",
     "x": 605,
-    "y": 60,
-    "width": 93,
-    "height": 141,
+    "y": 123,
+    "width": 87,
+    "height": 130,
     "colorR": 255,
     "colorG": 255,
     "colorB": 0,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a stiicky note\u003c/body\u003e\u003c/html\u003e"
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a stiicky note\u003c/body\u003e\u003c/html\u003e",
+    "todoListStrings": []
   },
   {
     "type": "StickyNote",
-    "x": 602,
-    "y": 212,
-    "width": 108,
-    "height": 108,
+    "x": 605,
+    "y": 267,
+    "width": 99,
+    "height": 99,
     "colorR": 255,
     "colorG": 255,
     "colorB": 0,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eReflections\u003c/body\u003e\u003c/html\u003e"
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eReflections\u003c/body\u003e\u003c/html\u003e",
+    "todoListStrings": []
   },
   {
     "type": "Calendar",
-    "x": -88,
-    "y": 8,
-    "width": 511,
+    "x": -30,
+    "y": 81,
+    "width": 481,
+    "height": 373,
+    "colorR": 128,
+    "colorG": 128,
+    "colorB": 128,
+    "text": "",
+    "todoListStrings": []
+  },
+  {
+    "type": "Todo",
+    "x": 457,
+    "y": 73,
+    "width": 143,
     "height": 396,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
-    "text": ""
-  },
-  {
-    "type": "Todo",
-    "x": 433,
-    "y": 8,
-    "width": 138,
-    "height": 430,
-    "colorR": 128,
-    "colorG": 128,
-    "colorB": 128,
-    "text": ""
+    "text": "TODO List",
+    "todoListStrings": [
+      ""
+    ]
   }
 ]

@@ -285,7 +285,8 @@ public class CanvasPanel extends JPanel {
                 note.getX(), note.getY(),
                 note.getWidth(), note.getHeight(),
                 note.getBackground(),  // Get color
-                note.getText()  // Get text content
+                note.getText(),  // Get text content
+                new ArrayList<String>()
             ));
         }
 
@@ -295,7 +296,8 @@ public class CanvasPanel extends JPanel {
                 cal.getX(), cal.getY(),
                 cal.getWidth(), cal.getHeight(),
                 cal.getBackground(),  // Get color
-                ""  // Calendars dont store text lol
+                "",  // Calendars dont store text lol
+                new ArrayList<String>()
             ));
         }
 
@@ -305,7 +307,8 @@ public class CanvasPanel extends JPanel {
                 td.getX(), td.getY(),
                 td.getWidth(), td.getHeight(),
                 td.getBackground(),
-                ""//td.getListContent() //TODO make this function return a list that can be rebuilt on application relaunch
+                td.getText(),//td.getListContent() //TODO make this function return a list that can be rebuilt on application relaunch
+                td.getList()
             ));
         }
 
@@ -343,6 +346,8 @@ public class CanvasPanel extends JPanel {
                         TodoObject td = new TodoObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
+                        td.setText(obj.text);
+                        //Initialize the actual list here
                         todoObjectList.add(td);
                         add(td);
                     }
