@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
@@ -286,7 +287,7 @@ public class CanvasPanel extends JPanel {
                 note.getWidth(), note.getHeight(),
                 note.getBackground(),  // Get color
                 note.getText(),  // Get text content
-                new ArrayList<String>()
+                null
             ));
         }
 
@@ -297,7 +298,7 @@ public class CanvasPanel extends JPanel {
                 cal.getWidth(), cal.getHeight(),
                 cal.getBackground(),  // Get color
                 "",  // Calendars dont store text lol
-                new ArrayList<String>()
+                null
             ));
         }
 
@@ -346,6 +347,9 @@ public class CanvasPanel extends JPanel {
                         TodoObject td = new TodoObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
+                        for(String str: obj.todoListStrings){
+                            td.addTaskToList(str);
+                        }
                         td.setText(obj.text);
                         //Initialize the actual list here
                         todoObjectList.add(td);

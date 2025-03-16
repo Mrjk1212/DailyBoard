@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
+import java.util.HashMap;
+import java.util.Map;
 
 /* 
 TODO
@@ -45,8 +47,7 @@ public class TodoObject extends JPanel {
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
 
-    private List<String> todoListArray = new ArrayList<>();
-    private List<JButton> todoCompleteButtons = new ArrayList<>();
+    private Map<JTextField, JButton> todoDict = new HashMap<>();
 
     public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -89,10 +90,10 @@ public class TodoObject extends JPanel {
         addTaskButton.setBackground(Color.BLACK);
         addTaskButton.setForeground(Color.WHITE);
         addTaskButton.setBorder(null);
-        addTaskButton.setRequestFocusEnabled(false);
+        addTaskButton.setFocusPainted(false);
         
         addTaskButton.setHorizontalAlignment(JButton.LEFT);
-        addTaskButton.addActionListener(e -> addTaskToList());
+        addTaskButton.addActionListener(e -> addTaskToList(""));
         add(addTaskButton, "span 3, wrap");
  
 
@@ -136,10 +137,10 @@ public class TodoObject extends JPanel {
         });
     }
 
-    private void addTaskToList(){
+    public void addTaskToList(String text){
         System.out.println("Adding Task");
         JTextField newTask = new JTextField();
-        newTask.setText("");
+        newTask.setText(text);
         newTask.setFont(new Font("Arial", Font.PLAIN, 12));
         newTask.setBorder(null);
         newTask.setVisible(true);
@@ -149,30 +150,51 @@ public class TodoObject extends JPanel {
         newTask.setHorizontalAlignment(JTextField.CENTER);
 
         // Add an ActionListener to disable editing when Enter is pressed
-        textField.addActionListener(e -> {
-            textField.setEditable(false); // Disable editing
-            textField.setRequestFocusEnabled(false);
+        newTask.addActionListener(e -> {
+            newTask.setEditable(false); // Disable editing
+            newTask.setRequestFocusEnabled(false);
         });
-        textField.addMouseListener(new MouseAdapter() {
+        newTask.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                textField.setEditable(true); // Enable editing again
-                textField.setRequestFocusEnabled(true);
+                newTask.setEditable(true); // Enable editing again
+                newTask.setRequestFocusEnabled(true);
             }
         });
+        
+        
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBackground(getBackground());
+        sep.setForeground(Color.LIGHT_GRAY);
+        add(sep, "span");
+
         JButton newTaskCompleteButton = new JButton();
+        newTaskCompleteButton.setPreferredSize(new Dimension((int) Math.round(10 * scale), (int) Math.round(10 * scale)));
+        newTaskCompleteButton.setMargin(new Insets(2, 2, 2, 2)); // Smaller padding
+        newTaskCompleteButton.setFocusPainted(false);
+        newTaskCompleteButton.addActionListener(e -> removeTaskFromList(newTask, newTaskCompleteButton, sep));
 
-
-        todoListArray.add(newTask.getText());
-        todoCompleteButtons.add(newTaskCompleteButton);
-
-
-        add(newTask, "span 2");
-        add(newTaskCompleteButton, "wrap");
+        todoDict.put(newTask, newTaskCompleteButton);
+        System.out.println("Added Task: " + newTask.getText());
+        System.out.println("Current Dict Size: " + todoDict.size());
+        add(newTask, "span 7");
+        add(newTaskCompleteButton, "width ::10, height ::10, wrap");
         
         revalidate();
         repaintInside(); // Needs to scale text in tasks
         repaint();
+    }
+
+    private void removeTaskFromList(JTextField tf, JButton button, JSeparator sep){
+        todoDict.remove(tf, button);
+
+        remove(tf);
+        remove(button);
+        remove(sep);
+
+        revalidate();
+        repaint();
+
     }
 
     private void saveText() {
@@ -184,7 +206,13 @@ public class TodoObject extends JPanel {
     }
 
     public List<String> getList(){
-        return todoListArray;
+        List<String> saveList = new ArrayList<String>();
+        for(JTextField tf: todoDict.keySet()){
+            saveList.add(tf.getText());
+            System.out.println("Task: " + tf.getText());
+        }
+        System.out.println("TodoDict Size: " + todoDict.size());
+        return saveList;
     }
     
     public String getText() { 
@@ -214,8 +242,8 @@ public class TodoObject extends JPanel {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
         textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        //displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
-        //textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        
+
     }
 
     private boolean isInResizeZone(Point p) {
