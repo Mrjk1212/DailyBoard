@@ -138,10 +138,14 @@ public class TodoObject extends JPanel {
     }
 
     public void addTaskToList(String text){
+        
         System.out.println("Adding Task");
+
+        int fontSize = Math.max(1, (int) Math.round(12 * scale));
+
         JTextField newTask = new JTextField();
         newTask.setText(text);
-        newTask.setFont(new Font("Arial", Font.PLAIN, 12));
+        newTask.setFont(new Font("Arial", Font.PLAIN, fontSize));
         newTask.setBorder(null);
         newTask.setVisible(true);
         newTask.setBackground(Color.WHITE);
@@ -169,7 +173,8 @@ public class TodoObject extends JPanel {
         add(sep, "span");
 
         JButton newTaskCompleteButton = new JButton();
-        newTaskCompleteButton.setPreferredSize(new Dimension((int) Math.round(10 * scale), (int) Math.round(10 * scale)));
+        newTaskCompleteButton.setSize(new Dimension(fontSize, fontSize));
+        newTaskCompleteButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
         newTaskCompleteButton.setMargin(new Insets(2, 2, 2, 2)); // Smaller padding
         newTaskCompleteButton.setFocusPainted(false);
         newTaskCompleteButton.addActionListener(e -> removeTaskFromList(newTask, newTaskCompleteButton, sep));
@@ -243,6 +248,13 @@ public class TodoObject extends JPanel {
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
         textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
         
+        for(JTextField tf: todoDict.keySet()){
+            tf.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        }
+        for(JButton button: todoDict.values()){
+            button.setFont(new Font("Arial", Font.PLAIN, fontSize));
+            button.setSize(new Dimension(fontSize, fontSize));
+        }
 
     }
 

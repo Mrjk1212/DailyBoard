@@ -1,10 +1,10 @@
 [
   {
     "type": "StickyNote",
-    "x": 524,
-    "y": 70,
-    "width": 101,
-    "height": 102,
+    "x": 434,
+    "y": 129,
+    "width": 75,
+    "height": 75,
     "colorR": 255,
     "colorG": 255,
     "colorB": 0,
@@ -12,10 +12,10 @@
   },
   {
     "type": "Calendar",
-    "x": -25,
-    "y": 68,
-    "width": 542,
-    "height": 396,
+    "x": 21,
+    "y": 129,
+    "width": 415,
+    "height": 319,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -23,16 +23,16 @@
   },
   {
     "type": "Todo",
-    "x": 636,
-    "y": 37,
-    "width": 196,
-    "height": 404,
+    "x": 546,
+    "y": 129,
+    "width": 147,
+    "height": 305,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
     "text": "TODO List",
     "todoListStrings": [
-      "Task 1"
+      "This is a task"
     ]
   }
 ]
