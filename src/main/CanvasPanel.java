@@ -18,6 +18,7 @@ public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
     private CalendarObject calendar;
     private TodoObject todo;
+    private WhiteBoardObject whiteBoard;
     
     private double scale = 1.0;
     private int offsetX = 0, offsetY = 0;
@@ -27,6 +28,7 @@ public class CanvasPanel extends JPanel {
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
     private List<CalendarObject> calendarObjectList = new ArrayList<>();
     private List<TodoObject> todoObjectList = new ArrayList<>();
+    private List<WhiteBoardObject> whiteBoardObjectList = new ArrayList<>();
 
     private static final double ZOOM_FACTOR = 0.1;
     private static final double MIN_SCALE = 0.1;
@@ -128,6 +130,22 @@ public class CanvasPanel extends JPanel {
                 td.repaintInside();
             }
 
+            for (WhiteBoardObject wb : whiteBoardObjectList) {
+                // Calculate distance from mouse to note
+                double dx = wb.getX() - mousePoint.x;
+                double dy = wb.getY() - mousePoint.y;
+                
+                // Scale this distance by the change in scale
+                double scaleChange = scale / oldScale;
+                dx *= scaleChange;
+                dy *= scaleChange;
+                
+                // Set new position relative to mouse point
+                wb.setLocation(
+                    (int)(mousePoint.x + dx),
+                    (int)(mousePoint.y + dy)
+                );
+            }
 
             repaint();
         });
@@ -169,6 +187,9 @@ public class CanvasPanel extends JPanel {
                     }
                     for (TodoObject obj : todoObjectList){
                         obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                    }
+                    for(WhiteBoardObject obj : whiteBoardObjectList){
+                        obj.setLocation(obj.getX() + dx,obj.getY() + dy);
                     }
                     repaint();
                 }
@@ -272,8 +293,11 @@ public class CanvasPanel extends JPanel {
         repaint();
     }
 
-    public void addParagraph() {
-        //objects.add(new ParagraphObject(700, 100, 300, 100, Color.PINK));
+    public void addWhiteBoard() {
+        WhiteBoardObject whiteBoard = new WhiteBoardObject(0, 0, 500, 500, Color.WHITE);
+        whiteBoardObjectList.add(whiteBoard);
+        
+        add(whiteBoard);
         repaint();
     }
 
@@ -388,9 +412,9 @@ public class CanvasPanel extends JPanel {
         addToDoListButton.addActionListener(e -> canvasPanel.addToDoList());
         toolBar.add(addToDoListButton);
 
-        JButton addParagraphButton = new JButton("Paragraph");
-        addParagraphButton.addActionListener(e -> canvasPanel.addParagraph());
-        toolBar.add(addParagraphButton);
+        JButton addWhiteBoardButton = new JButton("WhiteBoard");
+        addWhiteBoardButton.addActionListener(e -> canvasPanel.addWhiteBoard());
+        toolBar.add(addWhiteBoardButton);
 
         // Save board state on exit
         frame.addWindowListener(new WindowAdapter() {
