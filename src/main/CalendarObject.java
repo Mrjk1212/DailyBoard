@@ -113,10 +113,19 @@ public class CalendarObject extends JPanel {
             HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
             .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
             .setAccessType("offline")
+            .setApprovalPrompt("force") // Ensures new refresh token is granted
             .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
-        //returns an authorized Credential object.
+        // Reuse existing credential instead of requesting a new one
+        Credential credential = flow.loadCredential("user");
+        if (credential != null && credential.getRefreshToken() != null) {
+            System.out.println("Using stored refresh token.");
+            credential.refreshToken(); // Manually refresh
+        } else {
+            //not using stored token
+            credential = new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        }
+
         return credential;
     }
 
