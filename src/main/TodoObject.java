@@ -23,6 +23,10 @@ Add item = adds an item to the task list array and adds the item into the JPanel
 Item = String data in the
 X = Completed/Checkmark. aka removes item from list when clicked
 
+
+------BUGS--------
+Can still see cursor even after pressing enter after naming a task
+
 */
 
 /**
@@ -139,7 +143,6 @@ public class TodoObject extends JPanel {
 
     public void addTaskToList(String text){
         
-        System.out.println("Adding Task");
 
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
 
@@ -180,13 +183,12 @@ public class TodoObject extends JPanel {
         newTaskCompleteButton.addActionListener(e -> removeTaskFromList(newTask, newTaskCompleteButton, sep));
 
         todoDict.put(newTask, newTaskCompleteButton);
-        System.out.println("Added Task: " + newTask.getText());
-        System.out.println("Current Dict Size: " + todoDict.size());
+
         add(newTask, "span 7");
         add(newTaskCompleteButton, "width ::10, height ::10, wrap");
         
         revalidate();
-        repaintInside(); // Needs to scale text in tasks
+        repaintInside();
         repaint();
     }
 
@@ -214,9 +216,7 @@ public class TodoObject extends JPanel {
         List<String> saveList = new ArrayList<String>();
         for(JTextField tf: todoDict.keySet()){
             saveList.add(tf.getText());
-            System.out.println("Task: " + tf.getText());
         }
-        System.out.println("TodoDict Size: " + todoDict.size());
         return saveList;
     }
     
@@ -242,7 +242,7 @@ public class TodoObject extends JPanel {
         updateTextStyle();
     }
 
-    // Needs to scale text in tasks
+    
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));

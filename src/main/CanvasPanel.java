@@ -301,6 +301,13 @@ public class CanvasPanel extends JPanel {
         repaint();
     }
 
+    public void removeWhiteBoardObject(WhiteBoardObject wb){
+        whiteBoardObjectList.remove(wb);
+        remove(wb);
+        revalidate();
+        repaint();
+    }
+
     public void saveBoardState() {
         List<BoardObjectState> boardState = new ArrayList<>();
 
@@ -332,7 +339,7 @@ public class CanvasPanel extends JPanel {
                 td.getX(), td.getY(),
                 td.getWidth(), td.getHeight(),
                 td.getBackground(),
-                td.getText(),//td.getListContent() //TODO make this function return a list that can be rebuilt on application relaunch
+                td.getText(),
                 td.getList()
             ));
         }
