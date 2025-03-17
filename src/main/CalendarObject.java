@@ -138,7 +138,7 @@ public class CalendarObject extends JPanel {
                 .build();
     
         DateTime now = new DateTime(System.currentTimeMillis() - (System.currentTimeMillis() % (24L * 60 * 60 * 1000))); // Midnight today
-        DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 7L * 24 * 60 * 60 * 1000);
+        DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 6L * 24 * 60 * 60 * 1000);
         Events events = service.events().list("primary")
             .setMaxResults(50)
             .setTimeMin(now)
