@@ -419,7 +419,7 @@ public class CanvasPanel extends JPanel {
         addToDoListButton.addActionListener(e -> canvasPanel.addToDoList());
         toolBar.add(addToDoListButton);
 
-        JButton addWhiteBoardButton = new JButton("WhiteBoard");
+        JButton addWhiteBoardButton = new JButton("Under Construction");
         addWhiteBoardButton.addActionListener(e -> canvasPanel.addWhiteBoard());
         toolBar.add(addWhiteBoardButton);
 
