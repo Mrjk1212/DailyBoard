@@ -35,6 +35,7 @@ stay the same.
 public class StickyNoteObject extends JPanel {
     private JTextField textField;
     private JLabel displayLabel;
+    private JButton settingsButton;
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
@@ -53,6 +54,7 @@ public class StickyNoteObject extends JPanel {
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         setLayout(null);
+
 
         // Create a JLabel to display text
         displayLabel = new JLabel("", SwingConstants.CENTER);
@@ -108,6 +110,11 @@ public class StickyNoteObject extends JPanel {
                 else if(isInDeleteZone(e.getPoint())){
                     delete();
                 }
+                else if(isInSettingsZone(e.getPoint())){
+                    Color choosedColor = JColorChooser.showDialog(textField.getParent(), "Choose JPanel Background Color", color);
+                    setBackground(choosedColor);
+                    textField.setBackground(choosedColor);
+                }
                 else {
                     isResizing = false;
                 }
@@ -135,6 +142,9 @@ public class StickyNoteObject extends JPanel {
                 }
             }
         });
+
+
+
     }
 
     private void saveText() {
@@ -198,6 +208,12 @@ public class StickyNoteObject extends JPanel {
         return (p.x >= w - DELETE_MARGIN && p.y <= DELETE_MARGIN);
     }
 
+    private boolean isInSettingsZone(Point p) {
+        int w = getWidth();
+        int h = getHeight();
+        return (p.x <= RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -215,6 +231,12 @@ public class StickyNoteObject extends JPanel {
         // Draw delete box
         g2.setColor(Color.RED);
         g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+   
+        // Draw settings box
+        g2.setColor(Color.BLUE);
+        g2.fillRoundRect(0, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+   
+   
     }
 
     @Override
