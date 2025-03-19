@@ -1,32 +1,32 @@
 [
   {
     "type": "StickyNote",
-    "x": 42,
-    "y": 46,
-    "width": 118,
-    "height": 74,
+    "x": 246,
+    "y": 35,
+    "width": 131,
+    "height": 88,
     "colorR": 204,
     "colorG": 255,
     "colorB": 204,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003ethis is a note\u003c/body\u003e\u003c/html\u003e"
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eFix Scaling Issue, When zooming all the way out and in multiple times\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "StickyNote",
-    "x": 197,
-    "y": 45,
-    "width": 174,
-    "height": 50,
-    "colorR": 255,
-    "colorG": 51,
-    "colorB": 51,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis note is a really red one!\u003c/body\u003e\u003c/html\u003e"
+    "x": 384,
+    "y": 33,
+    "width": 120,
+    "height": 90,
+    "colorR": 204,
+    "colorG": 255,
+    "colorB": 255,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eDo Leetcode Once a day alteast.\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "Calendar",
-    "x": 265,
-    "y": 257,
-    "width": 457,
-    "height": 267,
+    "x": 245,
+    "y": 129,
+    "width": 436,
+    "height": 389,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -34,16 +34,18 @@
   },
   {
     "type": "Todo",
-    "x": 39,
-    "y": 139,
-    "width": 127,
-    "height": 183,
+    "x": 40,
+    "y": 133,
+    "width": 184,
+    "height": 224,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
-    "text": "TODO List",
+    "text": "TODO LIST",
     "todoListStrings": [
-      "This is a task"
+      "",
+      "Get Printer",
+      "Get Red Tape"
     ]
   }
 ]

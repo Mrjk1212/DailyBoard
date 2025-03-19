@@ -25,8 +25,8 @@ X = Completed/Checkmark. aka removes item from list when clicked
 
 
 ------BUGS--------
-Can still see cursor even after pressing enter after naming a task
-
+Can still see cursor even after pressing enter after naming a task and the header of the list.
+Need to preserve order of list on save and load.
 */
 
 /**
@@ -64,15 +64,14 @@ public class TodoObject extends JPanel {
         
         // Create a JTextField for input
         textField = new JTextField();
-        //textField.setBounds(5, 5, width - 10, height - 100);
-        textField.setFont(new Font("Arial", Font.PLAIN, 12));
+        textField.setFont(new Font("Arial", Font.BOLD, 16));
         textField.setBorder(null);
         textField.setVisible(true);
-        textField.setBackground(Color.WHITE);
-        textField.setForeground(Color.BLACK);
+        textField.setBackground(getBackground());
+        textField.setForeground(Color.WHITE);
         textField.setHorizontalAlignment(JTextField.CENTER);
                 
-        add(textField, "span 3, wrap");
+        add(textField, "span 7, wrap");
 
         // Add an ActionListener to disable editing when Enter is pressed
         textField.addActionListener(e -> {
@@ -152,7 +151,7 @@ public class TodoObject extends JPanel {
         newTask.setBorder(null);
         newTask.setVisible(true);
         newTask.setBackground(Color.WHITE);
-        newTask.setForeground(Color.BLACK);
+        newTask.setForeground(Color.WHITE);
         newTask.setOpaque(false);
         newTask.setHorizontalAlignment(JTextField.CENTER);
 
