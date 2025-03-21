@@ -1,32 +1,32 @@
 [
   {
     "type": "StickyNote",
-    "x": 21,
-    "y": 35,
-    "width": 200,
-    "height": 111,
+    "x": 65,
+    "y": 113,
+    "width": 228,
+    "height": 125,
     "colorR": 204,
     "colorG": 255,
     "colorB": 204,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eFix Scaling Issue, When zooming all the way out and in multiple times\u003c/body\u003e\u003c/html\u003e"
+    "text": ""
   },
   {
     "type": "StickyNote",
-    "x": 250,
-    "y": 39,
-    "width": 314,
-    "height": 98,
+    "x": 313,
+    "y": 3,
+    "width": 246,
+    "height": 211,
     "colorR": 204,
     "colorG": 255,
     "colorB": 204,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eDo Leetcode Once a a  day alteast.  Focus on: Array\u0027s, Lists, Maps, HashMaps... ect.\u003c/body\u003e\u003c/html\u003e"
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a brand new text area and this line should automatically wrap to the next line.\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "Calendar",
-    "x": 200,
-    "y": 172,
-    "width": 675,
-    "height": 603,
+    "x": 265,
+    "y": 270,
+    "width": 774,
+    "height": 692,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -34,17 +34,17 @@
   },
   {
     "type": "Todo",
-    "x": 22,
-    "y": 172,
-    "width": 120,
-    "height": 225,
+    "x": 65,
+    "y": 270,
+    "width": 136,
+    "height": 257,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
     "text": "TODO LIST",
     "todoListStrings": [
-      "Get Lighter",
-      "Get Printer"
+      "Get Printer",
+      "Get Lighter"
     ]
   }
 ]
