@@ -11,7 +11,7 @@ TODO
 -The Title can be smaller font.
 -Adjust Color of text to automatically set all text to be the correct either white or black for contrast.
 -SAVE THE TITLE for use on reload.
-
+- REMOVE THE USE OF JLABEL AND JUST USE A JTEXTAREA!!!!!!!
 
 --------BUGS----------
 -The Title JTextField Background does not change when changing the notes color.
@@ -68,7 +68,7 @@ public class StickyNoteObject extends JPanel {
 
         // Create a JTextField for input
         titleField = new JTextField();
-        titleField.setFont(new Font("Arial", Font.PLAIN, 14));
+        titleField.setFont(new Font("Arial", Font.PLAIN, 12));
         titleField.setBorder(null);
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
@@ -110,6 +110,8 @@ public class StickyNoteObject extends JPanel {
         sep.setForeground(getBackground().darker());
         add(sep, "span");
 
+
+        //StickyNote Text Components:
         // Create a JLabel to display text
         displayLabel = new JLabel("", SwingConstants.CENTER);
         displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -165,6 +167,9 @@ public class StickyNoteObject extends JPanel {
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
                 } 
+                else if (!textField.getBounds().contains(e.getPoint())) {
+                    requestFocusInWindow(); // This forces textField to lose focus
+                }
                 else {
                     isResizing = false;
                 }

@@ -2,24 +2,24 @@
   {
     "type": "StickyNote",
     "x": 65,
-    "y": 113,
+    "y": 114,
     "width": 228,
     "height": 125,
     "colorR": 204,
     "colorG": 255,
     "colorB": 204,
-    "text": ""
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is also a text area\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "StickyNote",
-    "x": 313,
-    "y": 3,
-    "width": 246,
-    "height": 211,
-    "colorR": 204,
+    "x": 360,
+    "y": 112,
+    "width": 225,
+    "height": 137,
+    "colorR": 255,
     "colorG": 255,
-    "colorB": 204,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eThis is a brand new text area and this line should automatically wrap to the next line.\u003c/body\u003e\u003c/html\u003e"
+    "colorB": 0,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003ethis is a lot of text that shuold wrap and be ncie tjos\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "Calendar",
@@ -43,7 +43,7 @@
     "colorB": 128,
     "text": "TODO LIST",
     "todoListStrings": [
-      "Get Printer",
+      "Get Printer 50$",
       "Get Lighter"
     ]
   }
