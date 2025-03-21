@@ -1,10 +1,10 @@
 [
   {
     "type": "StickyNote",
-    "x": 242,
-    "y": 102,
-    "width": 166,
-    "height": 108,
+    "x": 21,
+    "y": 35,
+    "width": 200,
+    "height": 111,
     "colorR": 204,
     "colorG": 255,
     "colorB": 204,
@@ -12,21 +12,21 @@
   },
   {
     "type": "StickyNote",
-    "x": 431,
-    "y": 102,
-    "width": 150,
-    "height": 110,
+    "x": 250,
+    "y": 39,
+    "width": 314,
+    "height": 98,
     "colorR": 204,
     "colorG": 255,
-    "colorB": 255,
-    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eDo Leetcode Once a day alteast.\u003c/body\u003e\u003c/html\u003e"
+    "colorB": 204,
+    "text": "\u003chtml\u003e\u003cbody style\u003d\u0027text-align:center\u0027\u003eDo Leetcode Once a a  day alteast.  Focus on: Array\u0027s, Lists, Maps, HashMaps... ect.\u003c/body\u003e\u003c/html\u003e"
   },
   {
     "type": "Calendar",
-    "x": 540,
-    "y": 218,
-    "width": 560,
-    "height": 500,
+    "x": 200,
+    "y": 172,
+    "width": 675,
+    "height": 603,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -34,17 +34,17 @@
   },
   {
     "type": "Todo",
-    "x": 28,
-    "y": 235,
-    "width": 233,
-    "height": 284,
+    "x": 22,
+    "y": 172,
+    "width": 120,
+    "height": 225,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
     "text": "TODO LIST",
     "todoListStrings": [
-      "Get Printer",
-      "Get Lighter"
+      "Get Lighter",
+      "Get Printer"
     ]
   }
 ]

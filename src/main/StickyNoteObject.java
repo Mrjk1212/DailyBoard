@@ -4,6 +4,8 @@ import java.io.File;
 
 import javax.swing.*;
 
+import net.miginfocom.swing.MigLayout;
+
 /* 
 TODO
 -Add an option to re-color each note so there can be distinction between them when zoomed out.
@@ -17,12 +19,10 @@ TODO
 --------------------------------------------------------------------
 
 --------BUGS----------
--There is no way to effectively make a blank sticky note after it has been
-written in. If you try and backspace all the text in it and then hit enter
-the note will not be overwritten with the blank input but will instead
-stay the same. 
-- this is fixed now I think, but i'll leave this here as a reminder to check this.
-
+-The Title JTextField Background does not change when changing the notes color.
+-The Title can be smaller font.
+-Adjust Color of text to automatically set all text to be the correct either white or black for contrast.
+-SAVE THE TITLE for use on reload.
 */
 
 /**
@@ -55,7 +55,7 @@ public class StickyNoteObject extends JPanel {
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        setLayout(null);
+        setLayout(new MigLayout("", "[grow, fill][][]", ""));
 
         final JPopupMenu popup = new JPopupMenu();
         popup.add(new JMenuItem(new AbstractAction("Delete") {
@@ -70,19 +70,50 @@ public class StickyNoteObject extends JPanel {
                     textField.setBackground(choosedColor);
             }
         }));
-        ImageIcon settingsIcon = new ImageIcon("C:/Users/Aaron/Documents/GitHub/DailyBoard/src/main/settingsIcon.jpg");
-        Image scaledImage = settingsIcon.getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH);
-        ImageIcon scaledSettingsIcon = new ImageIcon(scaledImage);
-        final JButton settingsButton = new JButton(scaledSettingsIcon);
+
+        // Create a JTextField for input
+        textField = new JTextField();
+        textField.setFont(new Font("Arial", Font.PLAIN, 14));
+        textField.setBorder(null);
+        textField.setVisible(true);
+        textField.setBackground(getBackground());
+        textField.setForeground(Color.BLACK);
+        textField.setHorizontalAlignment(JTextField.LEFT);
+                
+        add(textField, "span 2");
+
+        // Add an ActionListener to disable editing when Enter is pressed
+        textField.addActionListener(e -> {
+            textField.setEditable(false); // Disable editing
+            textField.setRequestFocusEnabled(false);
+        });
+        textField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                textField.setEditable(true); // Enable editing again
+                textField.setRequestFocusEnabled(true);
+            }
+        });
+
+
+        final JButton settingsButton = new JButton();
         settingsButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 popup.show(e.getComponent(), e.getX(), e.getY());
             }
         });
+        // Make the button transparent
+        settingsButton.setContentAreaFilled(false);
+        settingsButton.setBorderPainted(false);
+        settingsButton.setFocusPainted(false);
         settingsButton.setOpaque(false);
-        settingsButton.setBounds(0,0, 10,10);
-        settingsButton.setText(null);
-        add(settingsButton);
+        settingsButton.setText("...");
+        add(settingsButton, "span 1, wrap");
+
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBackground(getBackground().brighter());
+        sep.setForeground(getBackground().darker());
+        add(sep, "span");
 
         // Create a JLabel to display text
         displayLabel = new JLabel("", SwingConstants.CENTER);
@@ -90,7 +121,7 @@ public class StickyNoteObject extends JPanel {
         displayLabel.setBounds(5, 5, width - 10, height - 10);
         displayLabel.setHorizontalAlignment(JLabel.LEFT);
         displayLabel.setVerticalAlignment(JLabel.TOP);
-        add(displayLabel);
+        add(displayLabel, "span");
 
         // Create a JTextField for input
         textField = new JTextField();
@@ -99,7 +130,7 @@ public class StickyNoteObject extends JPanel {
         textField.setBorder(null);
         textField.setVisible(false); // Initially hidden
         textField.setBackground(color);
-        add(textField);
+        add(textField,"span");
 
         // Focus listener to update label when user clicks away
         textField.addFocusListener(new FocusAdapter() {
