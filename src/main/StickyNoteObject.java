@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.*;
 
 /* 
@@ -55,6 +57,32 @@ public class StickyNoteObject extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         setLayout(null);
 
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new AbstractAction("Delete") {
+            public void actionPerformed(ActionEvent e){
+                delete();
+            }
+        }));
+        popup.add(new JMenuItem(new AbstractAction("Color") {
+            public void actionPerformed(ActionEvent e){
+                Color choosedColor = JColorChooser.showDialog(textField.getParent(), "Choose JPanel Background Color", color);
+                    setBackground(choosedColor);
+                    textField.setBackground(choosedColor);
+            }
+        }));
+        ImageIcon settingsIcon = new ImageIcon("C:/Users/Aaron/Documents/GitHub/DailyBoard/src/main/settingsIcon.jpg");
+        Image scaledImage = settingsIcon.getImage().getScaledInstance(10, 10, Image.SCALE_SMOOTH);
+        ImageIcon scaledSettingsIcon = new ImageIcon(scaledImage);
+        final JButton settingsButton = new JButton(scaledSettingsIcon);
+        settingsButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        settingsButton.setOpaque(false);
+        settingsButton.setBounds(0,0, 10,10);
+        settingsButton.setText(null);
+        add(settingsButton);
 
         // Create a JLabel to display text
         displayLabel = new JLabel("", SwingConstants.CENTER);
@@ -107,14 +135,6 @@ public class StickyNoteObject extends JPanel {
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
                 } 
-                else if(isInDeleteZone(e.getPoint())){
-                    delete();
-                }
-                else if(isInSettingsZone(e.getPoint())){
-                    Color choosedColor = JColorChooser.showDialog(textField.getParent(), "Choose JPanel Background Color", color);
-                    setBackground(choosedColor);
-                    textField.setBackground(choosedColor);
-                }
                 else {
                     isResizing = false;
                 }
@@ -203,17 +223,6 @@ public class StickyNoteObject extends JPanel {
         return (p.x >= w - RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
     }
 
-    private boolean isInDeleteZone(Point p) {
-        int w = getWidth();
-        return (p.x >= w - DELETE_MARGIN && p.y <= DELETE_MARGIN);
-    }
-
-    private boolean isInSettingsZone(Point p) {
-        int w = getWidth();
-        int h = getHeight();
-        return (p.x <= RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -227,15 +236,6 @@ public class StickyNoteObject extends JPanel {
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-
-        // Draw delete box
-        g2.setColor(Color.RED);
-        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-   
-        // Draw settings box
-        g2.setColor(Color.BLUE);
-        g2.fillRoundRect(0, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-   
    
     }
 

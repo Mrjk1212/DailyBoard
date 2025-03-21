@@ -1,3 +1,4 @@
+StickyNoteObject$6.class
 WhiteBoardObject$1.class
 TodoObject$3.class
 CanvasPanel$2.class
@@ -16,10 +17,11 @@ CalendarObject$2.class
 EventTableRenderer.class
 StickyNoteObject$5.class
 TodoObject$2.class
+StickyNoteObject$7.class
 WhiteBoardObject.class
 WhiteBoardObject$2.class
 CanvasPanel$3.class
 StickyNoteObject$2.class
 CalendarObject$1.class
 StickyNoteObject$3.class
-main\saves\BoardObjectState.class
+StickyNoteObject$8.class
