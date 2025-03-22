@@ -8,8 +8,7 @@ import net.miginfocom.swing.MigLayout;
 
 /* 
 TODO
--Adjust Color of text to automatically set all text to be the correct either white or black for contrast.
--SAVE THE TITLE for use on reload.
+I think this is done actually :)
 --------BUGS BELOW----------
 
 

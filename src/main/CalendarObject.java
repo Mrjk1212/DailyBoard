@@ -420,10 +420,6 @@ public class CalendarObject extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Draw rounded rectangle background
-        g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth() - 10, getHeight() - 10, ARC_RADIUS, ARC_RADIUS);
-
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);

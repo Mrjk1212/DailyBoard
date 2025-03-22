@@ -40,7 +40,7 @@
     "x": 8,
     "y": 6,
     "width": 475,
-    "height": 380,
+    "height": 374,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -58,8 +58,8 @@
     "colorB": 128,
     "text": "TODO List",
     "todoListStrings": [
-      "Get Long Lighter For Jade",
-      "FIX THIS TODO LIST LOL"
+      "FIX THIS TODO LIST LOL",
+      "Get Long Lighter For Jade"
     ],
     "Title": ""
   }
