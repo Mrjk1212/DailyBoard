@@ -13,8 +13,8 @@ TODO
 -SAVE THE TITLE for use on reload.
 - REMOVE THE USE OF JLABEL AND JUST USE A JTEXTAREA!!!!!!!
 
---------BUGS----------
--The Title JTextField Background does not change when changing the notes color.
+--------BUGS BELOW----------
+
 
 */
 
@@ -30,8 +30,8 @@ TODO
 public class StickyNoteObject extends JPanel {
     private JTextField titleField;
     private JTextArea textField;
-    private JLabel displayLabel;
     private JButton settingsButton;
+    private JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
@@ -60,9 +60,14 @@ public class StickyNoteObject extends JPanel {
         popup.add(new JMenuItem(new AbstractAction("Color") {
             public void actionPerformed(ActionEvent e){
                 Color choosedColor = JColorChooser.showDialog(textField.getParent(), "Choose JPanel Background Color", color);
-                    setBackground(choosedColor);
-                    textField.setBackground(choosedColor);
-                    titleField.setBackground(choosedColor);
+                    
+                    if(choosedColor != null){
+                        setBackground(choosedColor);
+                        sep.setBackground(choosedColor.darker());
+                        sep.setForeground(choosedColor);
+                        textField.setBackground(choosedColor);
+                        titleField.setBackground(choosedColor);
+                    }
             }
         }));
 
@@ -105,20 +110,10 @@ public class StickyNoteObject extends JPanel {
         settingsButton.setText("...");
         add(settingsButton, "span 1, wrap");
 
-        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        
+        add(sep, "span");
         sep.setBackground(getBackground().brighter());
         sep.setForeground(getBackground().darker());
-        add(sep, "span");
-
-
-        //StickyNote Text Components:
-        // Create a JLabel to display text
-        displayLabel = new JLabel("", SwingConstants.CENTER);
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        displayLabel.setBounds(5, 5, width - 10, height - 10);
-        displayLabel.setHorizontalAlignment(JLabel.LEFT);
-        displayLabel.setVerticalAlignment(JLabel.TOP);
-        add(displayLabel, "span");
 
         // Create a JTextField for input
         textField = new JTextArea();
@@ -148,14 +143,6 @@ public class StickyNoteObject extends JPanel {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     saveText();
                 }
-            }
-        });
-
-        // Click event to allow text editing
-        displayLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                enterEditMode();
             }
         });
 
@@ -205,30 +192,18 @@ public class StickyNoteObject extends JPanel {
     private void saveText() {
         String text = textField.getText().trim();
         if (!text.isEmpty()) {
-            displayLabel.setText("<html><body style='text-align:center'>" + text.replace("\n", "<br>") + "</body></html>");
+            textField.setText(text);
         }
-        else{
-            displayLabel.setText("");
-        }
-        textField.setVisible(false);
-        displayLabel.setVisible(true);
     }
 
     
     public String getText() { 
-        return displayLabel.getText();
+        return textField.getText();
     }
 
     public void setText(String text) { 
-        displayLabel.setText(text);
+        textField.setText(text);
         updateTextStyle();
-    }
-
-    private void enterEditMode() {
-        textField.setText(displayLabel.getText().replaceAll("<br>", "\n").replaceAll("<[^>]*>", "")); // Remove HTML formatting
-        textField.setVisible(true);
-        displayLabel.setVisible(false);
-        textField.requestFocus();
     }
 
     public int getOriginalWidth() {
@@ -246,9 +221,7 @@ public class StickyNoteObject extends JPanel {
 
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
-        displayLabel.setFont(new Font("Arial", Font.PLAIN, fontSize));
         textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        displayLabel.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
         textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
     }
 
@@ -271,7 +244,7 @@ public class StickyNoteObject extends JPanel {
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-   
+    
     }
 
     @Override
