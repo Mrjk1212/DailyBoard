@@ -11,9 +11,10 @@ public class BoardObjectState {
     public int colorR, colorG, colorB; // Store color as RGB
     public String text; // For sticky notes
     public List<String> todoListStrings;
+    public String Title;
 
     // Constructor
-    public BoardObjectState(String type, int x, int y, int width, int height, Color color, String text, List<String> todoList) {
+    public BoardObjectState(String type, int x, int y, int width, int height, Color color, String text, List<String> todoList, String title) {
         this.type = type;
         this.x = x;
         this.y = y;
@@ -24,6 +25,7 @@ public class BoardObjectState {
         this.colorB = color.getBlue();
         this.text = text;
         this.todoListStrings = todoList;
+        this.Title = title;
     }
 
     // Convert stored color back to Color object

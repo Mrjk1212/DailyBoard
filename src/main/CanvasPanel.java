@@ -318,7 +318,8 @@ public class CanvasPanel extends JPanel {
                 note.getWidth(), note.getHeight(),
                 note.getBackground(),  // Get color
                 note.getText(),  // Get text content
-                null
+                (List<String>) null, //Type casting to null so I don't get some random null pointer exception!
+                note.getTitle()
             ));
         }
 
@@ -329,7 +330,8 @@ public class CanvasPanel extends JPanel {
                 cal.getWidth(), cal.getHeight(),
                 cal.getBackground(),  // Get color
                 "",  // Calendars dont store text lol
-                null
+                (List<String>) null,
+                ""
             ));
         }
 
@@ -340,7 +342,8 @@ public class CanvasPanel extends JPanel {
                 td.getWidth(), td.getHeight(),
                 td.getBackground(),
                 td.getText(),
-                td.getList()
+                td.getList(),
+                ""
             ));
         }
 
@@ -366,6 +369,7 @@ public class CanvasPanel extends JPanel {
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
                         note.setText(obj.text);
+                        note.setTitle(obj.Title);
                         stickyNoteObjectList.add(note);
                         add(note);
                     } else if (obj.type.equals("Calendar")) {

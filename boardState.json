@@ -1,39 +1,66 @@
 [
   {
     "type": "StickyNote",
-    "x": 342,
-    "y": 114,
-    "width": 208,
-    "height": 134,
-    "colorR": 238,
-    "colorG": 238,
-    "colorB": 238,
-    "text": "this is a lot of text and it will be needed to debug this all.\nthis\nis more text and this is text this is writteenafter and before sabing"
+    "x": 18,
+    "y": 406,
+    "width": 231,
+    "height": 109,
+    "colorR": 204,
+    "colorG": 255,
+    "colorB": 255,
+    "text": "This is a text block that should also be saved and remotely retain some semblance of the same formatting",
+    "Title": "This is a Title"
+  },
+  {
+    "type": "StickyNote",
+    "x": 262,
+    "y": 407,
+    "width": 198,
+    "height": 92,
+    "colorR": 255,
+    "colorG": 204,
+    "colorB": 204,
+    "text": "Try and do one leetcode problem per day",
+    "Title": "LeetCode"
+  },
+  {
+    "type": "StickyNote",
+    "x": 483,
+    "y": 409,
+    "width": 197,
+    "height": 91,
+    "colorR": 0,
+    "colorG": 0,
+    "colorB": 0,
+    "text": "heheehehehhehehehehhehehehheehehehehe.....",
+    "Title": "I love my sticky notes"
   },
   {
     "type": "Calendar",
-    "x": 220,
-    "y": 289,
-    "width": 774,
-    "height": 692,
+    "x": 8,
+    "y": 6,
+    "width": 475,
+    "height": 380,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
-    "text": ""
+    "text": "",
+    "Title": ""
   },
   {
     "type": "Todo",
-    "x": 20,
-    "y": 289,
-    "width": 136,
-    "height": 257,
+    "x": 502,
+    "y": 6,
+    "width": 214,
+    "height": 385,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
-    "text": "TODO LIST",
+    "text": "TODO List",
     "todoListStrings": [
-      "Get Lighter",
-      "Get Printer 50$"
-    ]
+      "Get Long Lighter For Jade",
+      "FIX THIS TODO LIST LOL"
+    ],
+    "Title": ""
   }
 ]

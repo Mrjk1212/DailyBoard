@@ -8,11 +8,8 @@ import net.miginfocom.swing.MigLayout;
 
 /* 
 TODO
--The Title can be smaller font.
 -Adjust Color of text to automatically set all text to be the correct either white or black for contrast.
 -SAVE THE TITLE for use on reload.
-- REMOVE THE USE OF JLABEL AND JUST USE A JTEXTAREA!!!!!!!
-
 --------BUGS BELOW----------
 
 
@@ -67,6 +64,11 @@ public class StickyNoteObject extends JPanel {
                         sep.setForeground(choosedColor);
                         textField.setBackground(choosedColor);
                         titleField.setBackground(choosedColor);
+                        //Set everything to have higher contrast with new selected color.
+                        // Adjust text color for readability
+                        textField.setForeground(getContrastColor(choosedColor));
+                        titleField.setForeground(getContrastColor(choosedColor));
+                        settingsButton.setForeground(getContrastColor(choosedColor));
                     }
             }
         }));
@@ -77,26 +79,31 @@ public class StickyNoteObject extends JPanel {
         titleField.setBorder(null);
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
-        titleField.setForeground(Color.BLACK);
+        titleField.setText("");
         titleField.setHorizontalAlignment(JTextField.LEFT);
                 
         add(titleField, "span 2");
 
-        // Add an ActionListener to disable editing when Enter is pressed
-        titleField.addActionListener(e -> {
-            titleField.setEditable(false); // Disable editing
-            titleField.setRequestFocusEnabled(false);
-        });
-        titleField.addMouseListener(new MouseAdapter() {
+        // Focus listener to update label when user clicks away
+        titleField.addFocusListener(new FocusAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                titleField.setEditable(true); // Enable editing again
-                titleField.setRequestFocusEnabled(true);
+            public void focusLost(FocusEvent e) {
+                saveText();
+            }
+        });
+
+        // Key listener to save text on Enter key press
+        titleField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    saveText();
+                }
             }
         });
 
 
-        final JButton settingsButton = new JButton();
+        settingsButton = new JButton();
         settingsButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 popup.show(e.getComponent(), e.getX(), e.getY());
@@ -122,11 +129,15 @@ public class StickyNoteObject extends JPanel {
         textField.setBorder(null);
         textField.setVisible(true);
         textField.setBackground(getBackground());
-        textField.setForeground(Color.BLACK);
         textField.setLineWrap(true);
         textField.setWrapStyleWord(true);
         textField.setOpaque(false);
         add(textField,"span");
+
+        // Adjust text color for readability after loading...
+        textField.setForeground(getContrastColor(getBackground()));
+        titleField.setForeground(getContrastColor(getBackground()));
+        settingsButton.setForeground(getContrastColor(getBackground()));
 
         // Focus listener to update label when user clicks away
         textField.addFocusListener(new FocusAdapter() {
@@ -154,9 +165,6 @@ public class StickyNoteObject extends JPanel {
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
                 } 
-                else if (!textField.getBounds().contains(e.getPoint())) {
-                    requestFocusInWindow(); // This forces textField to lose focus
-                }
                 else {
                     isResizing = false;
                 }
@@ -185,8 +193,12 @@ public class StickyNoteObject extends JPanel {
             }
         });
 
+    } // End Constructor
 
-
+    public Color getContrastColor(Color newColor){
+        double brightness = (0.299 * newColor.getRed()) + (0.587 * newColor.getGreen()) + (0.114 * newColor.getBlue());
+        Color contrastColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
+        return contrastColor;
     }
 
     private void saveText() {
@@ -194,11 +206,22 @@ public class StickyNoteObject extends JPanel {
         if (!text.isEmpty()) {
             textField.setText(text);
         }
+        String titleText = titleField.getText().trim();
+        if (!titleText.isEmpty()) {
+            titleField.setText(titleText);
+        }
     }
 
-    
     public String getText() { 
         return textField.getText();
+    }
+
+    public String getTitle() { 
+        return titleField.getText();
+    }
+
+    public void setTitle(String newTitle){
+        titleField.setText(newTitle);
     }
 
     public void setText(String text) { 
