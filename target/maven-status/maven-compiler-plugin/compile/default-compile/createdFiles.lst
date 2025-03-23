@@ -1,4 +1,5 @@
 StickyNoteObject$6.class
+CalendarObject$4.class
 WhiteBoardObject$1.class
 TodoObject$3.class
 CanvasPanel$2.class
@@ -20,6 +21,7 @@ TodoObject$4.class
 CalendarObject$2.class
 EventTableRenderer.class
 StickyNoteObject$5.class
+CalendarObject$3.class
 TodoObject$2.class
 StickyNoteObject$7.class
 WhiteBoardObject.class

@@ -41,6 +41,8 @@ TODO
 -
 */
 
+import net.miginfocom.swing.MigLayout;
+
 /**
  * CalendarObject represents a resizable and draggable component that allows
  * users to input a google account.
@@ -64,6 +66,8 @@ public class CalendarObject extends JPanel {
     private int originalHeight;
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
+    private JButton forwardWeekButton;
+    private JButton backwardWeekButton;
 
     private JTable eventTable;
     private JScrollPane scrollPane;
@@ -137,31 +141,39 @@ public class CalendarObject extends JPanel {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     
-        DateTime now = new DateTime(System.currentTimeMillis() - (System.currentTimeMillis() % (24L * 60 * 60 * 1000))); // Midnight today
-        DateTime oneWeekLater = new DateTime(System.currentTimeMillis() + 6L * 24 * 60 * 60 * 1000);
+        long currentMillis = System.currentTimeMillis();
+        long millisPerDay = 24L * 60 * 60 * 1000;
+    
+        // Midnight at the start of 3 days ago
+        DateTime threeDaysAgo = new DateTime(currentMillis - (1 * millisPerDay) - (currentMillis % millisPerDay));
+    
+        // 11:59:59 PM of the third day from today
+        DateTime threeDaysLater = new DateTime(threeDaysAgo.getValue() + (3 * millisPerDay) + (23 * 60 * 60 * 1000) + (59 * 60 * 1000) + (59 * 1000));
+    
         Events events = service.events().list("primary")
             .setMaxResults(50)
-            .setTimeMin(now)
-            .setTimeMax(oneWeekLater)
+            .setTimeMin(threeDaysAgo)  // Start from 3 days ago
+            .setTimeMax(threeDaysLater)  // End at 11:59:59 PM of 3 days from today
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute();
+    
         List<Event> eventList = events.getItems();
         if (eventList.isEmpty()) {
-            System.out.println("No upcoming events found.");
+            System.out.println("No events found in this range.");
             return Collections.emptyList();
         } else {
             for (Event event : eventList) {
-            DateTime start = event.getStart().getDateTime();
-            if (start == null) {
-                start = event.getStart().getDate();
-            }
-            System.out.printf("%s (%s)\n", event.getSummary(), start);
-
+                DateTime start = event.getStart().getDateTime();
+                if (start == null) {
+                    start = event.getStart().getDate();
+                }
+                System.out.printf("%s (%s)\n", event.getSummary(), start);
             }
             return eventList;
         }
     }
+    
 
     // Helper method to format time in AM/PM format
     private static String formatTime(int hour) {
@@ -194,12 +206,12 @@ public class CalendarObject extends JPanel {
         tableModel.setRowCount(0);
         tableModel.setColumnCount(0);
     
-        // Generate next 7 days as columns
+        // Generate next 4 days as columns
         java.util.Calendar calendar = java.util.Calendar.getInstance();
-        String[] columns = new String[8]; // 1 extra for "Time" column
+        String[] columns = new String[5]; // 1 extra for "Time" column
         columns[0] = "Time";
     
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 4; i++) {
             String dayName = dayFormat.format(calendar.getTime());
             String date = dateFormat.format(calendar.getTime());
             columns[i + 1] = dayName + " - " + date;
@@ -209,9 +221,9 @@ public class CalendarObject extends JPanel {
         tableModel.setColumnIdentifiers(columns);
     
         // Special row for all-day events
-        Object[] allDayRow = new Object[8];
+        Object[] allDayRow = new Object[5];
         allDayRow[0] = "All Day"; // Label for the first column
-        for (int i = 1; i < 8; i++) {
+        for (int i = 1; i < 5; i++) {
             allDayRow[i] = ""; // Initialize empty slots for events
         }
         tableModel.addRow(allDayRow);
@@ -255,7 +267,7 @@ public class CalendarObject extends JPanel {
     
             String eventDay = dayFormat.format(eventStart);
             int dayIndex = -1;
-            for (int i = 1; i <= 7; i++) {
+            for (int i = 1; i <= 4; i++) {
                 if (columns[i].startsWith(eventDay)) {
                     dayIndex = i;
                     break;
@@ -281,6 +293,9 @@ public class CalendarObject extends JPanel {
         tableModel.fireTableDataChanged();
     }
 
+
+
+
     
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -289,7 +304,29 @@ public class CalendarObject extends JPanel {
         setBounds(xPos, yPos, width, height);
         setOpaque(false);
         
-        setLayout(null);
+        setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill]", ""));
+
+        forwardWeekButton = new JButton(">");
+        backwardWeekButton = new JButton("<");
+
+        forwardWeekButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                //call function to go forward 4 days.
+
+            }
+        });
+        backwardWeekButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                //call function to go backwards 4 days.
+
+            }
+        });
+
+        add(backwardWeekButton, "span 1");
+        add(forwardWeekButton, "span 1, wrap");
+        
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        add(sep, "span, wrap");
 
         // Table setup
         String[] columnNames = {"Day", "Time", "Event"};
@@ -305,7 +342,7 @@ public class CalendarObject extends JPanel {
         eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         eventTable.getTableHeader().setForeground(Color.BLACK);
         eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));
-        eventTable.setBounds(0,0,width,height);
+        //eventTable.setBounds(0,0,width,height);
         
 
         // ScrollPane setup to show only 12 rows at a time
@@ -326,8 +363,8 @@ public class CalendarObject extends JPanel {
         });
         scrollPane.setEnabled(false);
         
-        scrollPane.setBounds(0, 0, width, tableHeight);
-        add(scrollPane, BorderLayout.CENTER);
+        //scrollPane.setBounds(0, 0, width, tableHeight);
+        add(scrollPane, "span, grow, push");
         
         // Populate the table
         try {
