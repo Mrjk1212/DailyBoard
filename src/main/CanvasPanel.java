@@ -271,7 +271,7 @@ public class CanvasPanel extends JPanel {
     }
 
     public void addToDoList() {
-        todo = new TodoObject(50, 50, 200, 400, Color.GRAY);
+        todo = new TodoObject(50, 50, 200, 400, new Color(245, 245, 245)); //Off White
         todoObjectList.add(todo);
         // Update size to account for zoom out/in
         todo.setBounds(

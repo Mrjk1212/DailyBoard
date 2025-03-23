@@ -4,6 +4,7 @@ TodoObject$3.class
 CanvasPanel$2.class
 GoogleCalendarTest.class
 StickyNoteObject$1.class
+TodoObject$5.class
 CanvasPanel.class
 TodoObject.class
 WhiteBoardObject$3.class
@@ -11,6 +12,8 @@ StickyNoteObject.class
 StickyNoteObject$9.class
 TodoObject$1.class
 CalendarObject.class
+CircleButton$1.class
+TodoObject$7.class
 CanvasPanel$1.class
 StickyNoteObject$4.class
 TodoObject$4.class
@@ -23,7 +26,9 @@ WhiteBoardObject.class
 WhiteBoardObject$2.class
 CanvasPanel$3.class
 StickyNoteObject$2.class
+TodoObject$6.class
 CalendarObject$1.class
+CircleButton.class
 StickyNoteObject$3.class
 StickyNoteObject$8.class
 main\saves\BoardObjectState.class

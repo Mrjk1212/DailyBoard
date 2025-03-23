@@ -8,6 +8,8 @@ import net.miginfocom.swing.MigLayout;
 import java.util.HashMap;
 import java.util.Map;
 
+import main.customComponents.*;
+
 /* 
 TODO
 --------LIST NAME----------
@@ -40,38 +42,40 @@ Need to preserve order of list on save and load.
  */
 public class TodoObject extends JPanel {
     private JTextField textField;
+    private JButton settingsButton;
+    private JSeparator titleSep;
     private JButton addTaskButton;
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
-    private static final int DELETE_MARGIN = 10;
     private static final Color RESIZE_COLOR = Color.GRAY;
     private int originalWidth;
     private int originalHeight;
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
 
-    private Map<JTextField, JButton> todoDict = new HashMap<>();
+    private Map<JTextField, CircleButton> todoDict = new HashMap<>();
+    private List<JSeparator> sepList = new ArrayList<>();
 
     public TodoObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
-        setLayout(new MigLayout("", "[grow, fill][][]", ""));//
+        setLayout(new MigLayout("", "[grow, fill][][]", ""));
         setBackground(color);
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         
         // Create a JTextField for input
-        textField = new JTextField();
+        textField = new JTextField("Todo List");
         textField.setFont(new Font("Arial", Font.BOLD, 16));
         textField.setBorder(null);
         textField.setVisible(true);
         textField.setBackground(getBackground());
-        textField.setForeground(Color.WHITE);
-        textField.setHorizontalAlignment(JTextField.CENTER);
+        textField.setForeground(getContrastColor(getBackground()));
+        textField.setHorizontalAlignment(JTextField.LEFT);
                 
-        add(textField, "span 7, wrap");
+        add(textField, "span 7");
 
         // Add an ActionListener to disable editing when Enter is pressed
         textField.addActionListener(e -> {
@@ -86,17 +90,77 @@ public class TodoObject extends JPanel {
             }
         });
 
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new AbstractAction("Delete") {
+            public void actionPerformed(ActionEvent e){
+                delete();
+            }
+        }));
+        popup.add(new JMenuItem(new AbstractAction("Color") {
+            public void actionPerformed(ActionEvent e){
+                Color choosedColor = JColorChooser.showDialog(textField.getParent(), "Choose JPanel Background Color", color);
+                    
+                    if(choosedColor != null){
+                        setBackground(choosedColor);
+                        
+                        textField.setBackground(getBackground());
+                        textField.setForeground(getContrastColor(getBackground()));
+                        //Set everything to have higher contrast with new selected color.
+                        // Adjust text color for readability
+                        titleSep.setBackground(getBackground());
+                        titleSep.setForeground(getBackground().darker());
+
+                        for(JTextField task : todoDict.keySet()){
+                            task.setBackground(getBackground());
+                            task.setForeground(getContrastColor(getBackground()));
+                        }
+                        for(CircleButton cButton : todoDict.values()){
+                            cButton.setBackground(getContrastColor(getBackground()));
+                            cButton.setForeground(getContrastColor(getBackground()));
+                        }
+                        for(JSeparator sep : sepList){
+                            sep.setBackground(getBackground());
+                            sep.setForeground(getBackground().darker());
+                        }
+                        addTaskButton.setBackground(getBackground());
+                        addTaskButton.setForeground(getContrastColor(getBackground()));
+                        settingsButton.setForeground(getContrastColor(choosedColor));
+                    }
+            }
+        }));
+
+        settingsButton = new JButton();
+        settingsButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        // Make the button transparent
+        settingsButton.setContentAreaFilled(false);
+        settingsButton.setBorderPainted(false);
+        settingsButton.setFocusPainted(false);
+        settingsButton.setOpaque(false);
+        settingsButton.setText("...");
+        settingsButton.setHorizontalAlignment(JButton.RIGHT);
+        settingsButton.setForeground(getContrastColor(getBackground()));
+        add(settingsButton, "right, gapbefore push, wrap");
+
+        titleSep = new JSeparator(SwingConstants.HORIZONTAL);
+        titleSep.setBackground(getBackground());
+        titleSep.setForeground(getBackground().darker());
+        add(titleSep, "span");
+
         // Create a JButton
-        addTaskButton = new JButton("+  Add Task");
+        addTaskButton = new JButton("Add Task +");
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, 12));
         addTaskButton.setOpaque(false);
-        addTaskButton.setBackground(Color.BLACK);
-        addTaskButton.setForeground(Color.WHITE);
+        addTaskButton.setBackground(getBackground());
+        addTaskButton.setForeground(getContrastColor(getBackground()));
         addTaskButton.setBorder(null);
         addTaskButton.setFocusPainted(false);
         
         addTaskButton.setHorizontalAlignment(JButton.LEFT);
-        addTaskButton.addActionListener(e -> addTaskToList(""));
+        addTaskButton.addActionListener(e -> addTaskToList("Example Text"));
         add(addTaskButton, "span 3, wrap");
  
 
@@ -108,9 +172,6 @@ public class TodoObject extends JPanel {
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
                 } 
-                else if(isInDeleteZone(e.getPoint())){
-                    delete();
-                }
                 else {
                     isResizing = false;
                 }
@@ -138,6 +199,9 @@ public class TodoObject extends JPanel {
                 }
             }
         });
+        updateTextStyle();
+        revalidate();
+        repaint();
     }
 
     public void addTaskToList(String text){
@@ -150,10 +214,10 @@ public class TodoObject extends JPanel {
         newTask.setFont(new Font("Arial", Font.PLAIN, fontSize));
         newTask.setBorder(null);
         newTask.setVisible(true);
-        newTask.setBackground(Color.WHITE);
-        newTask.setForeground(Color.WHITE);
+        newTask.setBackground(getContrastColor(getBackground()));
+        newTask.setForeground(getContrastColor(getBackground()));
         newTask.setOpaque(false);
-        newTask.setHorizontalAlignment(JTextField.CENTER);
+        newTask.setHorizontalAlignment(JTextField.LEFT);
 
         // Add an ActionListener to disable editing when Enter is pressed
         newTask.addActionListener(e -> {
@@ -171,27 +235,27 @@ public class TodoObject extends JPanel {
         
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
         sep.setBackground(getBackground());
-        sep.setForeground(Color.LIGHT_GRAY);
+        sep.setForeground(getBackground().darker());
+        sepList.add(sep);
         add(sep, "span");
 
-        JButton newTaskCompleteButton = new JButton();
-        newTaskCompleteButton.setSize(new Dimension(fontSize, fontSize));
-        newTaskCompleteButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        newTaskCompleteButton.setMargin(new Insets(2, 2, 2, 2)); // Smaller padding
+        CircleButton newTaskCompleteButton = new CircleButton(15);
         newTaskCompleteButton.setFocusPainted(false);
+        newTaskCompleteButton.setBackground(getContrastColor(getBackground()));
+        newTaskCompleteButton.setForeground(getContrastColor(getBackground()));
         newTaskCompleteButton.addActionListener(e -> removeTaskFromList(newTask, newTaskCompleteButton, sep));
-
+        
         todoDict.put(newTask, newTaskCompleteButton);
 
         add(newTask, "span 7");
-        add(newTaskCompleteButton, "width ::10, height ::10, wrap");
+        add(newTaskCompleteButton, "gapleft push, wrap");
         
         revalidate();
         repaintInside();
         repaint();
     }
 
-    private void removeTaskFromList(JTextField tf, JButton button, JSeparator sep){
+    private void removeTaskFromList(JTextField tf, CircleButton button, JSeparator sep){
         todoDict.remove(tf, button);
 
         remove(tf);
@@ -201,6 +265,12 @@ public class TodoObject extends JPanel {
         revalidate();
         repaint();
 
+    }
+
+    public Color getContrastColor(Color newColor){
+        double brightness = (0.299 * newColor.getRed()) + (0.587 * newColor.getGreen()) + (0.114 * newColor.getBlue());
+        Color contrastColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
+        return contrastColor;
     }
 
     private void saveText() {
@@ -244,13 +314,14 @@ public class TodoObject extends JPanel {
     
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
+        int titleSize = Math.max(1, (int) Math.round(16 * scale));
         addTaskButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
-        textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        textField.setFont(new Font("Arial", Font.PLAIN, titleSize));
         
         for(JTextField tf: todoDict.keySet()){
             tf.setFont(new Font("Arial", Font.PLAIN, fontSize));
         }
-        for(JButton button: todoDict.values()){
+        for(CircleButton button: todoDict.values()){
             button.setFont(new Font("Arial", Font.PLAIN, fontSize));
             button.setSize(new Dimension(fontSize, fontSize));
         }
@@ -261,11 +332,6 @@ public class TodoObject extends JPanel {
         int w = getWidth();
         int h = getHeight();
         return (p.x >= w - RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
-    }
-
-    private boolean isInDeleteZone(Point p) {
-        int w = getWidth();
-        return (p.x >= w - DELETE_MARGIN && p.y <= DELETE_MARGIN);
     }
 
     @Override
@@ -282,9 +348,6 @@ public class TodoObject extends JPanel {
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
 
-        // Draw delete box
-        g2.setColor(Color.RED);
-        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
     }
 
     @Override

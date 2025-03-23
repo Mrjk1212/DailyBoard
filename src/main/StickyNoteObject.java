@@ -10,7 +10,7 @@ import net.miginfocom.swing.MigLayout;
 TODO
 I think this is done actually :)
 --------BUGS BELOW----------
-
+-Hard to resize when the note is small and the text is "covering" the resize area
 
 */
 
