@@ -74,7 +74,7 @@ public class TodoObject extends JPanel {
         textField.setBackground(getBackground());
         textField.setForeground(getContrastColor(getBackground()));
         textField.setHorizontalAlignment(JTextField.LEFT);
-                
+        textField.setBounds(5,5, width - 50, 30);
         add(textField, "span 7");
 
         // Add an ActionListener to disable editing when Enter is pressed
@@ -143,11 +143,13 @@ public class TodoObject extends JPanel {
         settingsButton.setText("...");
         settingsButton.setHorizontalAlignment(JButton.RIGHT);
         settingsButton.setForeground(getContrastColor(getBackground()));
+        settingsButton.setBounds(width - 40,5, 30, 30);
         add(settingsButton, "right, gapbefore push, wrap");
 
         titleSep = new JSeparator(SwingConstants.HORIZONTAL);
         titleSep.setBackground(getBackground());
         titleSep.setForeground(getBackground().darker());
+        titleSep.setBounds(5, 30, width, 1);
         add(titleSep, "span");
 
         // Create a JButton
@@ -161,6 +163,7 @@ public class TodoObject extends JPanel {
         
         addTaskButton.setHorizontalAlignment(JButton.LEFT);
         addTaskButton.addActionListener(e -> addTaskToList("Example Text"));
+        addTaskButton.setBounds(5,45, width, 15);
         add(addTaskButton, "span 3, wrap");
  
 

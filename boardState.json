@@ -1,10 +1,10 @@
 [
   {
     "type": "StickyNote",
-    "x": 717,
-    "y": 111,
-    "width": 144,
-    "height": 71,
+    "x": 437,
+    "y": 113,
+    "width": 119,
+    "height": 58,
     "colorR": 204,
     "colorG": 102,
     "colorB": 255,
@@ -13,10 +13,10 @@
   },
   {
     "type": "Calendar",
-    "x": 157,
-    "y": 87,
-    "width": 495,
-    "height": 360,
+    "x": 5,
+    "y": 93,
+    "width": 412,
+    "height": 300,
     "colorR": 245,
     "colorG": 245,
     "colorB": 245,
@@ -25,10 +25,10 @@
   },
   {
     "type": "Todo",
-    "x": 708,
-    "y": 196,
-    "width": 122,
-    "height": 98,
+    "x": 428,
+    "y": 186,
+    "width": 101,
+    "height": 81,
     "colorR": 153,
     "colorG": 153,
     "colorB": 255,
@@ -37,6 +37,19 @@
       "Bananas",
       "Touch Aaron\u0027s Patootie"
     ],
+    "Title": ""
+  },
+  {
+    "type": "Todo",
+    "x": 579,
+    "y": 112,
+    "width": 185,
+    "height": 370,
+    "colorR": 255,
+    "colorG": 204,
+    "colorB": 204,
+    "text": "Bugs:",
+    "todoListStrings": [],
     "Title": ""
   }
 ]
