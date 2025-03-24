@@ -331,7 +331,7 @@ public class CalendarObject extends JPanel {
         
     
         // Midnight at the start of today
-        currentDayStart = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        currentDayStart = LocalDateTime.now().withHour(00).withMinute(00).withSecond(00);
         
     
         // 11:59:59 PM of the third day from today
@@ -345,8 +345,8 @@ public class CalendarObject extends JPanel {
                 //call function to go forward 4 days.
                 // Populate the table
                 
-                currentDayStart = currentDayStart.plusDays(4).withHour(1).withMinute(00).withSecond(00);// now equal to 3 days from now.
-                threeDaysLater = currentDayStart.plusDays(4).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
+                currentDayStart = currentDayStart.plusDays(4).withHour(00).withMinute(00).withSecond(00);// now equal to 3 days from now.
+                threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
 
                 try {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
@@ -369,8 +369,8 @@ public class CalendarObject extends JPanel {
             public void mousePressed(MouseEvent e){
                 //call function to go backwards 4 days.
                 // Populate the table
-                threeDaysLater = currentDayStart;// now equal to current time.
-                currentDayStart = currentDayStart.minusDays(4).withHour(1).withMinute(00).withSecond(00);// now equal to 3 days from now.
+                currentDayStart = currentDayStart.minusDays(4).withHour(00).withMinute(00).withSecond(00);// now equal to 3 days from now.
+                threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
 
                 try {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
