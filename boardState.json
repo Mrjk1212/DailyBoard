@@ -1,10 +1,10 @@
 [
   {
     "type": "StickyNote",
-    "x": 721,
-    "y": 95,
-    "width": 160,
-    "height": 79,
+    "x": 717,
+    "y": 111,
+    "width": 144,
+    "height": 71,
     "colorR": 204,
     "colorG": 102,
     "colorB": 255,
@@ -13,10 +13,10 @@
   },
   {
     "type": "Calendar",
-    "x": 80,
-    "y": 44,
-    "width": 550,
-    "height": 400,
+    "x": 157,
+    "y": 87,
+    "width": 495,
+    "height": 360,
     "colorR": 245,
     "colorG": 245,
     "colorB": 245,
@@ -25,17 +25,17 @@
   },
   {
     "type": "Todo",
-    "x": 711,
-    "y": 189,
-    "width": 136,
-    "height": 109,
+    "x": 708,
+    "y": 196,
+    "width": 122,
+    "height": 98,
     "colorR": 153,
     "colorG": 153,
     "colorB": 255,
     "text": "Todo List",
     "todoListStrings": [
-      "Touch Aaron\u0027s Patootie",
-      "Bananas"
+      "Bananas",
+      "Touch Aaron\u0027s Patootie"
     ],
     "Title": ""
   }

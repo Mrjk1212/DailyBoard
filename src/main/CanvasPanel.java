@@ -248,7 +248,11 @@ public class CanvasPanel extends JPanel {
 
 
     public void addCalendar() {
-        calendar = new CalendarObject(300, 300, 550, 400, Color.GRAY);
+        int scaledX = (int) (300 * scale);
+        int scaledY = (int) (300 * scale);
+        int scaledWidth = (int) (550 * scale);
+        int scaledHeight = (int) (400 * scale);
+        calendar = new CalendarObject(scaledX, scaledY, scaledWidth, scaledHeight, new Color(245,245,245));//Color = offwhite
         calendarObjectList.add(calendar);
         // Update size to account for zoom out/in
         calendar.setBounds(
@@ -257,9 +261,9 @@ public class CanvasPanel extends JPanel {
             (int)(calendar.getOriginalWidth() * scale),
             (int)(calendar.getOriginalHeight() * scale)
         );
+        add(calendar);
         calendar.setScale(scale);
         calendar.repaintInside();
-        add(calendar);
         repaint();
     }
 
