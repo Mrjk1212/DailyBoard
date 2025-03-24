@@ -314,9 +314,10 @@ public class CalendarObject extends JPanel {
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
-        setBounds(xPos, yPos, width, height);
-        setOpaque(false);
         setBackground(color);
+        setOpaque(false);
+        setBounds(xPos, yPos, width, height);
+        setBorder(BorderFactory.createLineBorder(Color.GRAY));
         
         setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill][grow, fill]", ""));
 
@@ -337,8 +338,20 @@ public class CalendarObject extends JPanel {
         // 11:59:59 PM of the third day from today
         threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);
 
-        forwardWeekButton = new JButton(">");
-        backwardWeekButton = new JButton("<");
+        forwardWeekButton = new JButton();
+        backwardWeekButton = new JButton();
+        // Make the button transparent
+        forwardWeekButton.setContentAreaFilled(false);
+        forwardWeekButton.setBorderPainted(false);
+        forwardWeekButton.setFocusPainted(false);
+        forwardWeekButton.setOpaque(false);
+        forwardWeekButton.setText(">");
+        // Make the button transparent
+        backwardWeekButton.setContentAreaFilled(false);
+        backwardWeekButton.setBorderPainted(false);
+        backwardWeekButton.setFocusPainted(false);
+        backwardWeekButton.setOpaque(false);
+        backwardWeekButton.setText("<");
 
         forwardWeekButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
@@ -401,13 +414,17 @@ public class CalendarObject extends JPanel {
         + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
         + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
 
-        add(calRange, "growx, span 1");
-
-        add(backwardWeekButton, "gapleft push, span 1");
-        add(forwardWeekButton, "gapright push, span 1");
+        
+        add(calRange, "growx, span 1,h 30!");
+        add(backwardWeekButton, "gapleft push, span 1, h 30!");
+        add(forwardWeekButton, "gapright push, span 1, h 30!");
+        
+        calRange.setPreferredSize(new Dimension(30, 30));
+        backwardWeekButton.setPreferredSize(new Dimension(30, 30));
+        forwardWeekButton.setPreferredSize(new Dimension(30, 30));
 
         //settings button here ("gap left push, span 1, wrap")
-        settingsButton = new JButton("..."); 
+        settingsButton = new JButton(); 
 
         settingsButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
@@ -419,8 +436,9 @@ public class CalendarObject extends JPanel {
         settingsButton.setBorderPainted(false);
         settingsButton.setFocusPainted(false);
         settingsButton.setOpaque(false);
+        settingsButton.setPreferredSize(new Dimension(30, 30));
         settingsButton.setText("...");
-        add(settingsButton, "gapleft push, span 1, wrap");
+        add(settingsButton, "span 1, wrap, h 30!");
 
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
         sep.setBackground(Color.GRAY);
@@ -440,9 +458,7 @@ public class CalendarObject extends JPanel {
         eventTable.getTableHeader().setBackground(new Color(250, 249, 248));
         eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         eventTable.getTableHeader().setForeground(Color.BLACK);
-        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));
-        //eventTable.setBounds(0,0,width,height);
-        
+        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));        
 
         // ScrollPane setup to show only 12 rows at a time
         eventTable.setRowHeight(30);
@@ -461,9 +477,8 @@ public class CalendarObject extends JPanel {
             verticalBar.setValue(verticalBar.getValue() + e.getWheelRotation() * verticalBar.getUnitIncrement() * 40);
         });
         scrollPane.setEnabled(false);
-        
-        //scrollPane.setBounds(0, 0, width, tableHeight);
-        add(scrollPane, "span, grow, push");
+
+        add(scrollPane, "span");
         
         // Populate the table
         try {
@@ -527,14 +542,13 @@ public class CalendarObject extends JPanel {
 
     public void setScale(double newScale) {
         this.scale = newScale;
-        updateTextStyle();
     }
     
     private void updateTextStyle() {
-        //int fontSize = Math.max(1, (int) Math.round(12));
-        //eventTable.setFont(new Font("Aptos", Font.PLAIN, fontSize));
-        eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 20);
-        //scrollPane.setFont(new Font("Aptos", Font.PLAIN, fontSize));
+        settingsButton.setBounds(500, 5, 50, 30);
+        forwardWeekButton.setBounds(400, 5, 50, 30);
+        backwardWeekButton.setBounds(300, 5, 50, 30);
+        calRange.setBounds(5, 5, 200, 30);
         scrollPane.setBounds(5, 50, getWidth() - 10, getHeight() - 10);
         repaint();
     }
@@ -552,9 +566,14 @@ public class CalendarObject extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        // Draw rounded rectangle background
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), ARC_RADIUS, ARC_RADIUS);
+
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+    
     }
 
     @Override
