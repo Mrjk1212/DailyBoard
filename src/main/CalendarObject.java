@@ -42,7 +42,7 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 /* 
 TODO
--Go Back And Forward Weeks.
+-
 -
 -
 */
@@ -66,7 +66,6 @@ public class CalendarObject extends JPanel {
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
-    private static final int DELETE_MARGIN = 10;
     private static final Color RESIZE_COLOR = Color.LIGHT_GRAY;
     private int originalWidth;
     private int originalHeight;
@@ -74,6 +73,7 @@ public class CalendarObject extends JPanel {
     private int ARC_RADIUS = 10;
     private JButton forwardWeekButton;
     private JButton backwardWeekButton;
+    private JButton settingsButton;
 
     private JTable eventTable;
     private JScrollPane scrollPane;
@@ -198,7 +198,7 @@ public class CalendarObject extends JPanel {
         int eventHour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
         int eventMinute = calendar.get(java.util.Calendar.MINUTE);
     
-        // The first row (index 0) is the header row, so shift the index by +1
+        // The first row (index 0) is the header row and the second row is All Day Events, so shift the index by +2
         return (eventHour * 2) + (eventMinute >= 30 ? 2 : 1);
     }
 
@@ -216,7 +216,7 @@ public class CalendarObject extends JPanel {
         tableModel.setRowCount(0);
         tableModel.setColumnCount(0);
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////IMPORTANT SPOT///////////////////////////////////////////////////////////
         // Generate next 4 days as columns
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         String[] columns = new String[5]; // 1 extra for "Time" column
@@ -231,7 +231,7 @@ public class CalendarObject extends JPanel {
         }
     
         tableModel.setColumnIdentifiers(columns);
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////IMPORTANT SPOT///////////////////////////////////////////////////////////
     
         // Special row for all-day events
         Object[] allDayRow = new Object[5];
@@ -319,8 +319,15 @@ public class CalendarObject extends JPanel {
         
         setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill]", ""));
 
-        long currentMillis = System.currentTimeMillis();
-        long millisPerDay = 24L * 60 * 60 * 1000;
+
+
+        final JPopupMenu popup = new JPopupMenu();
+        popup.add(new JMenuItem(new AbstractAction("Delete") {
+            public void actionPerformed(ActionEvent e){
+                delete();
+            }
+        }));
+        
     
         // Midnight at the start of today
         currentDayStart = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
@@ -344,7 +351,7 @@ public class CalendarObject extends JPanel {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
                     populateTable(eventList, currentDayStart);
                     tableModel.fireTableDataChanged();
-                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
                     
                     revalidate();
                     repaint();
@@ -365,7 +372,7 @@ public class CalendarObject extends JPanel {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
                     populateTable(eventList, currentDayStart);
                     tableModel.fireTableDataChanged();
-                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
                     
                     revalidate();
                     repaint();
@@ -376,11 +383,27 @@ public class CalendarObject extends JPanel {
         });
 
         add(backwardWeekButton, "gapleft push, span 1");
-        add(forwardWeekButton, "gapleft push, span 1, wrap");
+        add(forwardWeekButton, "gapleft push, span 1");
         
         //settings button here ("gap left push, span 1, wrap")
+        settingsButton = new JButton("..."); 
+
+        settingsButton.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e){
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        // Make the button transparent
+        settingsButton.setContentAreaFilled(false);
+        settingsButton.setBorderPainted(false);
+        settingsButton.setFocusPainted(false);
+        settingsButton.setOpaque(false);
+        settingsButton.setText("...");
+        add(settingsButton, "gapleft push, span 1, wrap");
 
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setBackground(Color.GRAY);
+        sep.setForeground(Color.LIGHT_GRAY);
         add(sep, "grow, span, wrap");
 
         // Table setup
@@ -426,7 +449,7 @@ public class CalendarObject extends JPanel {
             List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
             populateTable(eventList, currentDayStart);
             tableModel.fireTableDataChanged();
-            eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
+            eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
             revalidate();
             repaint();
         } catch (IOException | GeneralSecurityException e) {
@@ -439,9 +462,6 @@ public class CalendarObject extends JPanel {
                 initialClick = e.getPoint();
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
-                }
-                else if(isInDeleteZone(e.getPoint())){
-                    delete();
                 }
                 else {
                     isResizing = false;
@@ -501,11 +521,6 @@ public class CalendarObject extends JPanel {
         return (p.x >= w - RESIZE_MARGIN && p.y >= h - RESIZE_MARGIN);
     }
 
-    private boolean isInDeleteZone(Point p) {
-        int w = getWidth();
-        return (p.x >= w - DELETE_MARGIN && p.y <= DELETE_MARGIN);
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -515,10 +530,6 @@ public class CalendarObject extends JPanel {
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-
-        // Draw delete box
-        g2.setColor(Color.RED);
-        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
     }
 
     @Override

@@ -20,6 +20,7 @@ StickyNoteObject$4.class
 TodoObject$4.class
 CalendarObject$2.class
 EventTableRenderer.class
+CalendarObject$5.class
 StickyNoteObject$5.class
 CalendarObject$3.class
 TodoObject$2.class
@@ -32,5 +33,6 @@ TodoObject$6.class
 CalendarObject$1.class
 CircleButton.class
 StickyNoteObject$3.class
+CalendarObject$6.class
 StickyNoteObject$8.class
 main\saves\BoardObjectState.class

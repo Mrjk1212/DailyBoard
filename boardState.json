@@ -1,46 +1,22 @@
 [
   {
     "type": "StickyNote",
-    "x": 902,
-    "y": 17,
-    "width": 386,
-    "height": 99,
+    "x": 519,
+    "y": 34,
+    "width": 268,
+    "height": 158,
     "colorR": 204,
-    "colorG": 255,
+    "colorG": 102,
     "colorB": 255,
-    "text": "This is a text block that should also be saved and remotely retain some semblance of the same formatting",
-    "Title": "This is a Title"
-  },
-  {
-    "type": "StickyNote",
-    "x": 903,
-    "y": 317,
-    "width": 370,
-    "height": 138,
-    "colorR": 255,
-    "colorG": 204,
-    "colorB": 204,
-    "text": "Try and do one leetcode problem per day",
-    "Title": "LeetCode"
-  },
-  {
-    "type": "StickyNote",
-    "x": 901,
-    "y": 152,
-    "width": 384,
-    "height": 129,
-    "colorR": 0,
-    "colorG": 0,
-    "colorB": 0,
-    "text": "heheehehehhehehehehhehehehheehehehehe.....",
-    "Title": "I love my sticky notes"
+    "text": "Hello my dear wonderful fiance!!\nPlease let me touch your patootie\nYou are the love of my life and should let me do what I want with you.\nI love you soooooo muchh",
+    "Title": "My Sincere Plea"
   },
   {
     "type": "Calendar",
-    "x": 45,
-    "y": 18,
-    "width": 541,
-    "height": 922,
+    "x": 27,
+    "y": 19,
+    "width": 479,
+    "height": 536,
     "colorR": 128,
     "colorG": 128,
     "colorB": 128,
@@ -49,16 +25,17 @@
   },
   {
     "type": "Todo",
-    "x": 627,
-    "y": 25,
-    "width": 230,
-    "height": 414,
-    "colorR": 204,
-    "colorG": 204,
+    "x": 524,
+    "y": 206,
+    "width": 255,
+    "height": 161,
+    "colorR": 153,
+    "colorG": 153,
     "colorB": 255,
-    "text": "List",
+    "text": "Todo List",
     "todoListStrings": [
-      "do this"
+      "Touch Aaron\u0027s Patootie",
+      "Bananas"
     ],
     "Title": ""
   }
