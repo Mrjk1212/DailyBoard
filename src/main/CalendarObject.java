@@ -12,7 +12,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -73,6 +79,9 @@ public class CalendarObject extends JPanel {
     private JScrollPane scrollPane;
     private DefaultTableModel tableModel;
 
+    private LocalDateTime currentDayStart;
+    private LocalDateTime threeDaysLater;
+    private String timeZone = "America/Chicago";
 
     /**
     * Application name.
@@ -133,27 +142,28 @@ public class CalendarObject extends JPanel {
         return credential;
     }
 
-    public List<Event> listWeeksEvents() throws IOException, GeneralSecurityException {
+    public DateTime toGoogleDateTime(LocalDateTime startTime, String zoneId) {
+        ZonedDateTime zdtSource = startTime.atZone(ZoneId.of(zoneId));
+        Date date = Date.from(zdtSource.toInstant());
+        return new DateTime(date, TimeZone.getTimeZone(ZoneId.of(zoneId)));
+    }
+
+    public List<Event> listWeeksEvents(LocalDateTime now, LocalDateTime threeDaysLater) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service =
             new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
-    
-        long currentMillis = System.currentTimeMillis();
-        long millisPerDay = 24L * 60 * 60 * 1000;
-    
-        // Midnight at the start of 3 days ago
-        DateTime threeDaysAgo = new DateTime(currentMillis - (1 * millisPerDay) - (currentMillis % millisPerDay));
-    
-        // 11:59:59 PM of the third day from today
-        DateTime threeDaysLater = new DateTime(threeDaysAgo.getValue() + (3 * millisPerDay) + (23 * 60 * 60 * 1000) + (59 * 60 * 1000) + (59 * 1000));
+
+        //Convert Localdatetime into google API DateTime.
+        DateTime googleNow = toGoogleDateTime(now, timeZone);
+        DateTime googleThreeDaysLater = toGoogleDateTime(threeDaysLater, timeZone);
     
         Events events = service.events().list("primary")
             .setMaxResults(50)
-            .setTimeMin(threeDaysAgo)  // Start from 3 days ago
-            .setTimeMax(threeDaysLater)  // End at 11:59:59 PM of 3 days from today
+            .setTimeMin(googleNow)  // Start from 3 days ago
+            .setTimeMax(googleThreeDaysLater)  // End at 11:59:59 PM of 3 days from today
             .setOrderBy("startTime")
             .setSingleEvents(true)
             .execute();
@@ -192,7 +202,7 @@ public class CalendarObject extends JPanel {
         return (eventHour * 2) + (eventMinute >= 30 ? 2 : 1);
     }
 
-    public void populateTable(List<Event> events) {
+    public void populateTable(List<Event> events, LocalDateTime startDay) {
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEE"); // "Sunday"
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd"); // "5/11"
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a"); // "12:30 PM"
@@ -205,20 +215,23 @@ public class CalendarObject extends JPanel {
         // Clear existing table data
         tableModel.setRowCount(0);
         tableModel.setColumnCount(0);
-    
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Generate next 4 days as columns
         java.util.Calendar calendar = java.util.Calendar.getInstance();
         String[] columns = new String[5]; // 1 extra for "Time" column
         columns[0] = "Time";
     
         for (int i = 0; i < 4; i++) {
-            String dayName = dayFormat.format(calendar.getTime());
-            String date = dateFormat.format(calendar.getTime());
-            columns[i + 1] = dayName + " - " + date;
-            calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
+            //String dayName = dayFormat.format(startDay.getdat());
+            //String date = dateFormat.format(startDay.getDayOfMonth());
+            columns[i + 1] = startDay.getDayOfWeek().getDisplayName(TextStyle.SHORT, getLocale()) + " - " + Integer.toString(startDay.getDayOfMonth());
+            startDay = startDay.plusDays(1).withHour(23).withMinute(59).withSecond(59); //increase by one day?
+            //calendar.add(java.util.Calendar.DAY_OF_MONTH, 1);
         }
     
         tableModel.setColumnIdentifiers(columns);
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     
         // Special row for all-day events
         Object[] allDayRow = new Object[5];
@@ -233,14 +246,14 @@ public class CalendarObject extends JPanel {
         for (int hour = 0; hour < totalHours; hour++) {
             String timeLabel = formatTime(hour);
             tableModel.addRow(new Object[]{timeLabel, "", "", "", "", "", "", ""}); // Full hour
-            tableModel.addRow(new Object[]{" ", "", "", "", "", "", "", ""}); // Half-hour
+            tableModel.addRow(new Object[]{"", "", "", "", "", "", "", ""}); // Half-hour
         }
     
         // Initialize the cell renderer
         EventTableRenderer renderer = new EventTableRenderer();
         eventTable.setDefaultRenderer(Object.class, renderer);
     
-        // Set the current time label to be colored
+        // Set the current time label to be colored on the side bar
         DateTime nowDateTime = new DateTime(System.currentTimeMillis());
         Date now = new Date(nowDateTime.getValue());
         renderer.addEventCell(getRowIndexForTime(now), 0, new Color(190, 218, 240));
@@ -289,7 +302,7 @@ public class CalendarObject extends JPanel {
             String newValue = (existingValue == null || existingValue.toString().isEmpty()) ? event.getSummary() : existingValue + ", " + event.getSummary();
             tableModel.setValueAt(newValue, startRow, dayIndex);
         }
-    
+        
         tableModel.fireTableDataChanged();
     }
 
@@ -300,11 +313,21 @@ public class CalendarObject extends JPanel {
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
         originalHeight = height;
-        setBackground(color);
         setBounds(xPos, yPos, width, height);
         setOpaque(false);
+        setBackground(color);
         
         setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill]", ""));
+
+        long currentMillis = System.currentTimeMillis();
+        long millisPerDay = 24L * 60 * 60 * 1000;
+    
+        // Midnight at the start of today
+        currentDayStart = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
+        
+    
+        // 11:59:59 PM of the third day from today
+        threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);
 
         forwardWeekButton = new JButton(">");
         backwardWeekButton = new JButton("<");
@@ -312,28 +335,60 @@ public class CalendarObject extends JPanel {
         forwardWeekButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 //call function to go forward 4 days.
+                // Populate the table
+                
+                currentDayStart = currentDayStart.plusDays(4).withHour(1).withMinute(00).withSecond(00);// now equal to 3 days from now.
+                threeDaysLater = currentDayStart.plusDays(4).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
+
+                try {
+                    List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                    populateTable(eventList, currentDayStart);
+                    tableModel.fireTableDataChanged();
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
+                    
+                    revalidate();
+                    repaint();
+                } catch (IOException | GeneralSecurityException errorGoingForward) {
+                    errorGoingForward.printStackTrace();
+                }
 
             }
         });
         backwardWeekButton.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e){
                 //call function to go backwards 4 days.
+                // Populate the table
+                threeDaysLater = currentDayStart;// now equal to current time.
+                currentDayStart = currentDayStart.minusDays(4).withHour(1).withMinute(00).withSecond(00);// now equal to 3 days from now.
 
+                try {
+                    List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                    populateTable(eventList, currentDayStart);
+                    tableModel.fireTableDataChanged();
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
+                    
+                    revalidate();
+                    repaint();
+                } catch (IOException | GeneralSecurityException errorGoingBackward) {
+                    errorGoingBackward.printStackTrace();
+                }
             }
         });
 
-        add(backwardWeekButton, "span 1");
-        add(forwardWeekButton, "span 1, wrap");
+        add(backwardWeekButton, "gapleft push, span 1");
+        add(forwardWeekButton, "gapleft push, span 1, wrap");
         
+        //settings button here ("gap left push, span 1, wrap")
+
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
-        add(sep, "span, wrap");
+        add(sep, "grow, span, wrap");
 
         // Table setup
         String[] columnNames = {"Day", "Time", "Event"};
         tableModel = new DefaultTableModel(columnNames, 0);
         eventTable = new JTable(tableModel);
         eventTable.setEnabled(false);
-        eventTable.setBackground(new Color(250, 249, 248));
+        eventTable.setBackground(Color.RED);
         eventTable.setShowGrid(false);
         eventTable.setBorder(BorderFactory.createEmptyBorder());
         eventTable.setIntercellSpacing(new Dimension(0, 0));
@@ -368,8 +423,8 @@ public class CalendarObject extends JPanel {
         
         // Populate the table
         try {
-            List<Event> eventList = listWeeksEvents();
-            populateTable(eventList);
+            List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+            populateTable(eventList, currentDayStart);
             tableModel.fireTableDataChanged();
             eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Remove time column header as a test to see if it's more visually appealing
             revalidate();
@@ -395,7 +450,7 @@ public class CalendarObject extends JPanel {
         });
 
         addMouseMotionListener(new MouseAdapter() {
-            @Override
+            @Override     
             public void mouseDragged(MouseEvent e) {
                 if (initialClick == null) return;
 
@@ -431,11 +486,11 @@ public class CalendarObject extends JPanel {
     }
     
     private void updateTextStyle() {
-        int fontSize = Math.max(1, (int) Math.round(12));
-        eventTable.setFont(new Font("Aptos", Font.PLAIN, fontSize));
-        eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
-        scrollPane.setFont(new Font("Aptos", Font.PLAIN, fontSize));
-        scrollPane.setBounds(0, 0, getWidth() - 10, getHeight() - 10);
+        //int fontSize = Math.max(1, (int) Math.round(12));
+        //eventTable.setFont(new Font("Aptos", Font.PLAIN, fontSize));
+        eventTable.setBounds(0, 0, getWidth() - 10, getHeight() - 20);
+        //scrollPane.setFont(new Font("Aptos", Font.PLAIN, fontSize));
+        scrollPane.setBounds(5, 50, getWidth() - 10, getHeight() - 10);
         repaint();
     }
     
