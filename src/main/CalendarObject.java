@@ -74,6 +74,7 @@ public class CalendarObject extends JPanel {
     private JButton forwardWeekButton;
     private JButton backwardWeekButton;
     private JButton settingsButton;
+    private JLabel calRange;
 
     private JTable eventTable;
     private JScrollPane scrollPane;
@@ -317,7 +318,7 @@ public class CalendarObject extends JPanel {
         setOpaque(false);
         setBackground(color);
         
-        setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill]", ""));
+        setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill][grow, fill]", ""));
 
 
 
@@ -351,8 +352,11 @@ public class CalendarObject extends JPanel {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
                     populateTable(eventList, currentDayStart);
                     tableModel.fireTableDataChanged();
-                    eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
-                    
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
+                    calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+                    + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+                    + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+                    + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
                     revalidate();
                     repaint();
                 } catch (IOException | GeneralSecurityException errorGoingForward) {
@@ -372,8 +376,11 @@ public class CalendarObject extends JPanel {
                     List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
                     populateTable(eventList, currentDayStart);
                     tableModel.fireTableDataChanged();
-                    eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
-                    
+                    eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
+                    calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+                    + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+                    + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+                    + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
                     revalidate();
                     repaint();
                 } catch (IOException | GeneralSecurityException errorGoingBackward) {
@@ -382,9 +389,23 @@ public class CalendarObject extends JPanel {
             }
         });
 
+        calRange = new JLabel();
+        calRange.setOpaque(false);
+        calRange.setBackground(color);
+        calRange.setForeground(Color.BLACK);
+        calRange.setVisible(true);
+        calRange.setFont(new Font("Arial", Font.BOLD, 12));
+
+        calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+        + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+        + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+        + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+
+        add(calRange, "growx, span 1");
+
         add(backwardWeekButton, "gapleft push, span 1");
-        add(forwardWeekButton, "gapleft push, span 1");
-        
+        add(forwardWeekButton, "gapright push, span 1");
+
         //settings button here ("gap left push, span 1, wrap")
         settingsButton = new JButton("..."); 
 
@@ -449,7 +470,11 @@ public class CalendarObject extends JPanel {
             List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
             populateTable(eventList, currentDayStart);
             tableModel.fireTableDataChanged();
-            eventTable.getColumnModel().getColumn(0).setHeaderValue(currentDayStart.getMonth().getDisplayName(TextStyle.SHORT, getLocale())); //Display Month in the first row first col -> 0,0
+            eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
+            calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+            + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+            + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+            + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
             revalidate();
             repaint();
         } catch (IOException | GeneralSecurityException e) {
