@@ -42,8 +42,8 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 /* 
 TODO
--
--
+- Add support for ICalendar file import
+- Add support for Outlook calendar?
 -
 */
 
