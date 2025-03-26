@@ -115,7 +115,7 @@ public class TodoObject extends JPanel {
                             task.setForeground(getContrastColor(getBackground()));
                         }
                         for(CircleButton cButton : todoDict.values()){
-                            cButton.setBackground(getContrastColor(getBackground()));
+                            cButton.setBackground(getBackground());
                             cButton.setForeground(getContrastColor(getBackground()));
                         }
                         for(JSeparator sep : sepList){
@@ -244,8 +244,8 @@ public class TodoObject extends JPanel {
 
         CircleButton newTaskCompleteButton = new CircleButton(15);
         newTaskCompleteButton.setFocusPainted(false);
-        newTaskCompleteButton.setBackground(getContrastColor(getBackground()));
-        newTaskCompleteButton.setForeground(getContrastColor(getBackground()));
+        newTaskCompleteButton.setBackground(getBackground());
+        newTaskCompleteButton.setForeground(getBackground().brighter());
         newTaskCompleteButton.addActionListener(e -> removeTaskFromList(newTask, newTaskCompleteButton, sep));
         
         todoDict.put(newTask, newTaskCompleteButton);

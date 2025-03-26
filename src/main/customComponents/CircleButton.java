@@ -65,7 +65,7 @@ public class CircleButton extends JButton {
         int diameter = getDiameter();
         int radius = diameter / 2;
 
-        g.setColor(mousePressed ? Color.LIGHT_GRAY : Color.WHITE);
+        g.setColor(mousePressed ? getBackground().darker() : getBackground());
         g.fillOval(getWidth() / 2 - radius, getHeight() / 2 - radius, diameter - 2, diameter - 2);
 
         g.setColor(mouseOver ? Color.BLUE : Color.BLACK);
