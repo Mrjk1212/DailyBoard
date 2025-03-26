@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import javax.swing.*;
+import main.customComponents.*;
 
 import net.miginfocom.swing.MigLayout;
 import java.util.Date;
@@ -32,7 +33,7 @@ public class GoalObject extends JPanel {
     private JTextField titleField;
     private JTextArea textField;
     private JButton settingsButton;
-    private JButton dateButton;
+    private RoundedButton dateButton;
     private JLabel daysRemainingLabel;
     private JSpinner dateJSpinner;
     private JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
@@ -56,9 +57,10 @@ public class GoalObject extends JPanel {
         setLayout(new MigLayout("", "[grow, fill][][][]", ""));
 
         // Date picker
-        dateButton = new JButton("Pick Date");
+        dateButton = new RoundedButton(100, 30, "Select Date");
         dateButton.addActionListener(e -> showDatePicker());
-        dateButton.setForeground(Color.BLACK);
+        dateButton.setBackground(getBackground());
+        dateButton.setForeground(getContrastColor(getBackground()));
         add(dateButton, "span 1, gapright push");
 
         // Label to display days remaining
@@ -85,8 +87,10 @@ public class GoalObject extends JPanel {
                         textField.setBackground(choosedColor);
                         titleField.setBackground(choosedColor);
                         daysRemainingLabel.setBackground(choosedColor);
+                        dateButton.setBackground(choosedColor);
                         //Set everything to have higher contrast with new selected color.
                         // Adjust text color for readability
+                        dateButton.setForeground(getContrastColor(choosedColor));
                         textField.setForeground(getContrastColor(choosedColor));
                         titleField.setForeground(getContrastColor(choosedColor));
                         settingsButton.setForeground(getContrastColor(choosedColor));

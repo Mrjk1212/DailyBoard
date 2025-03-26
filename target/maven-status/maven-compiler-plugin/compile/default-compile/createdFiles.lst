@@ -17,6 +17,7 @@ CanvasPanel$3.class
 StickyNoteObject$2.class
 TodoObject$6.class
 CalendarObject$1.class
+RoundedButton.class
 GoalObject$1.class
 StickyNoteObject$8.class
 main\saves\BoardObjectState.class
@@ -28,6 +29,7 @@ GoogleCalendarTest.class
 TodoObject$5.class
 TodoObject.class
 StickyNoteObject$9.class
+RoundedButton$1.class
 TodoObject$1.class
 CircleButton$1.class
 CanvasPanel$1.class
