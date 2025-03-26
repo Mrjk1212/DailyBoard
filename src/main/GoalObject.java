@@ -1,10 +1,15 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 import javax.swing.*;
 
 import net.miginfocom.swing.MigLayout;
+import java.util.Date;
+import java.util.Calendar;
+
 
 /* 
 TODO
@@ -27,16 +32,19 @@ public class GoalObject extends JPanel {
     private JTextField titleField;
     private JTextArea textField;
     private JButton settingsButton;
+    private JButton dateButton;
+    private JLabel daysRemainingLabel;
+    private JSpinner dateJSpinner;
     private JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
     private Point initialClick;
     private boolean isResizing;
     private static final int RESIZE_MARGIN = 10;
-    private static final int DELETE_MARGIN = 10;
     private static final Color RESIZE_COLOR = Color.GRAY;
     private int originalWidth;
     private int originalHeight;
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
+    private Date selectedDate;
 
     public GoalObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -46,6 +54,19 @@ public class GoalObject extends JPanel {
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         setLayout(new MigLayout("", "[grow, fill][][][]", ""));
+
+        // Date picker
+        dateButton = new JButton("Pick Date");
+        dateButton.addActionListener(e -> showDatePicker());
+        dateButton.setForeground(Color.BLACK);
+        add(dateButton, "span 1, gapright push");
+
+        // Label to display days remaining
+        daysRemainingLabel = new JLabel("- Days");
+        daysRemainingLabel.setBackground(getBackground());
+        daysRemainingLabel.setForeground(getContrastColor(getBackground()));
+        daysRemainingLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        add(daysRemainingLabel, "gapleft push, span 1, wrap");
 
         final JPopupMenu popup = new JPopupMenu();
         popup.add(new JMenuItem(new AbstractAction("Delete") {
@@ -63,21 +84,24 @@ public class GoalObject extends JPanel {
                         sep.setForeground(choosedColor);
                         textField.setBackground(choosedColor);
                         titleField.setBackground(choosedColor);
+                        daysRemainingLabel.setBackground(choosedColor);
                         //Set everything to have higher contrast with new selected color.
                         // Adjust text color for readability
                         textField.setForeground(getContrastColor(choosedColor));
                         titleField.setForeground(getContrastColor(choosedColor));
                         settingsButton.setForeground(getContrastColor(choosedColor));
+                        daysRemainingLabel.setForeground(getContrastColor(choosedColor));
                     }
             }
         }));
 
         // Create a JTextField for input
         titleField = new JTextField();
-        titleField.setFont(new Font("Arial", Font.PLAIN, 12));
+        titleField.setFont(new Font("Arial", Font.BOLD, 14));
         titleField.setBorder(null);
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
+        titleField.setForeground(getContrastColor(getBackground()));
         titleField.setText("");
         titleField.setHorizontalAlignment(JTextField.LEFT);
                 
@@ -124,37 +148,16 @@ public class GoalObject extends JPanel {
         // Create a JTextField for input
         textField = new JTextArea();
         textField.setBounds(5, 5, width - 10, height - 10);
-        textField.setFont(new Font("Arial", Font.PLAIN, 12));
+        textField.setFont(new Font("Arial", Font.BOLD, 12));
         textField.setBorder(null);
+        textField.setEditable(false);
         textField.setVisible(true);
         textField.setBackground(getBackground());
+        textField.setForeground(getContrastColor(getBackground()));
         textField.setLineWrap(true);
         textField.setWrapStyleWord(true);
         textField.setOpaque(false);
-        add(textField,"span");
-
-        // Adjust text color for readability after loading...
-        textField.setForeground(getContrastColor(getBackground()));
-        titleField.setForeground(getContrastColor(getBackground()));
-        settingsButton.setForeground(getContrastColor(getBackground()));
-
-        // Focus listener to update label when user clicks away
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                saveText();
-            }
-        });
-
-        // Key listener to save text on Enter key press
-        textField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    saveText();
-                }
-            }
-        });
+        add(textField,"span 3");
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -194,10 +197,46 @@ public class GoalObject extends JPanel {
 
     } // End Constructor
 
+
+    // Function to show date picker
+    private void showDatePicker() {
+        // Use JSpinner with Date Model
+        JSpinner spinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor editor = new JSpinner.DateEditor(spinner, "yyyy-MM-dd");
+        spinner.setEditor(editor);
+
+        int option = JOptionPane.showConfirmDialog(this, spinner, "Select Date", JOptionPane.OK_CANCEL_OPTION);
+        if (option == JOptionPane.OK_OPTION) {
+            selectedDate = (Date) spinner.getValue();
+
+            updateDaysRemaining(selectedDate);
+        }
+    }
+
+    // Function to update label with days remaining
+    private void updateDaysRemaining(Date localSelectedDate) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate targetDate = new java.sql.Date(localSelectedDate.getTime()).toLocalDate();
+        long daysLeft = ChronoUnit.DAYS.between(today, targetDate);
+
+        daysRemainingLabel.setText(daysLeft + "\n" + " Days");
+        textField.setText("Due: " + targetDate);
+    }
+
     public Color getContrastColor(Color newColor){
         double brightness = (0.299 * newColor.getRed()) + (0.587 * newColor.getGreen()) + (0.114 * newColor.getBlue());
         Color contrastColor = (brightness > 128) ? Color.BLACK : Color.WHITE;
         return contrastColor;
+    }
+
+    public void setDate(Date savedDate){
+        selectedDate = savedDate;
+        updateDaysRemaining(selectedDate);
+    }
+
+    public Date getDate(){
+        return selectedDate;
     }
 
     private void saveText() {
@@ -243,8 +282,12 @@ public class GoalObject extends JPanel {
 
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
-        textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        int biggerFontSize = Math.max(1, (int) Math.round(14 * scale));
+        textField.setFont(new Font("Arial", Font.BOLD, fontSize));
         textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
+        titleField.setFont(new Font("Arial", Font.BOLD, biggerFontSize));
+        dateButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        daysRemainingLabel.setFont(new Font("Arial", Font.BOLD, biggerFontSize));
     }
 
     private boolean isInResizeZone(Point p) {

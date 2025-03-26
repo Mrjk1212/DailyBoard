@@ -14,11 +14,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
+
+//TODO
+/*
+- Relocate to origin button so you cant get lost
+- Fix spawning in items so that they "find" open screen space first.
+-
+-
+ */
+
 public class CanvasPanel extends JPanel {
     private StickyNoteObject stickyNote;
     private CalendarObject calendar;
     private TodoObject todo;
     private WhiteBoardObject whiteBoard;
+    private GoalObject goal;
     
     private double scale = 1.0;
     private int offsetX = 0, offsetY = 0;
@@ -29,6 +39,7 @@ public class CanvasPanel extends JPanel {
     private List<CalendarObject> calendarObjectList = new ArrayList<>();
     private List<TodoObject> todoObjectList = new ArrayList<>();
     private List<WhiteBoardObject> whiteBoardObjectList = new ArrayList<>();
+    private List<GoalObject> goalObjectList = new ArrayList<>();
 
     private static final double ZOOM_FACTOR = 0.1;
     private static final double MIN_SCALE = 0.1;
@@ -147,6 +158,33 @@ public class CanvasPanel extends JPanel {
                 );
             }
 
+            for (GoalObject Goal : goalObjectList) {
+                // Calculate distance from mouse to note
+                double dx = Goal.getX() - mousePoint.x;
+                double dy = Goal.getY() - mousePoint.y;
+                
+                // Scale this distance by the change in scale
+                double scaleChange = scale / oldScale;
+                dx *= scaleChange;
+                dy *= scaleChange;
+                
+                // Set new position relative to mouse point
+                Goal.setLocation(
+                    (int)(mousePoint.x + dx),
+                    (int)(mousePoint.y + dy)
+                );
+                
+                // Update size
+                Goal.setBounds(
+                    Goal.getX(),
+                    Goal.getY(),
+                    (int)(Goal.getOriginalWidth() * scale),
+                    (int)(Goal.getOriginalHeight() * scale)
+                );
+                Goal.setScale(scale);
+                Goal.repaintInside();
+            }
+
             repaint();
         });
 
@@ -189,6 +227,9 @@ public class CanvasPanel extends JPanel {
                         obj.setLocation(obj.getX() + dx, obj.getY() + dy);
                     }
                     for(WhiteBoardObject obj : whiteBoardObjectList){
+                        obj.setLocation(obj.getX() + dx,obj.getY() + dy);
+                    }
+                    for(GoalObject obj : goalObjectList){
                         obj.setLocation(obj.getX() + dx,obj.getY() + dy);
                     }
                     repaint();
@@ -312,6 +353,30 @@ public class CanvasPanel extends JPanel {
         repaint();
     }
 
+    public void addGoal(){
+        GoalObject Goal = new GoalObject(0, 0, 300, 100, new Color(245,245,245));//OFF WHITE
+        goalObjectList.add(Goal);
+        // Update size to account for zoom out/in
+        Goal.setBounds(
+            Goal.getX(),
+            Goal.getY(),
+            (int)(Goal.getOriginalWidth() * scale),
+            (int)(Goal.getOriginalHeight() * scale)
+        );
+        Goal.setScale(scale);
+        Goal.repaintInside();
+        add(Goal);
+        repaint();
+
+    }
+
+    public void removeGoal(GoalObject Goal){
+        goalObjectList.remove(Goal); // Remove from list
+        remove(Goal); // Remove from UI
+        revalidate();
+        repaint();
+    }
+
     public void saveBoardState() {
         List<BoardObjectState> boardState = new ArrayList<>();
 
@@ -323,7 +388,8 @@ public class CanvasPanel extends JPanel {
                 note.getBackground(),  // Get color
                 note.getText(),  // Get text content
                 (List<String>) null, //Type casting to null so I don't get some random null pointer exception!
-                note.getTitle()
+                note.getTitle(),
+                null
             ));
         }
 
@@ -335,7 +401,8 @@ public class CanvasPanel extends JPanel {
                 cal.getBackground(),  // Get color
                 "",  // Calendars dont store text lol
                 (List<String>) null,
-                ""
+                "",
+                null
             ));
         }
 
@@ -347,7 +414,21 @@ public class CanvasPanel extends JPanel {
                 td.getBackground(),
                 td.getText(),
                 td.getList(),
-                ""
+                "",
+                null
+            ));
+        }
+
+        for (GoalObject Goal : goalObjectList){
+            boardState.add(new BoardObjectState(
+                "Goal",
+                Goal.getX(), Goal.getY(),
+                Goal.getWidth(), Goal.getHeight(),
+                Goal.getBackground(),
+                Goal.getText(),
+                (List<String>) null,
+                Goal.getTitle(),
+                Goal.getDate()
             ));
         }
 
@@ -393,6 +474,17 @@ public class CanvasPanel extends JPanel {
                         //Initialize the actual list here
                         todoObjectList.add(td);
                         add(td);
+                    }else if (obj.type.equals("Goal")) {
+                        GoalObject Goal = new GoalObject(
+                            obj.x, obj.y, obj.width, obj.height, obj.getColor()
+                        );
+                        
+                        Goal.setTitle(obj.Title);
+                        Goal.setText(obj.text);
+                        Goal.setDate(obj.GoalDate);
+                        //Initialize the actual list here
+                        goalObjectList.add(Goal);
+                        add(Goal);
                     }
                 }
                 revalidate();
@@ -430,6 +522,10 @@ public class CanvasPanel extends JPanel {
         JButton addWhiteBoardButton = new JButton("Under Construction");
         addWhiteBoardButton.addActionListener(e -> canvasPanel.addWhiteBoard());
         toolBar.add(addWhiteBoardButton);
+
+        JButton addGoalButton = new JButton("Goal");
+        addGoalButton.addActionListener(e -> canvasPanel.addGoal());
+        toolBar.add(addGoalButton);
 
         // Save board state on exit
         frame.addWindowListener(new WindowAdapter() {

@@ -1,10 +1,10 @@
 [
   {
     "type": "StickyNote",
-    "x": 437,
-    "y": 113,
-    "width": 119,
-    "height": 58,
+    "x": 879,
+    "y": 15,
+    "width": 290,
+    "height": 197,
     "colorR": 204,
     "colorG": 102,
     "colorB": 255,
@@ -13,10 +13,10 @@
   },
   {
     "type": "Calendar",
-    "x": 5,
-    "y": 93,
-    "width": 412,
-    "height": 300,
+    "x": 11,
+    "y": 12,
+    "width": 582,
+    "height": 536,
     "colorR": 245,
     "colorG": 245,
     "colorB": 245,
@@ -25,31 +25,47 @@
   },
   {
     "type": "Todo",
-    "x": 428,
-    "y": 186,
-    "width": 101,
-    "height": 81,
+    "x": 597,
+    "y": 10,
+    "width": 239,
+    "height": 409,
     "colorR": 153,
     "colorG": 153,
     "colorB": 255,
     "text": "Todo List",
     "todoListStrings": [
-      "Bananas",
-      "Touch Aaron\u0027s Patootie"
+      "Touch Aaron\u0027s Patootie",
+      "Bananas"
     ],
     "Title": ""
   },
   {
     "type": "Todo",
-    "x": 579,
-    "y": 112,
-    "width": 185,
-    "height": 370,
+    "x": 1205,
+    "y": 6,
+    "width": 391,
+    "height": 207,
     "colorR": 255,
     "colorG": 204,
     "colorB": 204,
     "text": "Bugs:",
-    "todoListStrings": [],
+    "todoListStrings": [
+      "Object displayed over eachother",
+      "Find open space for object before placing them"
+    ],
     "Title": ""
+  },
+  {
+    "type": "Goal",
+    "x": 854,
+    "y": 239,
+    "width": 315,
+    "height": 104,
+    "colorR": 245,
+    "colorG": 245,
+    "colorB": 245,
+    "text": "Due: 2025-03-29",
+    "Title": "Finish Project LOL",
+    "GoalDate": "Mar 29, 2025, 12:00:00 AM"
   }
 ]
