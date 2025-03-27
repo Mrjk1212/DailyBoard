@@ -1,0 +1,94 @@
+Date : 2025-03-26 21:13:55
+Directory : c:\Users\Aaron\Documents\GitHub\DailyBoard
+Total : 55 files,  3794 codes, 361 comments, 480 blanks, all 4635 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         51 |      3,595 |        355 |        460 |      4,410 |
+| XML      |          1 |         88 |          6 |         13 |        107 |
+| JSON     |          2 |         86 |          0 |          0 |         86 |
+| Markdown |          1 |         25 |          0 |          7 |         32 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                        | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                           |         55 |      3,794 |        361 |        480 |      4,635 |
+| . (Files)                                                                                   |          4 |        199 |          6 |         20 |        225 |
+| src                                                                                         |         13 |      2,139 |        355 |        455 |      2,949 |
+| src\main                                                                                    |         13 |      2,139 |        355 |        455 |      2,949 |
+| src\main (Files)                                                                            |          9 |      1,961 |        349 |        412 |      2,722 |
+| src\main\customComponents                                                                   |          2 |        132 |          4 |         28 |        164 |
+| src\main\saves                                                                              |          2 |         46 |          2 |         15 |         63 |
+| target                                                                                      |         38 |      1,456 |          0 |          5 |      1,461 |
+| target\classes                                                                              |         38 |      1,456 |          0 |          5 |      1,461 |
+| target\classes (Files)                                                                      |         31 |      1,160 |          0 |          0 |      1,160 |
+| target\classes\main                                                                         |          7 |        296 |          0 |          5 |        301 |
+| target\classes\main (Files)                                                                 |          5 |        274 |          0 |          5 |        279 |
+| target\classes\main\saves                                                                   |          2 |         22 |          0 |          0 |         22 |
++---------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                                    | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\README.md                                        | Markdown |         25 |          0 |          7 |         32 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\boardScaleState.json                             | JSON     |          5 |          0 |          0 |          5 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\boardState.json                                  | JSON     |         81 |          0 |          0 |         81 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\pom.xml                                          | XML      |         88 |          6 |         13 |        107 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\CalendarObject.java                     | Java     |        442 |         71 |         97 |        610 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\CanvasPanel.java                        | Java     |        463 |         37 |         88 |        588 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\EventTableRenderer.java                 | Java     |         57 |          5 |         13 |         75 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\GoalObject.java                         | Java     |        263 |         31 |         55 |        349 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\GoogleCalendarService.java              | Java     |          0 |         71 |          0 |         71 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\GoogleCalendarTest.java                 | Java     |         76 |         26 |          7 |        109 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\StickyNoteObject.java                   | Java     |        227 |         29 |         46 |        302 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\TodoObject.java                         | Java     |        286 |         40 |         61 |        387 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\WhiteBoardObject.java                   | Java     |        147 |         39 |         45 |        231 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\customComponents\CircleButton.java      | Java     |         61 |          0 |         13 |         74 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\customComponents\RoundedButton.java     | Java     |         71 |          4 |         15 |         90 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\saves\BoardObjectState.java             | Java     |         35 |          2 |          6 |         43 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\src\main\saves\BoardScaleState.java              | Java     |         11 |          0 |          9 |         20 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\CalendarObject$6.class            | Java     |         31 |          0 |          0 |         31 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\CanvasPanel$3.class               | Java     |         13 |          0 |          0 |         13 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\CircleButton$1.class              | Java     |         21 |          0 |          0 |         21 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\CircleButton.class                | Java     |         31 |          0 |          0 |         31 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\EventTableRenderer.class          | Java     |         53 |          0 |          0 |         53 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$1.class                | Java     |          9 |          0 |          0 |          9 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$2.class                | Java     |         42 |          0 |          0 |         42 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$3.class                | Java     |         13 |          0 |          0 |         13 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$4.class                | Java     |         18 |          0 |          0 |         18 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$5.class                | Java     |         13 |          0 |          0 |         13 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$6.class                | Java     |         19 |          0 |          0 |         19 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject$7.class                | Java     |         28 |          0 |          0 |         28 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\GoalObject.class                  | Java     |        213 |          0 |          0 |        213 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\RoundedButton$1.class             | Java     |         22 |          0 |          0 |         22 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\RoundedButton.class               | Java     |         49 |          0 |          0 |         49 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\StickyNoteObject$6.class          | Java     |         12 |          0 |          0 |         12 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\StickyNoteObject$7.class          | Java     |         17 |          0 |          0 |         17 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\StickyNoteObject$8.class          | Java     |         18 |          0 |          0 |         18 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\StickyNoteObject$9.class          | Java     |         29 |          0 |          0 |         29 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$1.class                | Java     |         15 |          0 |          0 |         15 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$2.class                | Java     |          9 |          0 |          0 |          9 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$3.class                | Java     |         42 |          0 |          0 |         42 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$4.class                | Java     |         13 |          0 |          0 |         13 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$5.class                | Java     |         19 |          0 |          0 |         19 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$6.class                | Java     |         29 |          0 |          0 |         29 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject$7.class                | Java     |         11 |          0 |          0 |         11 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\TodoObject.class                  | Java     |        194 |          0 |          0 |        194 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\WhiteBoardObject$1.class          | Java     |         23 |          0 |          0 |         23 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\WhiteBoardObject$2.class          | Java     |         33 |          0 |          0 |         33 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\WhiteBoardObject$3.class          | Java     |         23 |          0 |          0 |         23 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\WhiteBoardObject.class            | Java     |         98 |          0 |          0 |         98 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\CalendarObject.class         | Java     |         64 |          0 |          1 |         65 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\CanvasPanel.class            | Java     |         44 |          0 |          1 |         45 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\StickyNoteObject.class       | Java     |         53 |          0 |          1 |         54 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\TodoObject.class             | Java     |         77 |          0 |          1 |         78 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\WhiteBoardObject.class       | Java     |         36 |          0 |          1 |         37 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\saves\BoardObjectState.class | Java     |         15 |          0 |          0 |         15 |
+| c:\Users\Aaron\Documents\GitHub\DailyBoard\target\classes\main\saves\BoardScaleState.class  | Java     |          7 |          0 |          0 |          7 |
+| Total                                                                                       |          |      3,794 |        361 |        480 |      4,635 |
++---------------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
