@@ -55,7 +55,7 @@ TODO
 
 ===========BUGS===================
 - Recurring All Day Events For ICal Files Don't Load!
-
+- Have the ICal file persist so you don't have to choose it everytime you open the application!
 
 */
 
@@ -421,13 +421,6 @@ public class CalendarObject extends JPanel {
         return googleEvents;
     }
 
-
-    public void populateTableFromICal(List<Event> events){
-
-        System.out.println("Made it into populateTableFromICal!");
-
-    }
-
     //prompt to ask the user to use either google cal or import a Ical file.
     //select ical -> loadEventsFromICal("filename", LocalDateTime startDate, LocalDateTime endDate)
     //               inside return a list of all events inside the startDate and endDate
@@ -437,9 +430,6 @@ public class CalendarObject extends JPanel {
     //              convert the DTStart to LocalDateTime
     //              converrt the DTEND to LocalDateTime
     //              populate the same way as a normal google cal api.
-
-    
-
     
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -455,6 +445,7 @@ public class CalendarObject extends JPanel {
         JDialog dialog = new JDialog();
         dialog.setSize(200, 150);
         dialog.setLayout(new FlowLayout());
+        dialog.setAlwaysOnTop(true);
         dialog.add(new JLabel("Choose Your Calendar Method"));
 
         JButton googleCalOptionButton = new JButton("Google Calendar");
