@@ -1,6 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +17,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TimeZone;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -39,14 +45,25 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 /* 
 TODO
 - Add support for ICalendar file import
 - Add support for Outlook calendar?
--
+- 
+
+===========BUGS===================
+- Recurring All Day Events For ICal Files Don't Load!
+
+
 */
 
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.model.Component;
+import net.fortuna.ical4j.model.ComponentList;
+import net.fortuna.ical4j.model.Property;
+import net.fortuna.ical4j.model.component.CalendarComponent;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -79,6 +96,9 @@ public class CalendarObject extends JPanel {
     private JTable eventTable;
     private JScrollPane scrollPane;
     private DefaultTableModel tableModel;
+
+    private String calType;
+    private String ICalFileLocation;
 
     private LocalDateTime currentDayStart;
     private LocalDateTime threeDaysLater;
@@ -148,6 +168,10 @@ public class CalendarObject extends JPanel {
         Date date = Date.from(zdtSource.toInstant());
         return new DateTime(date, TimeZone.getTimeZone(ZoneId.of(zoneId)));
     }
+
+
+    
+
 
     public List<Event> listWeeksEvents(LocalDateTime now, LocalDateTime threeDaysLater) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
@@ -308,7 +332,113 @@ public class CalendarObject extends JPanel {
     }
 
 
+    public List<Event> loadEventsFromICal(String filename, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Event> googleEvents = new ArrayList<>();
 
+        try {
+            InputStream ip = new FileInputStream(filename);
+            CalendarBuilder builder = new CalendarBuilder();
+            net.fortuna.ical4j.model.Calendar calendar = builder.build(ip);
+
+            for (Object obj : calendar.getComponents(Component.VEVENT)) {
+                net.fortuna.ical4j.model.Component icalEvent = (net.fortuna.ical4j.model.Component) obj;
+
+                // Extract event properties
+                String summary = icalEvent.getProperty(Property.SUMMARY).getValue();
+                Property dtstartProp = icalEvent.getProperty(Property.DTSTART);
+                Property dtendProp = icalEvent.getProperty(Property.DTEND);
+
+                // Detect if DTSTART uses VALUE=DATE (all-day event)
+                System.out.println("DTSTART: " + dtstartProp);
+                boolean isAllDay = dtstartProp.toString().contains("VALUE=DATE");
+                System.out.println("Is all day: " + isAllDay);
+
+                // Extract DTSTART and DTEND values
+                String start = dtstartProp.getValue();
+                String end = (dtendProp != null) ? dtendProp.getValue() : start; // Default to same day if DTEND is missing
+
+                DateTimeFormatter dateTimeFormatterWithTZ = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmssX"); // For times with 'Z' or offset
+                DateTimeFormatter dateTimeFormatterNoTZ = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"); // For times without timezone
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd"); // For all-day events
+
+                LocalDateTime startDateTime, endDateTime;
+                ZoneId zoneId = ZoneId.of(timeZone); // Use America/Chicago time zone
+
+                if (isAllDay) {
+                        // For all-day events, use LocalDate to avoid time component
+                        startDateTime = LocalDate.parse(start, dateFormatter).atStartOfDay(zoneId).toLocalDateTime(); 
+                        endDateTime = LocalDate.parse(end, dateFormatter).atStartOfDay(zoneId).toLocalDateTime(); // End is the next day
+                        
+                        startDateTime = startDateTime.withHour(1).withMinute(00).withSecond(00);
+                        endDateTime = endDateTime.withHour(1).withMinute(00).withSecond(00);
+                        System.out.println("This is the event start: " + startDateTime);
+                        System.out.println("This is the event end: " + endDateTime);
+                } else {
+                    // Handle timestamps with or without time zone
+                    if (start.endsWith("Z") || start.matches(".*[+-]\\d{4}$")) {
+                        // Has time zone
+                        ZonedDateTime startZoned = ZonedDateTime.parse(start, dateTimeFormatterWithTZ);
+                        ZonedDateTime endZoned = ZonedDateTime.parse(end, dateTimeFormatterWithTZ);
+                        
+                        // Convert to America/Chicago time zone
+                        startDateTime = startZoned.withZoneSameInstant(zoneId).toLocalDateTime();
+                        endDateTime = endZoned.withZoneSameInstant(zoneId).toLocalDateTime();
+                    } else {
+                        // No time zone, parse as LocalDateTime and assume America/Chicago time zone
+                        startDateTime = LocalDateTime.parse(start, dateTimeFormatterNoTZ).atZone(zoneId).toLocalDateTime();
+                        endDateTime = LocalDateTime.parse(end, dateTimeFormatterNoTZ).atZone(zoneId).toLocalDateTime();
+                    }
+                }
+
+                // // Convert to Google API Event
+
+                // Filter based on input date range
+                if (!startDateTime.isBefore(startDate) && !endDateTime.isAfter(endDate)) {
+                    // Convert to Google API Event
+                    Event googleEvent = new Event().setSummary(summary);
+
+                    if (isAllDay) {
+                        // Use `setDate` instead of `setDateTime` for all-day events
+                        googleEvent.setStart(new EventDateTime().setDate(new DateTime(startDateTime.toLocalDate().toString()))); // Only date, no time
+                        googleEvent.setEnd(new EventDateTime().setDate(new DateTime(endDateTime.toLocalDate().toString()))); // Only date, no time
+                        System.out.println("Found all day event: " + googleEvent.getSummary());
+                    } else {
+                        // Convert LocalDateTime to Google Calendar DateTime in America/Chicago timezone
+                        DateTime googleStart = new DateTime(startDateTime.atZone(zoneId).toInstant().toEpochMilli());
+                        DateTime googleEnd = new DateTime(endDateTime.atZone(zoneId).toInstant().toEpochMilli());
+
+                        googleEvent.setStart(new EventDateTime().setDateTime(googleStart));
+                        googleEvent.setEnd(new EventDateTime().setDateTime(googleEnd));
+                    }
+
+                    googleEvents.add(googleEvent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return googleEvents;
+    }
+
+
+    public void populateTableFromICal(List<Event> events){
+
+        System.out.println("Made it into populateTableFromICal!");
+
+    }
+
+    //prompt to ask the user to use either google cal or import a Ical file.
+    //select ical -> loadEventsFromICal("filename", LocalDateTime startDate, LocalDateTime endDate)
+    //               inside return a list of all events inside the startDate and endDate
+    //
+    //              populateTableFromICal(List<Strings>)
+    //              every 3 strings is a event!
+    //              convert the DTStart to LocalDateTime
+    //              converrt the DTEND to LocalDateTime
+    //              populate the same way as a normal google cal api.
+
+    
 
     
     public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
@@ -318,8 +448,49 @@ public class CalendarObject extends JPanel {
         setOpaque(false);
         setBounds(xPos, yPos, width, height);
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        
+        calType = "";
         setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill][grow, fill]", ""));
+
+
+        JDialog dialog = new JDialog();
+        dialog.setSize(200, 150);
+        dialog.setLayout(new FlowLayout());
+        dialog.add(new JLabel("Choose Your Calendar Method"));
+
+        JButton googleCalOptionButton = new JButton("Google Calendar");
+        JButton icalImportButton = new JButton("I-Calendar File");
+        googleCalOptionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calType = "GoogleCalendar";
+                dialog.dispose();
+            }
+        });
+        icalImportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calType = "ICalFile";
+
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Select an iCalendar (.ics) File");
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                
+                // Optional: Set a filter to only show .ics files
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("iCalendar Files (.ics)", "ics"));
+
+                int userSelection = fileChooser.showOpenDialog(null);
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    ICalFileLocation = selectedFile.getAbsolutePath(); // Set global variable
+                }
+
+                dialog.dispose();
+            }
+        });
+        dialog.add(googleCalOptionButton);
+        dialog.add(icalImportButton);
+        dialog.setVisible(true);
+        
 
 
 
@@ -357,19 +528,29 @@ public class CalendarObject extends JPanel {
             public void mousePressed(MouseEvent e){
                 //call function to go forward 4 days.
                 // Populate the table
-                
                 currentDayStart = currentDayStart.plusDays(4).withHour(00).withMinute(00).withSecond(00);// now equal to 3 days from now.
                 threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
 
                 try {
-                    List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
-                    populateTable(eventList, currentDayStart);
+
+                    if(calType == "GoogleCalendar"){
+                        List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                        populateTable(eventList, currentDayStart);
+                    }
+
+                    else if(calType == "ICalFile"){
+                        List<Event> eventList = loadEventsFromICal(ICalFileLocation,currentDayStart, threeDaysLater);
+                        populateTable(eventList, currentDayStart);
+                    }
+
                     tableModel.fireTableDataChanged();
                     eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
                     calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
                     + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
                     + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
                     + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+
+
                     revalidate();
                     repaint();
                 } catch (IOException | GeneralSecurityException errorGoingForward) {
@@ -386,14 +567,22 @@ public class CalendarObject extends JPanel {
                 threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);// now equal to current time(e.g. current time in increments of 3 days) + 3 days.
 
                 try {
-                    List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
-                    populateTable(eventList, currentDayStart);
+
+                    if (calType == "GoogleCalendar"){
+                        List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                        populateTable(eventList, currentDayStart);
+                    }
+                    else if(calType == "ICalFile"){
+                        List<Event> eventList = loadEventsFromICal(ICalFileLocation,currentDayStart, threeDaysLater);
+                        populateTable(eventList, currentDayStart);
+                    }
                     tableModel.fireTableDataChanged();
                     eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
                     calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
                     + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
                     + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
                     + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+                    
                     revalidate();
                     repaint();
                 } catch (IOException | GeneralSecurityException errorGoingBackward) {
@@ -482,14 +671,23 @@ public class CalendarObject extends JPanel {
         
         // Populate the table
         try {
-            List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
-            populateTable(eventList, currentDayStart);
+
+            if (calType == "GoogleCalendar"){
+                List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                populateTable(eventList, currentDayStart);
+            }
+            else if (calType == "ICalFile"){
+                List<Event> eventList = loadEventsFromICal(ICalFileLocation,currentDayStart, threeDaysLater);
+                populateTable(eventList, currentDayStart);
+            }
+            
             tableModel.fireTableDataChanged();
             eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
             calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
             + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
             + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
             + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+
             revalidate();
             repaint();
         } catch (IOException | GeneralSecurityException e) {

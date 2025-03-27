@@ -5,6 +5,7 @@ StickyNoteObject$1.class
 CanvasPanel.class
 WhiteBoardObject$3.class
 StickyNoteObject.class
+CalendarObject$7.class
 CalendarObject.class
 TodoObject$7.class
 GoalObject$5.class
@@ -18,6 +19,7 @@ StickyNoteObject$2.class
 TodoObject$6.class
 CalendarObject$1.class
 RoundedButton.class
+CalendarObject$8.class
 GoalObject$1.class
 StickyNoteObject$8.class
 main\saves\BoardObjectState.class
