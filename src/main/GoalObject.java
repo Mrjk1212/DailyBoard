@@ -279,6 +279,14 @@ public class GoalObject extends JPanel {
         return originalHeight;
     }
 
+    public void setOriginalHeight(int newOriginalHeight){
+        this.originalHeight = newOriginalHeight;
+    }
+
+    public void setOriginalWidth(int newOriginalWidth){
+        this.originalWidth = newOriginalWidth;
+    }
+
     public void setScale(double newScale) {
         this.scale = newScale;
         updateTextStyle();

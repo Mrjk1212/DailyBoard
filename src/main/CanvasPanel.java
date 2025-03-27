@@ -487,6 +487,8 @@ public class CanvasPanel extends JPanel {
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
                         note.setScale(this.scale);
+                        note.setOriginalHeight(obj.OriginalHeight);
+                        note.setOriginalWidth(obj.OriginalWidth);
                         note.setText(obj.text);
                         note.setTitle(obj.Title);
                         stickyNoteObjectList.add(note);
@@ -496,6 +498,8 @@ public class CanvasPanel extends JPanel {
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
                         cal.setScale(this.scale);
+                        cal.setOriginalHeight(obj.OriginalHeight);
+                        cal.setOriginalWidth(obj.OriginalWidth);
                         calendarObjectList.add(cal);
                         add(cal);
                     } else if (obj.type.equals("Todo")) {
@@ -517,6 +521,8 @@ public class CanvasPanel extends JPanel {
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
                         Goal.setScale(this.scale);
+                        Goal.setOriginalHeight(obj.OriginalHeight);
+                        Goal.setOriginalWidth(obj.OriginalWidth);
                         Goal.setTitle(obj.Title);
                         Goal.setText(obj.text);
                         Goal.setDate(obj.GoalDate);
