@@ -14,14 +14,18 @@ public class BoardObjectState {
     public List<String> todoListStrings;
     public String Title;
     public Date GoalDate;
+    public int OriginalWidth;
+    public int OriginalHeight;
 
     // Constructor
-    public BoardObjectState(String type, int x, int y, int width, int height, Color color, String text, List<String> todoList, String title, Date goalDate) {
+    public BoardObjectState(String type, int x, int y, int width, int height, int orignalWidth, int originalHeight, Color color, String text, List<String> todoList, String title, Date goalDate) {
         this.type = type;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        this.OriginalWidth = orignalWidth;
+        this.OriginalHeight = originalHeight;
         this.colorR = color.getRed();
         this.colorG = color.getGreen();
         this.colorB = color.getBlue();

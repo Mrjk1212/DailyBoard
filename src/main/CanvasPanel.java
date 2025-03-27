@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import main.saves.BoardObjectState;
+import main.saves.BoardScaleState;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -385,6 +386,7 @@ public class CanvasPanel extends JPanel {
                 "StickyNote",
                 note.getX(), note.getY(),
                 note.getWidth(), note.getHeight(),
+                note.getOriginalWidth(), note.getOriginalHeight(),
                 note.getBackground(),  // Get color
                 note.getText(),  // Get text content
                 (List<String>) null, //Type casting to null so I don't get some random null pointer exception!
@@ -398,6 +400,7 @@ public class CanvasPanel extends JPanel {
                 "Calendar",
                 cal.getX(), cal.getY(),
                 cal.getWidth(), cal.getHeight(),
+                cal.getOriginalWidth(), cal.getOriginalHeight(),
                 cal.getBackground(),  // Get color
                 "",  // Calendars dont store text lol
                 (List<String>) null,
@@ -411,6 +414,7 @@ public class CanvasPanel extends JPanel {
                 "Todo",
                 td.getX(), td.getY(),
                 td.getWidth(), td.getHeight(),
+                td.getOriginalWidth(), td.getOriginalHeight(),
                 td.getBackground(),
                 td.getText(),
                 td.getList(),
@@ -424,6 +428,7 @@ public class CanvasPanel extends JPanel {
                 "Goal",
                 Goal.getX(), Goal.getY(),
                 Goal.getWidth(), Goal.getHeight(),
+                Goal.getOriginalWidth(), Goal.getOriginalHeight(),
                 Goal.getBackground(),
                 Goal.getText(),
                 (List<String>) null,
@@ -439,11 +444,39 @@ public class CanvasPanel extends JPanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        BoardScaleState boardScaleState = new BoardScaleState(this.scale, this.offsetX, this.offsetY);
+
+        try (FileWriter writer = new FileWriter("boardScaleState.json")) {
+            gson.toJson(boardScaleState, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
     public void loadBoardState() {
         Gson gson = new Gson();
+
+
+        try (FileReader reader = new FileReader("boardScaleState.json")){
+
+            BoardScaleState boardScaleState = gson.fromJson(reader, BoardScaleState.class);
+            if(boardScaleState != null){
+
+                this.scale = boardScaleState.Scale;
+                this.offsetX = boardScaleState.OffsetX;
+                this.offsetY = boardScaleState.OffsetY;
+
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        
         try (FileReader reader = new FileReader("boardState.json")) {
             BoardObjectState[] boardState = gson.fromJson(reader, BoardObjectState[].class);
             
@@ -453,6 +486,7 @@ public class CanvasPanel extends JPanel {
                         StickyNoteObject note = new StickyNoteObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
+                        note.setScale(this.scale);
                         note.setText(obj.text);
                         note.setTitle(obj.Title);
                         stickyNoteObjectList.add(note);
@@ -461,12 +495,16 @@ public class CanvasPanel extends JPanel {
                         CalendarObject cal = new CalendarObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
+                        cal.setScale(this.scale);
                         calendarObjectList.add(cal);
                         add(cal);
                     } else if (obj.type.equals("Todo")) {
                         TodoObject td = new TodoObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
+                        td.setScale(this.scale);
+                        td.setOriginalWidth(obj.OriginalWidth);
+                        td.setOriginalHeight(obj.OriginalHeight);
                         for(String str: obj.todoListStrings){
                             td.addTaskToList(str);
                         }
@@ -478,7 +516,7 @@ public class CanvasPanel extends JPanel {
                         GoalObject Goal = new GoalObject(
                             obj.x, obj.y, obj.width, obj.height, obj.getColor()
                         );
-                        
+                        Goal.setScale(this.scale);
                         Goal.setTitle(obj.Title);
                         Goal.setText(obj.text);
                         Goal.setDate(obj.GoalDate);

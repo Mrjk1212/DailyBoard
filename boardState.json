@@ -1,50 +1,56 @@
 [
   {
     "type": "StickyNote",
-    "x": 385,
-    "y": 122,
-    "width": 259,
-    "height": 175,
+    "x": 399,
+    "y": 120,
+    "width": 48,
+    "height": 48,
     "colorR": 204,
     "colorG": 102,
     "colorB": 255,
     "text": "Hello my dear wonderful fiance!!\nPlease let me touch your patootie\nYou are the love of my life and should let me do what I want with you.\nI love you soooooo muchh",
-    "Title": "My Sincere Plea"
+    "Title": "My Sincere Plea",
+    "OriginalWidth": 75,
+    "OriginalHeight": 75
   },
   {
     "type": "Calendar",
-    "x": -372,
-    "y": 121,
-    "width": 520,
-    "height": 478,
+    "x": 191,
+    "y": 321,
+    "width": 124,
+    "height": 57,
     "colorR": 245,
     "colorG": 245,
     "colorB": 245,
     "text": "",
-    "Title": ""
+    "Title": "",
+    "OriginalWidth": 193,
+    "OriginalHeight": 89
   },
   {
     "type": "Todo",
-    "x": 156,
-    "y": 121,
-    "width": 212,
-    "height": 363,
+    "x": 213,
+    "y": 111,
+    "width": 159,
+    "height": 161,
     "colorR": 153,
     "colorG": 153,
     "colorB": 255,
     "text": "Todo List",
     "todoListStrings": [
-      "Bananas",
-      "Touch Aaron\u0027s Patootie"
+      "Touch Aaron\u0027s Patootie",
+      "Bananas"
     ],
-    "Title": ""
+    "Title": "",
+    "OriginalWidth": 248,
+    "OriginalHeight": 252
   },
   {
     "type": "Todo",
-    "x": 679,
-    "y": 113,
-    "width": 349,
-    "height": 183,
+    "x": 545,
+    "y": 129,
+    "width": 239,
+    "height": 125,
     "colorR": 255,
     "colorG": 204,
     "colorB": 204,
@@ -53,19 +59,23 @@
       "Object displayed over eachother",
       "Find open space for object before placing them"
     ],
-    "Title": ""
+    "Title": "",
+    "OriginalWidth": 372,
+    "OriginalHeight": 196
   },
   {
     "type": "Goal",
-    "x": 403,
-    "y": 327,
-    "width": 299,
-    "height": 114,
+    "x": 545,
+    "y": 281,
+    "width": 76,
+    "height": 35,
     "colorR": 204,
     "colorG": 204,
     "colorB": 255,
     "text": "Due: 2025-04-26",
     "Title": "Finish Project LOL",
-    "GoalDate": "Apr 26, 2025, 12:00:00 AM"
+    "GoalDate": "Apr 26, 2025, 12:00:00 AM",
+    "OriginalWidth": 119,
+    "OriginalHeight": 55
   }
 ]
