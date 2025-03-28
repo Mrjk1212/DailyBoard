@@ -55,8 +55,8 @@ TODO
 
 ===========BUGS===================
 - Recurring All Day Events For ICal Files Don't Load!
-- Have the ICal file persist so you don't have to choose it everytime you open the application!
-
+- Add option to change the timezone!
+- Google cal doesn't load right away
 */
 
 import net.fortuna.ical4j.data.CalendarBuilder;
@@ -203,7 +203,6 @@ public class CalendarObject extends JPanel {
                 if (start == null) {
                     start = event.getStart().getDate();
                 }
-                System.out.printf("%s (%s)\n", event.getSummary(), start);
             }
             return eventList;
         }
@@ -349,9 +348,7 @@ public class CalendarObject extends JPanel {
                 Property dtendProp = icalEvent.getProperty(Property.DTEND);
 
                 // Detect if DTSTART uses VALUE=DATE (all-day event)
-                System.out.println("DTSTART: " + dtstartProp);
                 boolean isAllDay = dtstartProp.toString().contains("VALUE=DATE");
-                System.out.println("Is all day: " + isAllDay);
 
                 // Extract DTSTART and DTEND values
                 String start = dtstartProp.getValue();
@@ -371,8 +368,6 @@ public class CalendarObject extends JPanel {
                         
                         startDateTime = startDateTime.withHour(1).withMinute(00).withSecond(00);
                         endDateTime = endDateTime.withHour(1).withMinute(00).withSecond(00);
-                        System.out.println("This is the event start: " + startDateTime);
-                        System.out.println("This is the event end: " + endDateTime);
                 } else {
                     // Handle timestamps with or without time zone
                     if (start.endsWith("Z") || start.matches(".*[+-]\\d{4}$")) {
@@ -401,7 +396,6 @@ public class CalendarObject extends JPanel {
                         // Use `setDate` instead of `setDateTime` for all-day events
                         googleEvent.setStart(new EventDateTime().setDate(new DateTime(startDateTime.toLocalDate().toString()))); // Only date, no time
                         googleEvent.setEnd(new EventDateTime().setDate(new DateTime(endDateTime.toLocalDate().toString()))); // Only date, no time
-                        System.out.println("Found all day event: " + googleEvent.getSummary());
                     } else {
                         // Convert LocalDateTime to Google Calendar DateTime in America/Chicago timezone
                         DateTime googleStart = new DateTime(startDateTime.atZone(zoneId).toInstant().toEpochMilli());
@@ -431,7 +425,7 @@ public class CalendarObject extends JPanel {
     //              converrt the DTEND to LocalDateTime
     //              populate the same way as a normal google cal api.
     
-    public CalendarObject(int xPos, int yPos, int width, int height, Color color) {
+    public CalendarObject(int xPos, int yPos, int width, int height, Color color, String fileLocation) {
         originalWidth = width;
         originalHeight = height;
         setBackground(color);
@@ -440,49 +434,146 @@ public class CalendarObject extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.GRAY));
         calType = "";
         setLayout(new MigLayout("", "[grow, fill][grow, fill][grow, fill][grow, fill]", ""));
+        setICalFileLocation(fileLocation);
 
 
-        JDialog dialog = new JDialog();
-        dialog.setSize(200, 150);
-        dialog.setLayout(new FlowLayout());
-        dialog.setAlwaysOnTop(true);
-        dialog.add(new JLabel("Choose Your Calendar Method"));
+        // Table setup
+        String[] columnNames = {"Day", "Time", "Event"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        eventTable = new JTable(tableModel);
+        eventTable.setEnabled(false);
+        eventTable.setBackground(Color.RED);
+        eventTable.setShowGrid(false);
+        eventTable.setBorder(BorderFactory.createEmptyBorder());
+        eventTable.setIntercellSpacing(new Dimension(0, 0));
+        eventTable.getTableHeader().setReorderingAllowed(false);
+        eventTable.getTableHeader().setBackground(new Color(250, 249, 248));
+        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        eventTable.getTableHeader().setForeground(Color.BLACK);
+        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));        
 
-        JButton googleCalOptionButton = new JButton("Google Calendar");
-        JButton icalImportButton = new JButton("I-Calendar File");
-        googleCalOptionButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calType = "GoogleCalendar";
-                dialog.dispose();
-            }
+        // ScrollPane setup to show only 12 rows at a time
+        eventTable.setRowHeight(30);
+        int visibleRows = 12;
+        int tableHeight = visibleRows * eventTable.getRowHeight();
+        eventTable.setPreferredScrollableViewportSize(new Dimension(width, tableHeight));
+
+        scrollPane = new JScrollPane(eventTable);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Hide scrollbar width
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        // Enable scrolling with the mouse wheel
+        scrollPane.addMouseWheelListener(e -> {
+            JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+            verticalBar.setValue(verticalBar.getValue() + e.getWheelRotation() * verticalBar.getUnitIncrement() * 40);
         });
-        icalImportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                calType = "ICalFile";
+        scrollPane.setEnabled(false);
 
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Select an iCalendar (.ics) File");
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                
-                // Optional: Set a filter to only show .ics files
-                fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("iCalendar Files (.ics)", "ics"));
-
-                int userSelection = fileChooser.showOpenDialog(null);
-                if (userSelection == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    ICalFileLocation = selectedFile.getAbsolutePath(); // Set global variable
-                }
-
-                dialog.dispose();
-            }
-        });
-        dialog.add(googleCalOptionButton);
-        dialog.add(icalImportButton);
-        dialog.setVisible(true);
+        // Midnight at the start of today
+        currentDayStart = LocalDateTime.now().withHour(00).withMinute(00).withSecond(00);
         
+    
+        // 11:59:59 PM of the third day from today
+        threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);
 
+
+        calRange = new JLabel();
+        calRange.setOpaque(false);
+        calRange.setBackground(color);
+        calRange.setForeground(Color.BLACK);
+        calRange.setVisible(true);
+        calRange.setFont(new Font("Arial", Font.BOLD, 12));
+
+        calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+        + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+        + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+        + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+
+
+        if(ICalFileLocation != null && ICalFileLocation != ""){
+            calType = "ICalFile";
+            List<Event> eventList = loadEventsFromICal(ICalFileLocation,currentDayStart, threeDaysLater);
+            populateTable(eventList, currentDayStart);
+        
+            tableModel.fireTableDataChanged();
+            eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
+            calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+            + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+            + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+            + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+
+            revalidate();
+            repaint();
+        }else{
+            JDialog dialog = new JDialog();
+            dialog.setSize(200, 150);
+            dialog.setLayout(new FlowLayout());
+            dialog.setAlwaysOnTop(true);
+            dialog.add(new JLabel("Choose Your Calendar Method"));
+    
+            JButton googleCalOptionButton = new JButton("Google Calendar");
+            JButton icalImportButton = new JButton("I-Calendar File");
+            googleCalOptionButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    calType = "GoogleCalendar";
+                    dialog.dispose();
+                }
+            });
+            icalImportButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    calType = "ICalFile";
+    
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Select an iCalendar (.ics) File");
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    
+                    // Optional: Set a filter to only show .ics files
+                    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("iCalendar Files (.ics)", "ics"));
+    
+                    int userSelection = fileChooser.showOpenDialog(null);
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        ICalFileLocation = selectedFile.getAbsolutePath(); // Set global variable
+                    }
+    
+                    dialog.dispose();
+    
+                    // Populate the table
+                    try {
+    
+                        if (calType == "GoogleCalendar"){
+                            List<Event> eventList = listWeeksEvents(currentDayStart, threeDaysLater);
+                            populateTable(eventList, currentDayStart);
+                        }
+                        else if (calType == "ICalFile"){
+                            List<Event> eventList = loadEventsFromICal(ICalFileLocation,currentDayStart, threeDaysLater);
+                            populateTable(eventList, currentDayStart);
+                        }
+                        
+                        tableModel.fireTableDataChanged();
+                        eventTable.getColumnModel().getColumn(0).setHeaderValue(""); //Display Month in the first row first col -> 0,0
+                        calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
+                        + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
+                        + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
+                        + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
+    
+                        revalidate();
+                        repaint();
+                    } catch (IOException | GeneralSecurityException ec) {
+                        ec.printStackTrace();
+                    }
+                    
+                    revalidate();
+                    repaint();
+                }
+            });
+            dialog.add(googleCalOptionButton);
+            dialog.add(icalImportButton);
+            dialog.setVisible(true);
+        }
 
 
         final JPopupMenu popup = new JPopupMenu();
@@ -492,13 +583,6 @@ public class CalendarObject extends JPanel {
             }
         }));
         
-    
-        // Midnight at the start of today
-        currentDayStart = LocalDateTime.now().withHour(00).withMinute(00).withSecond(00);
-        
-    
-        // 11:59:59 PM of the third day from today
-        threeDaysLater = currentDayStart.plusDays(3).withHour(23).withMinute(59).withSecond(59);
 
         forwardWeekButton = new JButton();
         backwardWeekButton = new JButton();
@@ -582,18 +666,6 @@ public class CalendarObject extends JPanel {
             }
         });
 
-        calRange = new JLabel();
-        calRange.setOpaque(false);
-        calRange.setBackground(color);
-        calRange.setForeground(Color.BLACK);
-        calRange.setVisible(true);
-        calRange.setFont(new Font("Arial", Font.BOLD, 12));
-
-        calRange.setText(currentDayStart.getMonth().getDisplayName(TextStyle.FULL, getLocale()) + " " 
-        + Integer.toString(currentDayStart.getDayOfMonth()) + "-" 
-        + threeDaysLater.getMonth().getDisplayName(TextStyle.FULL, getLocale()) 
-        + " " + Integer.toString(threeDaysLater.getDayOfMonth()));
-
         
         add(calRange, "growx, span 1,h 30!");
         add(backwardWeekButton, "gapleft push, span 1, h 30!");
@@ -624,39 +696,6 @@ public class CalendarObject extends JPanel {
         sep.setBackground(Color.GRAY);
         sep.setForeground(Color.LIGHT_GRAY);
         add(sep, "grow, span, wrap");
-
-        // Table setup
-        String[] columnNames = {"Day", "Time", "Event"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        eventTable = new JTable(tableModel);
-        eventTable.setEnabled(false);
-        eventTable.setBackground(Color.RED);
-        eventTable.setShowGrid(false);
-        eventTable.setBorder(BorderFactory.createEmptyBorder());
-        eventTable.setIntercellSpacing(new Dimension(0, 0));
-        eventTable.getTableHeader().setReorderingAllowed(false);
-        eventTable.getTableHeader().setBackground(new Color(250, 249, 248));
-        eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-        eventTable.getTableHeader().setForeground(Color.BLACK);
-        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));        
-
-        // ScrollPane setup to show only 12 rows at a time
-        eventTable.setRowHeight(30);
-        int visibleRows = 12;
-        int tableHeight = visibleRows * eventTable.getRowHeight();
-        eventTable.setPreferredScrollableViewportSize(new Dimension(width, tableHeight));
-
-        scrollPane = new JScrollPane(eventTable);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0)); // Hide scrollbar width
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-
-        // Enable scrolling with the mouse wheel
-        scrollPane.addMouseWheelListener(e -> {
-            JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
-            verticalBar.setValue(verticalBar.getValue() + e.getWheelRotation() * verticalBar.getUnitIncrement() * 40);
-        });
-        scrollPane.setEnabled(false);
 
         add(scrollPane, "span");
         
@@ -719,6 +758,18 @@ public class CalendarObject extends JPanel {
                 }
             }
         });
+    }
+
+    public String getICalFileLocation(){
+        if(calType == "ICalFile"){
+            return ICalFileLocation;
+        }else{
+            return "";
+        }
+    }
+
+    public void setICalFileLocation(String savedLocation){
+        ICalFileLocation = savedLocation;
     }
 
     public int getOriginalWidth() {

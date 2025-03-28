@@ -294,7 +294,7 @@ public class CanvasPanel extends JPanel {
         int scaledY = (int) (300 * scale);
         int scaledWidth = (int) (550 * scale);
         int scaledHeight = (int) (400 * scale);
-        calendar = new CalendarObject(scaledX, scaledY, scaledWidth, scaledHeight, new Color(245,245,245));//Color = offwhite
+        calendar = new CalendarObject(scaledX, scaledY, scaledWidth, scaledHeight, new Color(245,245,245), "");//Color = offwhite
         calendarObjectList.add(calendar);
         // Update size to account for zoom out/in
         calendar.setBounds(
@@ -402,7 +402,7 @@ public class CanvasPanel extends JPanel {
                 cal.getWidth(), cal.getHeight(),
                 cal.getOriginalWidth(), cal.getOriginalHeight(),
                 cal.getBackground(),  // Get color
-                "",  // Calendars dont store text lol
+                cal.getICalFileLocation(),  // Calendars dont store text lol, but we will multiPurpose use this to store the ICalFile Location if applicable
                 (List<String>) null,
                 "",
                 null
@@ -495,8 +495,7 @@ public class CanvasPanel extends JPanel {
                         add(note);
                     } else if (obj.type.equals("Calendar")) {
                         CalendarObject cal = new CalendarObject(
-                            obj.x, obj.y, obj.width, obj.height, obj.getColor()
-                        );
+                            obj.x, obj.y, obj.width, obj.height, obj.getColor(), obj.text); // Hacky gross badd way of storing file location
                         cal.setScale(this.scale);
                         cal.setOriginalHeight(obj.OriginalHeight);
                         cal.setOriginalWidth(obj.OriginalWidth);
