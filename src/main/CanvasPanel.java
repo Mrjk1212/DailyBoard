@@ -474,8 +474,6 @@ public class CanvasPanel extends JPanel {
         }catch (IOException e) {
             e.printStackTrace();
         }
-
-
         
         try (FileReader reader = new FileReader("boardState.json")) {
             BoardObjectState[] boardState = gson.fromJson(reader, BoardObjectState[].class);
@@ -495,7 +493,7 @@ public class CanvasPanel extends JPanel {
                         add(note);
                     } else if (obj.type.equals("Calendar")) {
                         CalendarObject cal = new CalendarObject(
-                            obj.x, obj.y, obj.width, obj.height, obj.getColor(), obj.text); // Hacky gross badd way of storing file location
+                        obj.x, obj.y, obj.width, obj.height, obj.getColor(), obj.text); // Hacky gross badd way of storing file locations=
                         cal.setScale(this.scale);
                         cal.setOriginalHeight(obj.OriginalHeight);
                         cal.setOriginalWidth(obj.OriginalWidth);
