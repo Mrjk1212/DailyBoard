@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import main.saves.BoardObjectState;
 import main.saves.BoardScaleState;
+import main.customComponents.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -548,7 +549,9 @@ public class CanvasPanel extends JPanel {
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Canvas with Toolbar");
+        JFrame frame = new JFrame("Daily Board");
+        ImageIcon logoIcon = new ImageIcon("src\\main\\resources\\logo.PNG");
+        frame.setIconImage(logoIcon.getImage());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         CanvasPanel canvasPanel = new CanvasPanel();
@@ -558,23 +561,23 @@ public class CanvasPanel extends JPanel {
         toolBar.setFloatable(false);
 
         // Add buttons for the toolbar
-        JButton addStickyNoteButton = new JButton("Sticky Note");
+        RoundedButton addStickyNoteButton = new RoundedButton(100, 30, "Sticky Note");
         addStickyNoteButton.addActionListener(e -> canvasPanel.addStickyNote());
         toolBar.add(addStickyNoteButton);
 
-        JButton addCalendarButton = new JButton("Calendar");
+        RoundedButton addCalendarButton = new RoundedButton(100, 30, "Calendar");
         addCalendarButton.addActionListener(e -> canvasPanel.addCalendar());
         toolBar.add(addCalendarButton);
 
-        JButton addToDoListButton = new JButton("To-Do List");
+        RoundedButton addToDoListButton = new RoundedButton(100, 30, "To-Do List");
         addToDoListButton.addActionListener(e -> canvasPanel.addToDoList());
         toolBar.add(addToDoListButton);
 
-        JButton addWhiteBoardButton = new JButton("Under Construction");
+        RoundedButton addWhiteBoardButton = new RoundedButton(100, 30, "White Board");
         addWhiteBoardButton.addActionListener(e -> canvasPanel.addWhiteBoard());
         toolBar.add(addWhiteBoardButton);
 
-        JButton addGoalButton = new JButton("Goal");
+        RoundedButton addGoalButton = new RoundedButton(100, 30, "Goal");
         addGoalButton.addActionListener(e -> canvasPanel.addGoal());
         toolBar.add(addGoalButton);
 

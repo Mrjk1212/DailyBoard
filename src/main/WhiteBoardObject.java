@@ -176,13 +176,11 @@ public class WhiteBoardObject extends JPanel {
 
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
-        g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, 
-                       RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
+        g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
 
         // Draw delete box
         g2.setColor(Color.RED);
-        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, 
-                       ARC_RADIUS, ARC_RADIUS);
+        g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
 
         // Calculate center position for the canvas
         int x = (getWidth() - displayCanvas.getWidth()) / 2;
