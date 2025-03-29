@@ -157,6 +157,8 @@ public class CanvasPanel extends JPanel {
                     (int)(mousePoint.x + dx),
                     (int)(mousePoint.y + dy)
                 );
+                wb.setScale(scale);
+                wb.repaintInside();
             }
 
             for (GoalObject Goal : goalObjectList) {
@@ -342,7 +344,15 @@ public class CanvasPanel extends JPanel {
     public void addWhiteBoard() {
         WhiteBoardObject whiteBoard = new WhiteBoardObject(0, 0, 500, 500, Color.WHITE);
         whiteBoardObjectList.add(whiteBoard);
-        
+        // Update size to account for zoom out/in
+        whiteBoard.setBounds(
+            whiteBoard.getX(),
+            whiteBoard.getY(),
+            (int)(whiteBoard.getOriginalWidth() * scale),
+            (int)(whiteBoard.getOriginalHeight() * scale)
+        );
+        whiteBoard.setScale(scale);
+        whiteBoard.repaintInside();
         add(whiteBoard);
         repaint();
     }
