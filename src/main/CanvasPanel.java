@@ -446,6 +446,25 @@ public class CanvasPanel extends JPanel {
                 Goal.getTitle(),
                 Goal.getDate()
             ));
+
+
+        for (WhiteBoardObject wb : whiteBoardObjectList){
+            wb.saveImage();
+            boardState.add(new BoardObjectState(
+            "WhiteBoard",
+            wb.getX(),
+            wb.getY(),
+            wb.getWidth(),
+            wb.getHeight(),
+            wb.getOriginalWidth(),
+            wb.getOriginalHeight(),
+            wb.getBackground(),
+            wb.getImageLocation(),
+            (List<String>) null,
+            "",
+            null
+            ));
+        }
         }
 
         // Convert to JSON
@@ -537,6 +556,14 @@ public class CanvasPanel extends JPanel {
                         //Initialize the actual list here
                         goalObjectList.add(Goal);
                         add(Goal);
+                    }else if (obj.type.equals("WhiteBoard")){
+                        WhiteBoardObject wb = new WhiteBoardObject(obj.x, obj.y, obj.width, obj.height, obj.getColor());
+                        wb.setScale(this.scale);
+                        wb.setOriginalHeight(obj.OriginalHeight);
+                        wb.setOriginalWidth(obj.OriginalWidth);
+                        wb.loadImage(obj.text);
+                        whiteBoardObjectList.add(wb);
+                        add(wb);
                     }
                 }
                 revalidate();

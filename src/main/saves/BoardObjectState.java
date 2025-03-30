@@ -1,6 +1,7 @@
 package main.saves;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class BoardObjectState {
     public String type; // "StickyNote" or "Calendar"
     public int x, y, width, height;
     public int colorR, colorG, colorB; // Store color as RGB
-    public String text; // For sticky notes
+    public String text; // For sticky notes // Store file location for whiteboards too !
     public List<String> todoListStrings;
     public String Title;
     public Date GoalDate;

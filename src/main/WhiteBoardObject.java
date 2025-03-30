@@ -1,7 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -30,6 +33,7 @@ public class WhiteBoardObject extends JPanel {
     private int canvasWidth; 
     private int canvasHeight;
     private float strokeWidth = 2.0f; // Default stroke width 
+    private String imageLocation;
 
     public WhiteBoardObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -51,7 +55,6 @@ public class WhiteBoardObject extends JPanel {
         
         // Initialize the display canvas
         displayCanvas = originalCanvas;
-
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -73,7 +76,7 @@ public class WhiteBoardObject extends JPanel {
                     prevX = Math.max(0, Math.min(prevX, canvasWidth - 1));
                     prevY = Math.max(0, Math.min(prevY, canvasHeight - 1));
                 }
-            }
+            } 
 
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -132,8 +135,16 @@ public class WhiteBoardObject extends JPanel {
         return originalWidth;
     }
 
+    public void setOriginalWidth(int newWidth){
+        originalWidth = newWidth;
+    }
+
     public int getOriginalHeight() {
         return originalHeight;
+    }
+
+    public void setOriginalHeight(int newHeight){
+        originalHeight = newHeight;
     }
 
     public void setScale(double newScale) {
@@ -202,6 +213,47 @@ public class WhiteBoardObject extends JPanel {
         // Update the display canvas and repaint
         updateDisplayCanvas();
         repaint();
+    }
+
+    public void saveImage(){
+        String filePath = "whiteBoard.png";// Add with static number increasing everytime constuctor is run.
+        File outputFile = new File(filePath);
+        try {
+            ImageIO.write(originalCanvas, "png", outputFile);
+            System.out.println("Image saved successfully to: " + filePath);
+            imageLocation = filePath;
+        } catch (IOException e) {
+            System.err.println("Error saving image: " + e.getMessage());
+        }
+    }
+
+    public String getImageLocation(){
+        return this.imageLocation;
+    }
+
+    public void loadImage(String savedImageLocation){
+        //set buffered image to image at the saved Image Location
+        if(savedImageLocation != null){
+            try {
+                // Specify the path to the PNG file
+                File pngFile = new File(savedImageLocation);
+
+                // Read the PNG file into a BufferedImage
+                originalCanvas = ImageIO.read(pngFile);
+
+                // Check if the image was loaded successfully
+                if (originalCanvas != null) {
+                    System.out.println("PNG image loaded successfully!");
+                    // Update the display canvas with the new scale
+                    updateDisplayCanvas();
+                    // You can now work with the bufferedImage
+                } else {
+                    System.err.println("Failed to load PNG image. Check the file path.");
+                }
+            } catch (IOException e) {
+                System.err.println("An error occurred while loading the image: " + e.getMessage());
+            }
+        }
     }
 
     public void delete() {
