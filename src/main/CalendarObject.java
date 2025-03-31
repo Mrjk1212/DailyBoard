@@ -454,7 +454,7 @@ public class CalendarObject extends JPanel {
 
         // ScrollPane setup to show only 12 rows at a time
         eventTable.setRowHeight(30);
-        int visibleRows = 12;
+        int visibleRows = 24;
         int tableHeight = visibleRows * eventTable.getRowHeight();
         eventTable.setPreferredScrollableViewportSize(new Dimension(width, tableHeight));
 
