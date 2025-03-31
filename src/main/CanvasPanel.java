@@ -393,64 +393,60 @@ public class CanvasPanel extends JPanel {
         List<BoardObjectState> boardState = new ArrayList<>();
 
         for (StickyNoteObject note : stickyNoteObjectList) {
-            boardState.add(new BoardObjectState(
+            BoardObjectState bs = new BoardObjectState(
                 "StickyNote",
                 note.getX(), note.getY(),
                 note.getWidth(), note.getHeight(),
                 note.getOriginalWidth(), note.getOriginalHeight(),
-                note.getBackground(),  // Get color
-                note.getText(),  // Get text content
-                (List<String>) null, //Type casting to null so I don't get some random null pointer exception!
-                note.getTitle(),
-                null
-            ));
+                note.getBackground());
+                bs.setText(note.getText());
+                bs.setTitle(note.getTitle());
+
+                boardState.add(bs);
         }
 
         for (CalendarObject cal : calendarObjectList) {
-            boardState.add(new BoardObjectState(
+            BoardObjectState bs = new BoardObjectState(
                 "Calendar",
                 cal.getX(), cal.getY(),
                 cal.getWidth(), cal.getHeight(),
                 cal.getOriginalWidth(), cal.getOriginalHeight(),
-                cal.getBackground(),  // Get color
-                cal.getICalFileLocation(),  // Calendars dont store text lol, but we will multiPurpose use this to store the ICalFile Location if applicable
-                (List<String>) null,
-                "",
-                null
-            ));
+                cal.getBackground());
+                bs.setText(cal.getICalFileLocation()); // Calendars dont store text lol, but we will multiPurpose use this to store the ICalFile Location if applicable
+
+                boardState.add(bs);
         }
 
         for (TodoObject td : todoObjectList){
-            boardState.add(new BoardObjectState(
+            BoardObjectState bs = new BoardObjectState(
                 "Todo",
                 td.getX(), td.getY(),
                 td.getWidth(), td.getHeight(),
                 td.getOriginalWidth(), td.getOriginalHeight(),
-                td.getBackground(),
-                td.getText(),
-                td.getList(),
-                "",
-                null
-            ));
+                td.getBackground());
+                bs.setText(td.getText()); // Actually TITLE.... just made this inconsistent because lazy? fix later
+                bs.setTodoList(td.getList());
+
+                boardState.add(bs);
         }
 
         for (GoalObject Goal : goalObjectList){
-            boardState.add(new BoardObjectState(
+            BoardObjectState bs = new BoardObjectState(
                 "Goal",
                 Goal.getX(), Goal.getY(),
                 Goal.getWidth(), Goal.getHeight(),
                 Goal.getOriginalWidth(), Goal.getOriginalHeight(),
-                Goal.getBackground(),
-                Goal.getText(),
-                (List<String>) null,
-                Goal.getTitle(),
-                Goal.getDate()
-            ));
+                Goal.getBackground());
+                bs.setGoalDate(Goal.getDate());
+                bs.setText(Goal.getText());
+                bs.setTitle(Goal.getTitle());
 
+                boardState.add(bs);
+        }
 
         for (WhiteBoardObject wb : whiteBoardObjectList){
             wb.saveImage();
-            boardState.add(new BoardObjectState(
+            BoardObjectState bs = new BoardObjectState(
             "WhiteBoard",
             wb.getX(),
             wb.getY(),
@@ -458,14 +454,11 @@ public class CanvasPanel extends JPanel {
             wb.getHeight(),
             wb.getOriginalWidth(),
             wb.getOriginalHeight(),
-            wb.getBackground(),
-            wb.getImageLocation(),
-            (List<String>) null,
-            "",
-            null
-            ));
+            wb.getBackground());
+            bs.setText(wb.getImageLocation());// Actually ImageLocation String.... just made this inconsistent because lazy? fix later
+            boardState.add(bs);
         }
-        }
+        
 
         // Convert to JSON
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
