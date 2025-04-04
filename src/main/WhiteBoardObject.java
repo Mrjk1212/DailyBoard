@@ -258,6 +258,17 @@ public class WhiteBoardObject extends JPanel {
                     // Update the display canvas with the new scale
                     updateDisplayCanvas();
                     // You can now work with the bufferedImage
+                    // Delete saved image
+                if (savedImageLocation != null) {
+                    File file = new File(savedImageLocation);
+                    if (file.exists()) {
+                        if (file.delete()) {
+                            System.out.println("Deleted image at: " + savedImageLocation);
+                        } else {
+                            System.err.println("Failed to delete image at: " + savedImageLocation);
+                        }
+                    }
+                }
                 } else {
                     System.err.println("Failed to load PNG image. Check the file path.");
                 }
@@ -268,10 +279,12 @@ public class WhiteBoardObject extends JPanel {
     }
 
     public void delete() {
+        // Remove from parent CanvasPanel
         Container parent = getParent();
         if (parent instanceof CanvasPanel) {
             ((CanvasPanel) parent).removeWhiteBoardObject(this);
         }
+    
     }
 
     /**
