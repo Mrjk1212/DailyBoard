@@ -34,6 +34,7 @@ public class WhiteBoardObject extends JPanel {
     private int canvasHeight;
     private float strokeWidth = 2.0f; // Default stroke width 
     private String imageLocation;
+    private static int imageNumber;
 
     public WhiteBoardObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -215,13 +216,23 @@ public class WhiteBoardObject extends JPanel {
         repaint();
     }
 
-    public void saveImage(){
-        String filePath = "whiteBoard.png";// Add with static number increasing everytime constuctor is run.
-        File outputFile = new File(filePath);
+    public void saveImage() {
+        String folderPath = System.getProperty("user.home") + File.separator + "dailyBoardSaves";
+        File theDir = new File(folderPath);
+        if (!theDir.exists()) {
+            theDir.mkdirs();
+        }
+        File outputFile;
+        do {
+            String fileName = "whiteBoard_"+ imageNumber + ".png";
+            outputFile = new File(theDir, fileName);
+            imageNumber++;
+        } while (outputFile.exists());
+    
         try {
             ImageIO.write(originalCanvas, "png", outputFile);
-            System.out.println("Image saved successfully to: " + filePath);
-            imageLocation = filePath;
+            System.out.println("Image saved successfully to: " + outputFile.getAbsolutePath());
+            imageLocation = outputFile.getAbsolutePath();
         } catch (IOException e) {
             System.err.println("Error saving image: " + e.getMessage());
         }
