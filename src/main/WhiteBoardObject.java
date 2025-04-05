@@ -190,7 +190,7 @@ public class WhiteBoardObject extends JPanel {
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
 
-        // Draw delete box
+         // Draw delete box
         g2.setColor(Color.RED);
         g2.fillRoundRect(getWidth() - DELETE_MARGIN, 0, DELETE_MARGIN, DELETE_MARGIN, ARC_RADIUS, ARC_RADIUS);
 
@@ -255,10 +255,20 @@ public class WhiteBoardObject extends JPanel {
                 // Check if the image was loaded successfully
                 if (originalCanvas != null) {
                     System.out.println("PNG image loaded successfully!");
+                    canvasWidth = originalCanvas.getWidth();
+                    canvasHeight = originalCanvas.getHeight();
+                    originalWidth = canvasWidth + 10;
+                    originalHeight = canvasHeight + 10;
+                    setBounds(getX(), getY(), (int)(originalWidth * scale), (int)(originalHeight * scale));
                     // Update the display canvas with the new scale
                     updateDisplayCanvas();
-                    // You can now work with the bufferedImage
-                    // Delete saved image
+                    g2d = originalCanvas.createGraphics();
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2d.setStroke(new BasicStroke(strokeWidth));
+                    g2d.setColor(Color.BLACK); // or restore previous drawing color if you have it stored
+
+                    updateDisplayCanvas();
+                    repaint();
                 if (savedImageLocation != null) {
                     File file = new File(savedImageLocation);
                     if (file.exists()) {
