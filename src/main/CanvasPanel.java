@@ -21,7 +21,7 @@ import java.util.Map;
 /*
 - Relocate to origin button so you cant get lost
 - Fix spawning in items so that they "find" open screen space first.
--
+- Fix Scaling so that each thing scales and adjusts size based off of DOUBLE, instead of INT (current)
 -
  */
 
