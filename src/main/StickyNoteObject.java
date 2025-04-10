@@ -78,7 +78,7 @@ public class StickyNoteObject extends JPanel {
         titleField.setBorder(null);
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
-        titleField.setText("");
+        titleField.setText("Example Title");
         titleField.setHorizontalAlignment(JTextField.LEFT);
                 
         add(titleField, "span 2");
@@ -122,7 +122,7 @@ public class StickyNoteObject extends JPanel {
         sep.setForeground(getBackground().darker());
 
         // Create a JTextField for input
-        textField = new JTextArea();
+        textField = new JTextArea("Example Text");
         textField.setBounds(5, 5, width - 10, height - 10);
         textField.setFont(new Font("Arial", Font.PLAIN, 12));
         textField.setBorder(null);

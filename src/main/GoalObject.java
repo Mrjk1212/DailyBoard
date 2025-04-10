@@ -106,7 +106,7 @@ public class GoalObject extends JPanel {
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
         titleField.setForeground(getContrastColor(getBackground()));
-        titleField.setText("");
+        titleField.setText("Example Goal");
         titleField.setHorizontalAlignment(JTextField.LEFT);
                 
         add(titleField, "span 2");
