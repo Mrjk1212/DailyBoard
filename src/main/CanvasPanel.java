@@ -280,6 +280,7 @@ public class CanvasPanel extends JPanel {
         stickyNote.setScale(scale);
         stickyNote.repaintInside();
         add(stickyNote);
+        this.setComponentZOrder(stickyNote, 2);
         repaint();
         
     }
@@ -307,6 +308,7 @@ public class CanvasPanel extends JPanel {
             (int)(calendar.getOriginalHeight() * scale)
         );
         add(calendar);
+        this.setComponentZOrder(calendar, 2);
         calendar.setScale(scale);
         calendar.repaintInside();
         repaint();
@@ -332,6 +334,7 @@ public class CanvasPanel extends JPanel {
         todo.setScale(scale);
         todo.repaintInside();
         add(todo);
+        this.setComponentZOrder(todo, 2);
         repaint();
     }
 
@@ -355,6 +358,7 @@ public class CanvasPanel extends JPanel {
         whiteBoard.setScale(scale);
         whiteBoard.repaintInside();
         add(whiteBoard);
+        this.setComponentZOrder(whiteBoard, 2);
         repaint();
     }
 
@@ -378,6 +382,7 @@ public class CanvasPanel extends JPanel {
         Goal.setScale(scale);
         Goal.repaintInside();
         add(Goal);
+        this.setComponentZOrder(Goal, 2);
         repaint();
 
     }
