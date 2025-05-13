@@ -265,6 +265,15 @@ public class CanvasPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         drawGrid(g2);
+
+        // Draw position information in the corner
+        g2.setColor(new Color(0, 0, 0, 180)); // Semi-transparent black background
+        g2.fillRect(10, getHeight() - 60, 200, 50);
+        
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        g2.drawString(String.format("Position: X=%d, Y=%d", offsetX, offsetY), 15, getHeight() - 40);
+        g2.drawString(String.format("Scale: %.2f", scale), 15, getHeight() - 20);
     }
 
     public void addStickyNote() {
