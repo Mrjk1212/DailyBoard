@@ -37,11 +37,11 @@ public class CanvasPanel extends JPanel {
     private Point lastDrag = null;
     private boolean isPanning = false;
 
-    private boolean darkMode = false;
-    private Color darkBackgroundColor = new Color(128,128,128);
+    private static boolean darkMode = false;
+    private static Color darkBackgroundColor = new Color(128,128,128);
     private Color darkGridLineColor = new Color(144,144,144);
 
-    private Color lightBackgroundColor = new Color(245, 245, 245);
+    private static Color lightBackgroundColor = new Color(245, 245, 245);
     private Color lightGridLineColor = new Color(220, 220, 220);
 
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
@@ -61,7 +61,9 @@ public class CanvasPanel extends JPanel {
         loadBoardState();
 
         addMouseWheelListener(e -> {
-            Point mousePoint = e.getPoint();
+            //Point mousePoint = e.getPoint();
+            Dimension viewSize = getSize();
+            Point mousePoint = new Point(viewSize.width / 2, viewSize.height / 2);
             double oldScale = scale;
             
             if (e.getWheelRotation() < 0) {
@@ -254,7 +256,7 @@ public class CanvasPanel extends JPanel {
 
         if(darkMode){
             this.setBackground(lightBackgroundColor);
-
+            
             darkMode = false;
         }
         else{
