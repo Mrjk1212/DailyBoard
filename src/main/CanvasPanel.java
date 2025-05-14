@@ -37,6 +37,13 @@ public class CanvasPanel extends JPanel {
     private Point lastDrag = null;
     private boolean isPanning = false;
 
+    private boolean darkMode = false;
+    private Color darkBackgroundColor = new Color(128,128,128);
+    private Color darkGridLineColor = new Color(144,144,144);
+
+    private Color lightBackgroundColor = new Color(245, 245, 245);
+    private Color lightGridLineColor = new Color(220, 220, 220);
+
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
     private List<CalendarObject> calendarObjectList = new ArrayList<>();
     private List<TodoObject> todoObjectList = new ArrayList<>();
@@ -243,10 +250,31 @@ public class CanvasPanel extends JPanel {
         
     }
 
+    private void themeMode(){
+
+        if(darkMode){
+            this.setBackground(lightBackgroundColor);
+
+            darkMode = false;
+        }
+        else{
+            this.setBackground(darkBackgroundColor);
+
+            darkMode = true;
+        }
+        repaint();
+    }
+
     private void drawGrid(Graphics2D g2) {
         int baseGridSize = 50;
         int scaledGridSize = (int)(baseGridSize * scale);
-        g2.setColor(new Color(220, 220, 220));
+
+        if(darkMode){
+            g2.setColor(darkGridLineColor);
+        }
+        else{
+            g2.setColor(lightGridLineColor);
+        }
 
         int startX = offsetX % scaledGridSize;
         int startY = offsetY % scaledGridSize;
@@ -614,6 +642,10 @@ public class CanvasPanel extends JPanel {
         RoundedButton addGoalButton = new RoundedButton(100, 30, "Goal");
         addGoalButton.addActionListener(e -> canvasPanel.addGoal());
         toolBar.add(addGoalButton);
+
+        RoundedButton DarkModeButton = new RoundedButton(100, 30, "Dark/Light");
+        DarkModeButton.addActionListener(e -> canvasPanel.themeMode());
+        toolBar.add(DarkModeButton);
 
         // Save board state on exit
         frame.addWindowListener(new WindowAdapter() {
