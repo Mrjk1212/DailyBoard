@@ -74,7 +74,7 @@ public class StickyNoteObject extends JPanel {
 
         // Create a JTextField for input
         titleField = new JTextField();
-        titleField.setFont(new Font("Arial", Font.PLAIN, 12));
+        titleField.setFont(new Font("Arial", Font.BOLD, 12));
         titleField.setBorder(null);
         titleField.setVisible(true);
         titleField.setBackground(getBackground());
@@ -124,7 +124,7 @@ public class StickyNoteObject extends JPanel {
         // Create a JTextField for input
         textField = new JTextArea("Example Text");
         textField.setBounds(5, 5, width - 10, height - 10);
-        textField.setFont(new Font("Arial", Font.PLAIN, 12));
+        textField.setFont(new Font("Arial", Font.BOLD, 12));
         textField.setBorder(null);
         textField.setVisible(true);
         textField.setBackground(getBackground());
@@ -251,7 +251,7 @@ public class StickyNoteObject extends JPanel {
 
     private void updateTextStyle() {
         int fontSize = Math.max(1, (int) Math.round(12 * scale));
-        textField.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        textField.setFont(new Font("Arial", Font.BOLD, fontSize));
         textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
     }
 

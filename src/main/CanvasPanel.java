@@ -19,8 +19,10 @@ import java.util.Map;
 
 //TODO
 /*
-- Relocate to origin button so you cant get lost
-- Fix Scaling so that each thing scales and adjusts size based off of DOUBLE, instead of INT (current)
+- Select box to move multiple objects
+
+
+- Fix Scaling so that each thing scales and adjusts size based off of DOUBLE, instead of INT (never gonna work btw, forget this)
 ^^ Not sure this can be possble to just "fix" will need to change how scaling works.
 -
  */
@@ -37,11 +39,11 @@ public class CanvasPanel extends JPanel {
     private Point lastDrag = null;
     private boolean isPanning = false;
 
-    private static boolean darkMode = false;
-    private static Color darkBackgroundColor = new Color(128,128,128);
+    private boolean darkMode = false;
+    private Color darkBackgroundColor = new Color(128,128,128);
     private Color darkGridLineColor = new Color(144,144,144);
 
-    private static Color lightBackgroundColor = new Color(245, 245, 245);
+    private Color lightBackgroundColor = new Color(245, 245, 245);
     private Color lightGridLineColor = new Color(220, 220, 220);
 
     private List<StickyNoteObject> stickyNoteObjectList = new ArrayList<>();
@@ -252,6 +254,7 @@ public class CanvasPanel extends JPanel {
         
     }
 
+    //This is for the button switch
     private void themeMode(){
 
         if(darkMode){
@@ -266,6 +269,22 @@ public class CanvasPanel extends JPanel {
         }
         repaint();
     }
+
+    //this is for loading
+    private void darkMode(boolean yes){
+
+    if(!yes){
+        this.setBackground(lightBackgroundColor);
+        
+        darkMode = false;
+    }
+    else{
+        this.setBackground(darkBackgroundColor);
+
+        darkMode = true;
+    }
+    repaint();
+}
 
     private void drawGrid(Graphics2D g2) {
         int baseGridSize = 50;
@@ -512,7 +531,7 @@ public class CanvasPanel extends JPanel {
             e.printStackTrace();
         }
 
-        BoardScaleState boardScaleState = new BoardScaleState(this.scale, this.offsetX, this.offsetY);
+        BoardScaleState boardScaleState = new BoardScaleState(this.scale, this.offsetX, this.offsetY, this.darkMode);
 
         try (FileWriter writer = new FileWriter("boardScaleState.json")) {
             gson.toJson(boardScaleState, writer);
@@ -535,7 +554,8 @@ public class CanvasPanel extends JPanel {
                 this.scale = boardScaleState.Scale;
                 this.offsetX = boardScaleState.OffsetX;
                 this.offsetY = boardScaleState.OffsetY;
-
+                this.darkMode = boardScaleState.darkMode;
+                darkMode(darkMode);
             }
 
         }catch (IOException e) {
