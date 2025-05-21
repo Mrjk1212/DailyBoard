@@ -450,7 +450,7 @@ public class CalendarObject extends JPanel {
         eventTable.getTableHeader().setBackground(new Color(250, 249, 248));
         eventTable.getTableHeader().setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         eventTable.getTableHeader().setForeground(Color.BLACK);
-        eventTable.getTableHeader().setFont(new Font("Aptos", Font.PLAIN, 14));        
+        eventTable.getTableHeader().setFont(new Font("Aptos", Font.BOLD, 14));        
 
         // ScrollPane setup to show only 12 rows at a time
         eventTable.setRowHeight(30);

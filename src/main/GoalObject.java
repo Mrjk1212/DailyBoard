@@ -298,7 +298,7 @@ public class GoalObject extends JPanel {
         textField.setFont(new Font("Arial", Font.BOLD, fontSize));
         textField.setBounds(5, 5, getWidth() - 10, getHeight() - 10);
         titleField.setFont(new Font("Arial", Font.BOLD, biggerFontSize));
-        dateButton.setFont(new Font("Arial", Font.PLAIN, fontSize));
+        dateButton.setFont(new Font("Arial", Font.BOLD, fontSize));
         daysRemainingLabel.setFont(new Font("Arial", Font.BOLD, biggerFontSize));
     }
 
