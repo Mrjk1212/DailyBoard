@@ -37,6 +37,7 @@ public class StickyNoteObject extends JPanel {
     private int originalHeight;
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
+    private boolean isSelected = false;
 
     public StickyNoteObject(int xPos, int yPos, int width, int height, Color color) {
         originalWidth = width;
@@ -188,6 +189,10 @@ public class StickyNoteObject extends JPanel {
                     int deltaX = e.getX() - initialClick.x;
                     int deltaY = e.getY() - initialClick.y;
                     setLocation(thisX + deltaX, thisY + deltaY);
+                    Container parent = getParent();
+                    if (parent instanceof CanvasPanel) {
+                        ((CanvasPanel) parent).moveGroup(deltaX,deltaY); // Notify CanvasPanel
+                    }
                 }
             }
         });
@@ -247,6 +252,13 @@ public class StickyNoteObject extends JPanel {
     public void setScale(double newScale) {
         this.scale = newScale;
         updateTextStyle();
+    }
+
+    public void setSelected(boolean selected){
+        this.isSelected = selected;
+    }
+    public boolean getSelected(){
+        return this.isSelected;
     }
 
     private void updateTextStyle() {

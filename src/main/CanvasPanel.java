@@ -14,7 +14,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 //TODO
@@ -38,6 +40,11 @@ public class CanvasPanel extends JPanel {
     private int offsetX = 0, offsetY = 0;
     private Point lastDrag = null;
     private boolean isPanning = false;
+
+    private Rectangle selectionBox = null;
+    private boolean isSelecting = false;
+    private final Set<JComponent> selectedObjects = new HashSet<>();
+    private JComponent draggingSelectedObject = null;
 
     private boolean darkMode = false;
     private Color darkBackgroundColor = new Color(128,128,128);
@@ -203,55 +210,111 @@ public class CanvasPanel extends JPanel {
             repaint();
         });
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    isPanning = true;
-                    lastDrag = e.getPoint();
-                    setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-                }
+        MouseAdapter mouseHandler = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                isPanning = true;
+                lastDrag = e.getPoint();
+                setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            } else if (SwingUtilities.isLeftMouseButton(e)) {
+                isSelecting = true;
+                selectionBox = new Rectangle(e.getPoint());
+                selectedObjects.clear();
+                draggingSelectedObject = getObjectAt(e.getPoint());
+                System.out.println(draggingSelectedObject);
+                lastDrag = e.getPoint();
             }
+        }
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-                    isPanning = false;
-                    setCursor(Cursor.getDefaultCursor());
-                }
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                if (isPanning && lastDrag != null) {
-                    int dx = e.getX() - lastDrag.x;
-                    int dy = e.getY() - lastDrag.y;
-                    offsetX += dx;
-                    offsetY += dy;
-                    lastDrag = e.getPoint();
-
-                    for (StickyNoteObject obj : stickyNoteObjectList) {
-                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
-                    }
-                    for (CalendarObject obj : calendarObjectList) {
-                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
-                    }
-                    for (TodoObject obj : todoObjectList){
-                        obj.setLocation(obj.getX() + dx, obj.getY() + dy);
-                    }
-                    for(WhiteBoardObject obj : whiteBoardObjectList){
-                        obj.setLocation(obj.getX() + dx,obj.getY() + dy);
-                    }
-                    for(GoalObject obj : goalObjectList){
-                        obj.setLocation(obj.getX() + dx,obj.getY() + dy);
-                    }
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                isPanning = false;
+                setCursor(Cursor.getDefaultCursor());
+            } else if (SwingUtilities.isLeftMouseButton(e)) {
+                if (isSelecting && selectionBox != null) {
+                    selectObjectsWithin(selectionBox);
+                    selectionBox = null;
                     repaint();
                 }
+                draggingSelectedObject = null;
+                isSelecting = false;
             }
-        });
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (isPanning && lastDrag != null) {
+                int dx = e.getX() - lastDrag.x;
+                int dy = e.getY() - lastDrag.y;
+                offsetX += dx;
+                offsetY += dy;
+                lastDrag = e.getPoint();
+
+                for (JComponent obj : getAllObjects()) {
+                    obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                }
+                repaint();
+            }
+            
+            else if (isSelecting && selectionBox != null) {
+                selectionBox.setSize(
+                    e.getX() - selectionBox.x,
+                    e.getY() - selectionBox.y
+                );
+                repaint();
+            }
+            
+        }
+    };
+
+    addMouseListener(mouseHandler);
+    addMouseMotionListener(mouseHandler);
+    
+}
+
+
+    public void moveGroup(int dx, int dy){
         
+        for (JComponent obj : getAllObjects() ) {
+            if(obj instanceof StickyNoteObject){
+                if(((StickyNoteObject) obj).getSelected()){
+                    obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                }
+            }
+        }
+    }
+
+    private JComponent getObjectAt(Point point) {
+        for (JComponent obj : getAllObjects()) {
+            if (obj.getBounds().contains(point)) {
+                return obj;
+            }
+        }
+        return null;
+    }
+
+    private List<JComponent> getAllObjects() {
+        List<JComponent> all = new ArrayList<>();
+        all.addAll(stickyNoteObjectList);
+        all.addAll(calendarObjectList);
+        all.addAll(todoObjectList);
+        all.addAll(whiteBoardObjectList);
+        all.addAll(goalObjectList);
+        return all;
+    }
+
+    private void selectObjectsWithin(Rectangle rect) {
+    for (JComponent obj : getAllObjects()) {
+        Rectangle objBounds = obj.getBounds();
+        if (rect.contains(objBounds)) {
+            selectedObjects.add(obj);
+            ((StickyNoteObject) obj).setSelected(true);
+            System.out.println(obj);
+            //obj.setBackground(getBackground().brighter());
+        }
+        }
     }
 
     //This is for the button switch
@@ -259,12 +322,10 @@ public class CanvasPanel extends JPanel {
 
         if(darkMode){
             this.setBackground(lightBackgroundColor);
-            
             darkMode = false;
         }
         else{
             this.setBackground(darkBackgroundColor);
-
             darkMode = true;
         }
         repaint();
@@ -323,6 +384,14 @@ public class CanvasPanel extends JPanel {
         g2.setFont(new Font("SansSerif", Font.PLAIN, 12));
         g2.drawString(String.format("Position: X=%d, Y=%d", offsetX, offsetY), 15, getHeight() - 40);
         g2.drawString(String.format("Scale: %.2f", scale), 15, getHeight() - 20);
+
+        if (selectionBox != null && isSelecting) {
+        g2.setColor(Color.BLUE);
+        g2.setStroke(new BasicStroke(1));
+        g2.draw(selectionBox);
+        g2.setColor(new Color(0, 0, 255, 50));
+        g2.fill(selectionBox);
+    }
     }
 
     public void addStickyNote() {
