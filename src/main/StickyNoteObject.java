@@ -160,7 +160,7 @@ public class StickyNoteObject extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                initialClick = e.getPoint();
+                initialClick = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), getParent());
 
                 if (isInResizeZone(e.getPoint())) {
                     isResizing = true;
@@ -184,15 +184,23 @@ public class StickyNoteObject extends JPanel {
                     setSize(Math.max(newWidth, 50), Math.max(newHeight, 50));
                     updateTextStyle();
                 } else {
-                    int thisX = getX();
-                    int thisY = getY();
-                    int deltaX = e.getX() - initialClick.x;
-                    int deltaY = e.getY() - initialClick.y;
-                    setLocation(thisX + deltaX, thisY + deltaY);
+                    Point current = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), getParent());
+                    int dx = current.x - initialClick.x;
+                    int dy = current.y - initialClick.y;
+
                     Container parent = getParent();
                     if (parent instanceof CanvasPanel) {
-                        ((CanvasPanel) parent).moveGroup(deltaX,deltaY); // Notify CanvasPanel
+                        if (getSelected() && ((CanvasPanel)parent).getSelectedObjects().size() > 1) {
+                            // Group dragging
+                            ((CanvasPanel)parent).moveGroup(dx, dy);
+                        } else {
+                            // Single object drag
+                            setLocation(getX() + dx, getY() + dy);
+                        }
                     }
+
+                    // Only update initialClick once per frame, for smooth delta
+                    initialClick = current;
                 }
             }
         });

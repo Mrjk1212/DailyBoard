@@ -220,9 +220,18 @@ public class CanvasPanel extends JPanel {
             } else if (SwingUtilities.isLeftMouseButton(e)) {
                 isSelecting = true;
                 selectionBox = new Rectangle(e.getPoint());
+                for(Object obj : selectedObjects){
+                    if(obj instanceof StickyNoteObject){
+                        ((StickyNoteObject) obj).setSelected(false);;
+                    }
+                }
                 selectedObjects.clear();
                 draggingSelectedObject = getObjectAt(e.getPoint());
-                System.out.println(draggingSelectedObject);
+                //handle clicking directly on a note (no drag-box)
+                if (draggingSelectedObject != null && draggingSelectedObject instanceof StickyNoteObject) {
+                    ((StickyNoteObject) draggingSelectedObject).setSelected(true);
+                    selectedObjects.add(draggingSelectedObject);
+                }
                 lastDrag = e.getPoint();
             }
         }
@@ -274,7 +283,6 @@ public class CanvasPanel extends JPanel {
     
 }
 
-
     public void moveGroup(int dx, int dy){
         
         for (JComponent obj : getAllObjects() ) {
@@ -315,6 +323,10 @@ public class CanvasPanel extends JPanel {
             //obj.setBackground(getBackground().brighter());
         }
         }
+    }
+
+    public Set<JComponent> getSelectedObjects(){
+        return selectedObjects;
     }
 
     //This is for the button switch
