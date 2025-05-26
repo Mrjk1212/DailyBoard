@@ -294,7 +294,7 @@ public class StickyNoteObject extends JPanel {
         // Draw resize box
         g2.setColor(RESIZE_COLOR);
         g2.fillRoundRect(getWidth() - RESIZE_MARGIN, getHeight() - RESIZE_MARGIN, RESIZE_MARGIN, RESIZE_MARGIN, ARC_RADIUS, ARC_RADIUS);
-    
+        
     }
 
     @Override

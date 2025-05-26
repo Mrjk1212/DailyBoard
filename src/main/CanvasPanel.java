@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -318,9 +320,12 @@ public class CanvasPanel extends JPanel {
         Rectangle objBounds = obj.getBounds();
         if (rect.contains(objBounds)) {
             selectedObjects.add(obj);
-            ((StickyNoteObject) obj).setSelected(true);
-            System.out.println(obj);
-            //obj.setBackground(getBackground().brighter());
+            
+            if(obj instanceof StickyNoteObject){
+                ((StickyNoteObject) obj).setSelected(true);
+            }
+            
+            
         }
         }
     }
