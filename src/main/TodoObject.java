@@ -53,6 +53,7 @@ public class TodoObject extends JPanel {
     private int originalHeight;
     private double scale = 1.0;
     private int ARC_RADIUS = 10;
+    private boolean isSelected = false;
 
     private Map<JTextField, CircleButton> todoDict = new HashMap<>();
     private List<JSeparator> sepList = new ArrayList<>();
@@ -181,7 +182,7 @@ public class TodoObject extends JPanel {
             }
         });
 
-        addMouseMotionListener(new MouseAdapter() {
+                addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 if (initialClick == null) return;
@@ -194,11 +195,23 @@ public class TodoObject extends JPanel {
                     setSize(Math.max(newWidth, 50), Math.max(newHeight, 50));
                     updateTextStyle();
                 } else {
-                    int thisX = getX();
-                    int thisY = getY();
-                    int deltaX = e.getX() - initialClick.x;
-                    int deltaY = e.getY() - initialClick.y;
-                    setLocation(thisX + deltaX, thisY + deltaY);
+                    Point current = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(), getParent());
+                    int dx = current.x - initialClick.x;
+                    int dy = current.y - initialClick.y;
+
+                    Container parent = getParent();
+                    if (parent instanceof CanvasPanel) {
+                        if (getSelected() && ((CanvasPanel)parent).getSelectedObjects().size() > 1) {
+                            // Group dragging
+                            ((CanvasPanel)parent).moveGroup(dx, dy);
+                        } else {
+                            // Single object drag
+                            setLocation(getX() + dx, getY() + dy);
+                        }
+                    }
+
+                    // Only update initialClick once per frame, for smooth delta
+                    initialClick = current;
                 }
             }
         });
@@ -315,6 +328,14 @@ public class TodoObject extends JPanel {
 
     public void setOriginalWidth(int newOriginalWidth){
         this.originalWidth = newOriginalWidth;
+    }
+
+    
+    public void setSelected(boolean selected){
+        this.isSelected = selected;
+    }
+    public boolean getSelected(){
+        return this.isSelected;
     }
 
     public void setScale(double newScale) {

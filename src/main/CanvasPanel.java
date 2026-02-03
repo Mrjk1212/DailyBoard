@@ -293,6 +293,11 @@ public class CanvasPanel extends JPanel {
                     obj.setLocation(obj.getX() + dx, obj.getY() + dy);
                 }
             }
+            if(obj instanceof TodoObject){
+                if(((TodoObject) obj).getSelected()){
+                    obj.setLocation(obj.getX() + dx, obj.getY() + dy);
+                }
+            }
         }
     }
 
@@ -320,12 +325,13 @@ public class CanvasPanel extends JPanel {
         Rectangle objBounds = obj.getBounds();
         if (rect.contains(objBounds)) {
             selectedObjects.add(obj);
-            
+
             if(obj instanceof StickyNoteObject){
                 ((StickyNoteObject) obj).setSelected(true);
             }
-            
-            
+            if(obj instanceof TodoObject){
+                ((TodoObject) obj).setSelected(true);
+            }
         }
         }
     }
